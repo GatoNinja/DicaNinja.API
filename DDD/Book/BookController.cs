@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookSearch.API.DDD.Book;
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 public class BookController : ControllerBase
 {
@@ -49,20 +49,5 @@ public class BookController : ControllerBase
             ));
 
         return Ok(output);
-    }
-
-    [HttpGet("{isbn}")]
-    public async Task<IActionResult> GetDetail([FromRoute] string isbn)
-    {
-        var request = Service.Volumes.List(isbn);
-        var response = await request.ExecuteAsync();
-        var first = response.Items?.FirstOrDefault();
-
-        if (first is null)
-        {
-            return NotFound();
-        }
-
-        return Ok(first);
     }
 }

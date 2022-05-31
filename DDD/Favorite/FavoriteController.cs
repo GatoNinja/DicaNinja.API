@@ -1,4 +1,5 @@
 ﻿using BookSearch.API.Abstracts;
+using BookSearch.API.Helpers;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,8 +32,11 @@ public class FavoriteController: ControllerHelper
     }
 
     [HttpGet()]
-    public async Task<List<FavoriteModel>> GetAll([FromQuery] Helpers.QueryString queryString)
+    public async Task<PagedResponse<List<FavoriteModel>>> GetAll([FromQuery] Helpers.QueryString queryString)
     {
-        return await FavoriteRepository.GetFavoriteByUser(UserId, queryString.Page, queryString.PerPage);
+        var favorites = await FavoriteRepository.GetFavoriteByUser(UserId, queryString.Page, queryString.PerPage);
+        var totalRecords = await FavoriteRepository.GetFavoritesCount(UserId);
+
+        return PaginationHelper.CreatePagedResponse<FavoriteModel>(favorites, queryString, totalRecords);
     }
 }
