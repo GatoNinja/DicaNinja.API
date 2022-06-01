@@ -1,19 +1,24 @@
-﻿using BookSearch.API.Contexts;
+﻿using BookSearch.API.Abstracts;
+using BookSearch.API.Contexts;
+using BookSearch.API.DDD.Favorite;
 
 using Google.Apis.Books.v1;
+using Google.Apis.Books.v1.Data;
 using Google.Apis.Services;
 
 using Microsoft.AspNetCore.Mvc;
+
+using static Google.Apis.Books.v1.Data.Volume.VolumeInfoData;
 
 namespace BookSearch.API.DDD.Book;
 
 [Route("[controller]")]
 [ApiController]
-public class BookController : ControllerBase
+public class BookController : ControllerHelper
 {
     private const string apiKey = "AIzaSyBKobq7aC-ajuflWLdnrjGlFnz-Eem3Fhw";
 
-    public BookController(DefaultContext context)
+    public BookController(DefaultContext context, IFavoriteRepository favoriteRepository)
     {
         var service = new BooksService(new BaseClientService.Initializer()
         {
@@ -23,9 +28,11 @@ public class BookController : ControllerBase
 
         Service = service;
         Context = context;
+        FavoriteRepository = favoriteRepository;
     }
 
-    public DefaultContext Context { get; }
+    private DefaultContext Context { get; }
+    private IFavoriteRepository FavoriteRepository { get; }
     private BooksService Service { get; }
 
     [HttpGet]
@@ -33,7 +40,7 @@ public class BookController : ControllerBase
     {
         var request = Service.Volumes.List(query);
         var response = await request.ExecuteAsync();
-        var output = response.Items.Select(item => new BookResponse(
+        var books = response.Items.Select(item => new BookResponse(
             item.VolumeInfo.Title,
             item.VolumeInfo.Subtitle,
             item.VolumeInfo.IndustryIdentifiers.Select(identifier => new BookIdentifier(identifier.Identifier, identifier.Type)),
@@ -46,8 +53,29 @@ public class BookController : ControllerBase
             item.VolumeInfo.ImageLinks?.Thumbnail ?? string.Empty,
             item.VolumeInfo.Authors,
             item.VolumeInfo.AverageRating ?? 0
-            ));
+        ));
 
-        return Ok(output);
+        foreach (var book in books)
+        {
+            if (book.Title.Contains("direito"))
+            {
+                book.IsFavorite = await IsBookFavorite(UserId, book.Identifiers);
+            }
+        }
+
+        return Ok(books);
+    }
+
+    private async Task<bool> IsBookFavorite(Guid userId, IEnumerable<BookIdentifier> identifiers)
+    {
+        foreach (var identifier in identifiers)
+        {
+            if (await FavoriteRepository.IsFavorite(userId, identifier.Isbn, identifier.Type))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

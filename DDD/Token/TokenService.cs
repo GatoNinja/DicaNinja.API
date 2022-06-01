@@ -21,22 +21,22 @@ public sealed class TokenService : ITokenService
 
     private IConfiguration Configuration { get; }
 
-    public async Task<TokenResponse> GenerateTokenAsync(UserModel userModel)
+    public async Task<TokenResponse> GenerateTokenAsync(UserModel user)
     {
         var claims = new List<Claim>
         {
-            new("Id", userModel.Id.ToString()),
-            new(ClaimTypes.Name, userModel.Username),
+            new("Id", user.Id.ToString()),
+            new(ClaimTypes.Name, user.Username),
             new(ClaimTypes.Role, Configuration["DefaultUserRole"]),
-            new(ClaimTypes.Email, userModel.Email)
+            new(ClaimTypes.Email, user.Email)
         };
 
         var accessToken = GenerateAccessToken(claims);
         var refreshToken = RefreshTokenRepository.GenerateRefreshToken();
 
-        await RefreshTokenRepository.SaveRefreshTokenAsync(userModel.Id, refreshToken);
+        await RefreshTokenRepository.SaveRefreshTokenAsync(user.Id, refreshToken);
 
-        return new TokenResponse(accessToken, refreshToken, userModel);
+        return new TokenResponse(accessToken, refreshToken, user);
     }
 
     public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)

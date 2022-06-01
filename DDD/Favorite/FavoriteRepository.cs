@@ -44,4 +44,9 @@ public class FavoriteRepository : IFavoriteRepository
     {
         return await Context.Favorites.CountAsync(favorite => favorite.UserId == userId);
     }
+
+    public async Task<bool> IsFavorite(Guid userId, string identifier, string type)
+    {
+        return await Context.Favorites.AnyAsync(favorite => favorite.UserId == userId && favorite.Identifier == identifier && favorite.Type == type);
+    }
 }

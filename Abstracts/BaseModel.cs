@@ -13,7 +13,6 @@ public abstract record BaseModel : ISoftDelete
     {
         Created = DateTimeOffset.Now;
         Updated = DateTimeOffset.Now;
-        Id = Guid.NewGuid();
     }
 
     [Key, Required]
