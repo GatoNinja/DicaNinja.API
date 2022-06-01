@@ -10,6 +10,7 @@ public record FavoritePayload(string isbn, string type);
 
 [Route("[controller]")]
 [ApiController]
+[Authorize]
 public class FavoriteController: ControllerHelper
 {
     public FavoriteController(IFavoriteRepository favoriteRepository)

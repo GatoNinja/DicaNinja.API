@@ -3,17 +3,16 @@ using BookSearch.API.Contexts;
 using BookSearch.API.DDD.Favorite;
 
 using Google.Apis.Books.v1;
-using Google.Apis.Books.v1.Data;
 using Google.Apis.Services;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
-using static Google.Apis.Books.v1.Data.Volume.VolumeInfoData;
 
 namespace BookSearch.API.DDD.Book;
 
 [Route("[controller]")]
 [ApiController]
+[Authorize]
 public class BookController : ControllerHelper
 {
     private const string apiKey = "AIzaSyBKobq7aC-ajuflWLdnrjGlFnz-Eem3Fhw";
