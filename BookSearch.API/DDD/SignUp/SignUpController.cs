@@ -18,7 +18,7 @@ public class SignUpController : ControllerBase
     private IUserRepository UserRepository { get; }
 
     [HttpPost]
-    public async Task<ActionResult<UserModel>> PostNewUserAsync([FromBody] NewUserPayload request)
+    public async Task<ActionResult<Guid>> PostNewUserAsync([FromBody] NewUserPayload request)
     {
         if (request.Password != request.ConfirmPassword)
         {
@@ -47,6 +47,11 @@ public class SignUpController : ControllerBase
 
         var insertedUser = await UserRepository.InsertAsync(user);
 
-        return new CreatedResult("token", insertedUser);
+        if (insertedUser is null)
+        {
+            return new BadRequestObjectResult(new MessageResponse(TextConstant.ProblemToSaveRecord));
+        }
+
+        return new CreatedResult("token", insertedUser.Id);
     }
 }

@@ -1,4 +1,6 @@
 
+using BookSearch.API.Startup;
+
 using System.Security.Cryptography;
 
 namespace BookSearch.API.DDD.PasswordHasher;
@@ -8,9 +10,9 @@ public sealed class PasswordHasher : IPasswordHasher
     private const int SaltSize = 16;
     private const int KeySize = 32;
 
-    public PasswordHasher(IConfiguration configuration)
+    public PasswordHasher(ConfigurationReader config)
     {
-        Iterations = Convert.ToInt32(configuration["HashIterations"]);
+        Iterations = Convert.ToInt32(config.Security.HashIterations);
     }
 
     private int Iterations { get; }

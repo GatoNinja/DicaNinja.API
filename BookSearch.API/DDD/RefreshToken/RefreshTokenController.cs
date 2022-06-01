@@ -69,7 +69,6 @@ public class RefreshTokenController : ControllerHelper
 
         await RefreshTokenRepository.SaveRefreshTokenAsync(userId, newRefreshToken);
 
-        var refreshTokenResponse = new RefreshTokenResponse(newAccessToken, newRefreshToken);
-        return refreshTokenResponse;
+        return new RefreshTokenResponse(newAccessToken, newRefreshToken);
     }
 }

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookSearch.API.DDD.User;
 
-public sealed class UserRepository : IUserRepository
+public sealed class UserRepository : IUserRepository, IUserRepository1
 {
     public UserRepository(DefaultContext context, IPasswordHasher passwordHasher)
     {

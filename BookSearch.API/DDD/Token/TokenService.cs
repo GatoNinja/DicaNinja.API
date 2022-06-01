@@ -4,6 +4,7 @@ using System.Text;
 
 using BookSearch.API.DDD.RefreshToken;
 using BookSearch.API.DDD.User;
+using BookSearch.API.Startup;
 
 using Microsoft.IdentityModel.Tokens;
 
@@ -11,15 +12,15 @@ namespace BookSearch.API.DDD.Token;
 
 public sealed class TokenService : ITokenService
 {
-    public TokenService(IRefreshTokenRepository refreshTokenRepository, IConfiguration configuration)
+    public TokenService(IRefreshTokenRepository refreshTokenRepository, ConfigurationReader config)
     {
         RefreshTokenRepository = refreshTokenRepository;
-        Configuration = configuration;
+        Config = config;
     }
 
     private IRefreshTokenRepository RefreshTokenRepository { get; }
 
-    private IConfiguration Configuration { get; }
+    private ConfigurationReader Config { get; }
 
     public async Task<TokenResponse> GenerateTokenAsync(UserModel user)
     {
@@ -27,7 +28,7 @@ public sealed class TokenService : ITokenService
         {
             new("Id", user.Id.ToString()),
             new(ClaimTypes.Name, user.Username),
-            new(ClaimTypes.Role, Configuration["DefaultUserRole"]),
+            new(ClaimTypes.Role, Config.Security.DefaultUserRole),
             new(ClaimTypes.Email, user.Email)
         };
 
@@ -46,7 +47,7 @@ public sealed class TokenService : ITokenService
             ValidateAudience = false,
             ValidateIssuer = false,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenSecurity"])),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Config.Security.TokenSecurity)),
             ValidateLifetime = false
         };
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -62,12 +63,12 @@ public sealed class TokenService : ITokenService
 
     public string GenerateAccessToken(IEnumerable<Claim> claims)
     {
-        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenSecurity"]));
+        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Config.Security.TokenSecurity));
         var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-        var tokenExpiryInMinutes = Convert.ToInt32(Configuration["TokenExpiryInMinutes"]);
+        var tokenExpiryInMinutes = Convert.ToInt32(Config.Security.TokenExpiryInMinutes);
         var tokeOptions = new JwtSecurityToken(
-            Configuration["Info:Site"],
-            Configuration["Info:Site"],
+            Config.Info.Site,
+            Config.Info.Site,
             claims,
             expires: DateTime.Now.AddMinutes(tokenExpiryInMinutes),
             signingCredentials: signinCredentials

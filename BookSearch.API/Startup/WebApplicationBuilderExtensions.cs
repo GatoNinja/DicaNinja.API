@@ -1,4 +1,6 @@
-﻿using BookSearch.API.Contexts;
+﻿using AutoMapper;
+
+using BookSearch.API.Contexts;
 using BookSearch.API.DDD.External;
 using BookSearch.API.DDD.Favorite;
 using BookSearch.API.DDD.PasswordHasher;
@@ -23,33 +25,48 @@ public static class WebApplicationBuilderExtensions
     public static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder builder)
     {
         var config = new ConfigurationReader(builder.Configuration);
+        var services = builder.Services;
 
-        ConfigureDatabase(builder, config.DefaultConnectionString);
-        AddController(builder);
-        AddAuthentication(builder, config.Info, config.Security.TokenSecurity);
-        AddSwagger(builder, config.Info);
-        ConfigureDependencyInjection(builder);
+        ConfigureDatabase(services, config.DefaultConnectionString);
+        AddController(services);
+        AddAuthentication(services, config.Info, config.Security.TokenSecurity);
+        AddSwagger(services, config.Info);
+        AddAutomapper(services);
+        ConfigureDependencyInjection(services);
 
         return builder;
     }
 
-    private static void ConfigureDependencyInjection(WebApplicationBuilder builder)
+    private static void AddAutomapper(IServiceCollection services)
     {
-        builder.Services.AddDbContext<DefaultContext>();
+        var config = new MapperConfiguration(config =>
+        {
+            config.CreateMap<FavoriteModel, FavoriteDTO>().ReverseMap();
+        });
 
-        builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
-        builder.Services.AddTransient<IUserRepository, UserRepository>();
-        builder.Services.AddTransient<IPersonRepository, PersonRepository>();
-        builder.Services.AddTransient<ITokenService, TokenService>();
-        builder.Services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
-        builder.Services.AddTransient<IPasswordRecoveryRepository, PasswordRecoveryRepository>();
-        builder.Services.AddTransient<ISmtpService, SmtpService>();
-        builder.Services.AddTransient<IFavoriteRepository, FavoriteRepository>();
+        var mapper = config.CreateMapper();
+
+        services.AddSingleton(mapper);
     }
 
-    private static void AddController(WebApplicationBuilder builder)
+    private static void ConfigureDependencyInjection(IServiceCollection services)
     {
-        builder.Services.AddControllers()
+        services.AddDbContext<DefaultContext>();
+
+        services.AddSingleton<ConfigurationReader>();
+        services.AddTransient<IPasswordHasher, PasswordHasher>();
+        services.AddTransient<IUserRepository, UserRepository>();
+        services.AddTransient<IPersonRepository, PersonRepository>();
+        services.AddTransient<ITokenService, TokenService>();
+        services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddTransient<IPasswordRecoveryRepository, PasswordRecoveryRepository>();
+        services.AddTransient<ISmtpService, SmtpService>();
+        services.AddTransient<IFavoriteRepository, FavoriteRepository>();
+    }
+
+    private static void AddController(IServiceCollection services)
+    {
+        services.AddControllers()
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.AllowTrailingCommas = false;
@@ -60,11 +77,11 @@ public static class WebApplicationBuilderExtensions
                 });
     }
 
-    private static void AddSwagger(WebApplicationBuilder builder, ConfigurationInfo info)
+    private static void AddSwagger(IServiceCollection services, ConfigurationInfo info)
     {
 
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(config =>
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen(config =>
         {
             config.SwaggerDoc("v1", new OpenApiInfo
             {
@@ -109,9 +126,9 @@ public static class WebApplicationBuilderExtensions
         });
     }
 
-    private static void AddAuthentication(WebApplicationBuilder builder, ConfigurationInfo info, string tokenSecurity)
+    private static void AddAuthentication(IServiceCollection services, ConfigurationInfo info, string tokenSecurity)
     {
-        builder.Services.AddAuthentication(options =>
+        services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -128,11 +145,11 @@ public static class WebApplicationBuilderExtensions
                 });
     }
 
-    private static void ConfigureDatabase(WebApplicationBuilder builder, string connectionString)
+    private static void ConfigureDatabase(IServiceCollection services, string connectionString)
     {
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         
-        builder.Services.AddDbContext<DefaultContext>(options =>
+        services.AddDbContext<DefaultContext>(options =>
         {
             options.UseNpgsql(connectionString)
                         .UseSnakeCaseNamingConvention();

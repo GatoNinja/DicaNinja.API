@@ -16,13 +16,6 @@ public sealed record PersonModel : BaseModel
 
     }
 
-    public PersonModel(Guid id, string firstName, string lastname)
-    {
-        Id = id;
-        FirstName = firstName;
-        Lastname = lastname;
-    }
-
     public PersonModel(string firstname, string lastname)
     {
         FirstName = firstname;

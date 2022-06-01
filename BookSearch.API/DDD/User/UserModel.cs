@@ -16,11 +16,6 @@ public record UserModel : BaseModel
         RefreshTokens = new List<RefreshTokenModel>();
     }
 
-    public UserModel(Guid id, string username, string email, PersonModel personModel) : this(id, username, email)
-    {
-        PersonModel = personModel;
-    }
-
     public UserModel(Guid id, string username, string email) : this()
     {
         Id = id;

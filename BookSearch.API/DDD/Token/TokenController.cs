@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BookSearch.API.DDD.Token;
 
 [Route("token")]
-public class TokenController : ControllerHelper, ITokenController
+public class TokenController : ControllerHelper
 {
     public TokenController(IUserRepository userRepository, ITokenService tokenService)
     {

@@ -1,28 +1,27 @@
-
 using BookSearch.API.Abstracts;
 using BookSearch.API.Helpers;
+using BookSearch.API.Startup;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookSearch.API.DDD.User;
+namespace BookSearch.API.DDD.Util;
 
 [AllowAnonymous]
 [Route("[controller]")]
 public class UtilController : ControllerHelper
 {
-    private IConfiguration Configuration { get; }
+    private ConfigurationReader Config { get; }
 
-    public UtilController(IConfiguration configuration)
+    public UtilController(ConfigurationReader config)
     {
-        Configuration = configuration;
+        Config = config;
     }
 
     [HttpGet("version")]
     public ActionResult GetVersion()
     {
-        var version = Configuration["Info:Version"];
-        var message = new MessageResponse(version);
+        var message = new MessageResponse(Config.Info.Version);
 
         return Ok(message);
     }

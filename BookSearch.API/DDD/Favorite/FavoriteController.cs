@@ -1,4 +1,6 @@
-﻿using BookSearch.API.Abstracts;
+﻿using AutoMapper;
+
+using BookSearch.API.Abstracts;
 using BookSearch.API.Helpers;
 
 using Microsoft.AspNetCore.Authorization;
@@ -13,13 +15,15 @@ public record FavoritePayload(string isbn, string type);
 [Authorize]
 public class FavoriteController: ControllerHelper
 {
-    public FavoriteController(IFavoriteRepository favoriteRepository)
+    public FavoriteController(IFavoriteRepository favoriteRepository, IMapper mapper)
     {
         FavoriteRepository = favoriteRepository;
+        Mapper = mapper;
     }
 
     private IFavoriteRepository FavoriteRepository { get; }
-
+    private IMapper Mapper { get; }
+    
     [HttpPost]
     public async Task<int> CreateFavorite([FromBody] FavoritePayload payload)
     {
@@ -33,11 +37,12 @@ public class FavoriteController: ControllerHelper
     }
 
     [HttpGet()]
-    public async Task<PagedResponse<List<FavoriteModel>>> GetAll([FromQuery] Helpers.QueryString queryString)
+    public async Task<PagedResponse<List<FavoriteDTO>>> GetAll([FromQuery] Helpers.QueryString queryString)
     {
         var favorites = await FavoriteRepository.GetFavoriteByUser(UserId, queryString.Page, queryString.PerPage);
         var totalRecords = await FavoriteRepository.GetFavoritesCount(UserId);
+        var mapped = Mapper.Map<List<FavoriteDTO>>(favorites);
 
-        return PaginationHelper.CreatePagedResponse<FavoriteModel>(favorites, queryString, totalRecords);
+        return PaginationHelper.CreatePagedResponse<FavoriteDTO>(mapped, queryString, totalRecords);
     }
 }

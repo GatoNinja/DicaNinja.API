@@ -1,6 +1,7 @@
 ﻿using BookSearch.API.Abstracts;
 using BookSearch.API.Contexts;
 using BookSearch.API.DDD.Favorite;
+using BookSearch.API.Startup;
 
 using Google.Apis.Books.v1;
 using Google.Apis.Services;
@@ -15,14 +16,13 @@ namespace BookSearch.API.DDD.Book;
 [Authorize]
 public class BookController : ControllerHelper
 {
-    private const string apiKey = "AIzaSyBKobq7aC-ajuflWLdnrjGlFnz-Eem3Fhw";
 
-    public BookController(DefaultContext context, IFavoriteRepository favoriteRepository)
+    public BookController(DefaultContext context, IFavoriteRepository favoriteRepository, ConfigurationReader config)
     {
         var service = new BooksService(new BaseClientService.Initializer()
         {
-            ApiKey = apiKey,
-            ApplicationName = "Fenicia",
+            ApiKey = config.Google.ApiKey,
+            ApplicationName = config.Google.Application,
         });
 
         Service = service;

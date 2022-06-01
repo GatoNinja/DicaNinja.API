@@ -1,4 +1,3 @@
-namespace BookSearch.API.DDD.RefreshToken
-{
-    public record RefreshTokenResponse(string AccessToken, string RefreshToken);
-}
+namespace BookSearch.API.DDD.RefreshToken;
+
+public record RefreshTokenResponse(string AccessToken, string RefreshToken);
