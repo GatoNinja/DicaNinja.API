@@ -55,27 +55,27 @@ public class BookController : ControllerHelper
             item.VolumeInfo.AverageRating ?? 0
         ));
 
-        foreach (var book in books)
-        {
-            if (book.Title.Contains("direito"))
-            {
-                book.IsFavorite = await IsBookFavorite(UserId, book.Identifiers);
-            }
-        }
+        //foreach (var book in books)
+        //{
+        //    if (book.Title.Contains("direito"))
+        //    {
+        //        book.IsFavorite = await IsBookFavorite(UserId, book.Identifiers);
+        //    }
+        //}
 
         return Ok(books);
     }
 
-    private async Task<bool> IsBookFavorite(Guid userId, IEnumerable<BookIdentifier> identifiers)
-    {
-        foreach (var identifier in identifiers)
-        {
-            if (await FavoriteRepository.IsFavorite(userId, identifier.Isbn, identifier.Type))
-            {
-                return true;
-            }
-        }
+    //private async Task<bool> IsBookFavorite(Guid userId, IEnumerable<BookIdentifier> identifiers)
+    //{
+    //    foreach (var identifier in identifiers)
+    //    {
+    //        if (await FavoriteRepository.IsFavorite(userId, identifier.Isbn, identifier.Type))
+    //        {
+    //            return true;
+    //        }
+    //    }
 
-        return false;
-    }
+    //    return false;
+    //}
 }
