@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 
 using BookSearch.API.Contexts;
+using BookSearch.API.DDD.Book;
 using BookSearch.API.DDD.External;
 using BookSearch.API.DDD.Favorite;
 using BookSearch.API.DDD.PasswordHasher;
@@ -9,6 +10,8 @@ using BookSearch.API.DDD.Person;
 using BookSearch.API.DDD.RefreshToken;
 using BookSearch.API.DDD.Token;
 using BookSearch.API.DDD.User;
+
+using Google.Apis.Books.v1.Data;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +45,24 @@ public static class WebApplicationBuilderExtensions
         var config = new MapperConfiguration(config =>
         {
             config.CreateMap<FavoriteModel, FavoriteDTO>().ReverseMap();
+            config.CreateMap<Volume, BookResponse>()
+                .ForMember(dest => dest.PageCount, opt => opt.MapFrom(src => src.VolumeInfo.PageCount ?? 0))
+                .ForMember(dest => dest.PublicationDate, opt => opt.MapFrom(src => src.VolumeInfo.PublishedDate ?? string.Empty))
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => GetImage(src)))
+                .ForMember(dest => dest.AverageRating, opt => opt.MapFrom(src => src.VolumeInfo.AverageRating ?? 0))
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.VolumeInfo.Title))
+                .ForMember(dest => dest.Subtitle, opt => opt.MapFrom(src => src.VolumeInfo.Subtitle))
+                .ForMember(dest => dest.Language, opt => opt.MapFrom(src => src.VolumeInfo.Language))
+                .ForMember(dest => dest.Categories, opt => opt.MapFrom(src => src.VolumeInfo.Categories))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.VolumeInfo.Description))
+                .ForMember(dest => dest.Publisher, opt => opt.MapFrom(src => src.VolumeInfo.Publisher))
+                .ForMember(dest => dest.Authors, opt => opt.MapFrom(src => src.VolumeInfo.Authors));
+
+
+
+
+            config.CreateMap<BookIdentifier, Volume.VolumeInfoData.IndustryIdentifiersData>()
+                .ForMember(dest => dest.Identifier, opt => opt.MapFrom(src => src.Isbn));
         });
 
         var mapper = config.CreateMapper();
@@ -62,6 +83,7 @@ public static class WebApplicationBuilderExtensions
         services.AddTransient<IPasswordRecoveryRepository, PasswordRecoveryRepository>();
         services.AddTransient<ISmtpService, SmtpService>();
         services.AddTransient<IFavoriteRepository, FavoriteRepository>();
+        services.AddTransient<BookGoogleService>();
     }
 
     private static void AddController(IServiceCollection services)
@@ -154,6 +176,17 @@ public static class WebApplicationBuilderExtensions
             options.UseNpgsql(connectionString)
                         .UseSnakeCaseNamingConvention();
         });
-
     }
+
+    private static string GetImage(Volume src)
+    {
+        if (src.VolumeInfo.ImageLinks?.Thumbnail != null)
+            return src.VolumeInfo.ImageLinks.Thumbnail;
+
+        if (src.VolumeInfo.ImageLinks?.SmallThumbnail != null)
+            return src.VolumeInfo.ImageLinks.SmallThumbnail;
+
+        return string.Empty;
+    }
+
 }

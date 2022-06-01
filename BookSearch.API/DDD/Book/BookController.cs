@@ -17,64 +17,18 @@ namespace BookSearch.API.DDD.Book;
 public class BookController : ControllerHelper
 {
 
-    public BookController(DefaultContext context, IFavoriteRepository favoriteRepository, ConfigurationReader config)
+    public BookController(BookGoogleService service)
     {
-        var service = new BooksService(new BaseClientService.Initializer()
-        {
-            ApiKey = config.Google.ApiKey,
-            ApplicationName = config.Google.Application,
-        });
-
         Service = service;
-        Context = context;
-        FavoriteRepository = favoriteRepository;
     }
 
-    private DefaultContext Context { get; }
-    private IFavoriteRepository FavoriteRepository { get; }
-    private BooksService Service { get; }
+    private BookGoogleService Service { get; }
 
     [HttpGet]
     public async Task<ActionResult<List<BookResponse>>> GetAsync([FromQuery] string query)
     {
-        var request = Service.Volumes.List(query);
-        var response = await request.ExecuteAsync();
-        var books = response.Items.Select(item => new BookResponse(
-            item.VolumeInfo.Title,
-            item.VolumeInfo.Subtitle,
-            item.VolumeInfo.IndustryIdentifiers.Select(identifier => new BookIdentifier(identifier.Identifier, identifier.Type)),
-            item.VolumeInfo.Language,
-            item.VolumeInfo.Description,
-            item.VolumeInfo.Categories,
-            item.VolumeInfo.PageCount ?? 0,
-            item.VolumeInfo.Publisher,
-            item.VolumeInfo.PublishedDate ?? "",
-            item.VolumeInfo.ImageLinks?.Thumbnail ?? string.Empty,
-            item.VolumeInfo.Authors,
-            item.VolumeInfo.AverageRating ?? 0
-        ));
-
-        //foreach (var book in books)
-        //{
-        //    if (book.Title.Contains("direito"))
-        //    {
-        //        book.IsFavorite = await IsBookFavorite(UserId, book.Identifiers);
-        //    }
-        //}
+        var books = await Service.QueryBooks(query);
 
         return Ok(books);
     }
-
-    //private async Task<bool> IsBookFavorite(Guid userId, IEnumerable<BookIdentifier> identifiers)
-    //{
-    //    foreach (var identifier in identifiers)
-    //    {
-    //        if (await FavoriteRepository.IsFavorite(userId, identifier.Isbn, identifier.Type))
-    //        {
-    //            return true;
-    //        }
-    //    }
-
-    //    return false;
-    //}
 }
