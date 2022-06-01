@@ -7,42 +7,43 @@ using BookSearch.API.Helpers;
 
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookSearch.API.DDD.ForgotPassword;
-
-[Route("[controller]")]
-public class ForgotPasswordController : ControllerHelper
+namespace BookSearch.API.DDD.ForgotPassword
 {
-    public ForgotPasswordController(ISmtpService smtpService, IPasswordRecoveryRepository passwordRecovery, IUserRepository userRepository)
+    [Route("[controller]")]
+    public class ForgotPasswordController : ControllerHelper
     {
-        SmtpService = smtpService;
-        PasswordRecovery = passwordRecovery;
-        UserRepository = userRepository;
-    }
-
-    private ISmtpService SmtpService { get; }
-
-    private IPasswordRecoveryRepository PasswordRecovery { get; }
-
-    private IUserRepository UserRepository { get; }
-
-    [HttpPost]
-    public async Task<ActionResult> PostForgotPasswordAsync([FromBody] ForgotPasswordPayload request)
-    {
-        var user = await UserRepository.GetByEmail(request.Email);
-
-        if (user is null)
+        public ForgotPasswordController(ISmtpService smtpService, IPasswordRecoveryRepository passwordRecovery, IUserRepository userRepository)
         {
-            var messageResponse = new MessageResponse(TextConstant.UserNotFound);
-
-            return new NotFoundObjectResult(messageResponse);
+            SmtpService = smtpService;
+            PasswordRecovery = passwordRecovery;
+            UserRepository = userRepository;
         }
 
-        var passwordRecovery = new PasswordRecoveryModel(user);
-        var inserted = await PasswordRecovery.InsertAsync(passwordRecovery);
-        var code = inserted.Code;
-        var bodyMessage = @$"Seu código de recuperação para o login é {code}";
-        SmtpService.SendEmail("ygor@ygorlazaro.com", "Recupere sua senha", bodyMessage);
+        private ISmtpService SmtpService { get; }
 
-        return Ok(new MessageResponse("Seu e-mail de recuperação foi enviado"));
+        private IPasswordRecoveryRepository PasswordRecovery { get; }
+
+        private IUserRepository UserRepository { get; }
+
+        [HttpPost]
+        public async Task<ActionResult> PostForgotPasswordAsync([FromBody] ForgotPasswordPayload request)
+        {
+            var user = await UserRepository.GetByEmail(request.Email);
+
+            if (user is null)
+            {
+                var messageResponse = new MessageResponse(TextConstant.UserNotFound);
+
+                return new NotFoundObjectResult(messageResponse);
+            }
+
+            var passwordRecovery = new PasswordRecovery.PasswordRecovery(user);
+            var inserted = await PasswordRecovery.InsertAsync(passwordRecovery);
+            var code = inserted.Code;
+            var bodyMessage = @$"Seu código de recuperação para o login é {code}";
+            SmtpService.SendEmail("ygor@ygorlazaro.com", "Recupere sua senha", bodyMessage);
+
+            return Ok(new MessageResponse("Seu e-mail de recuperação foi enviado"));
+        }
     }
 }

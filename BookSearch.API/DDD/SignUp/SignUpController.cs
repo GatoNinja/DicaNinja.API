@@ -1,57 +1,56 @@
-
-using BookSearch.API.DDD.Person;
 using BookSearch.API.DDD.User;
 using BookSearch.API.Helpers;
 
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookSearch.API.DDD.SignUp;
-
-[Route("[controller]")]
-public class SignUpController : ControllerBase
+namespace BookSearch.API.DDD.SignUp
 {
-    public SignUpController(IUserRepository userRepository)
+    [Route("[controller]")]
+    public class SignUpController : ControllerBase
     {
-        UserRepository = userRepository;
-    }
-
-    private IUserRepository UserRepository { get; }
-
-    [HttpPost]
-    public async Task<ActionResult<Guid>> PostNewUserAsync([FromBody] NewUserPayload request)
-    {
-        if (request.Password != request.ConfirmPassword)
+        public SignUpController(IUserRepository userRepository)
         {
-            var messageResponse = new MessageResponse(TextConstant.PasswordDoesntMatch);
-
-            return new BadRequestObjectResult(messageResponse);
+            UserRepository = userRepository;
         }
 
-        var person = new PersonModel(request.Firstname, request.Lastname);
-        var user = new UserModel(request.Username, request.Password, request.Email, person);
-        var validateNewUser = UserRepository.ValidateNewUser(user);
+        private IUserRepository UserRepository { get; }
 
-        if (validateNewUser == EnumNewUserCheck.ExistingEmail)
+        [HttpPost]
+        public async Task<ActionResult<Guid>> PostNewUserAsync([FromBody] NewUserPayload request)
         {
-            var messageResponse = new MessageResponse(TextConstant.ExistingEmail);
+            if (request.Password != request.ConfirmPassword)
+            {
+                var messageResponse = new MessageResponse(TextConstant.PasswordDoesntMatch);
 
-            return new BadRequestObjectResult(messageResponse);
+                return new BadRequestObjectResult(messageResponse);
+            }
+
+            var person = new Person.Person(request.Firstname, request.Lastname);
+            var user = new User.User(request.Username, request.Password, request.Email, person);
+            var validateNewUser = UserRepository.ValidateNewUser(user);
+
+            if (validateNewUser == EnumNewUserCheck.ExistingEmail)
+            {
+                var messageResponse = new MessageResponse(TextConstant.ExistingEmail);
+
+                return new BadRequestObjectResult(messageResponse);
+            }
+
+            if (validateNewUser == EnumNewUserCheck.ExistingUsername)
+            {
+                var messageResponse = new MessageResponse(TextConstant.ExistingUsername);
+
+                return new BadRequestObjectResult(messageResponse);
+            }
+
+            var insertedUser = await UserRepository.InsertAsync(user);
+
+            if (insertedUser is null)
+            {
+                return new BadRequestObjectResult(new MessageResponse(TextConstant.ProblemToSaveRecord));
+            }
+
+            return new CreatedResult("token", insertedUser.Id);
         }
-
-        if (validateNewUser == EnumNewUserCheck.ExistingUsername)
-        {
-            var messageResponse = new MessageResponse(TextConstant.ExistingUsername);
-
-            return new BadRequestObjectResult(messageResponse);
-        }
-
-        var insertedUser = await UserRepository.InsertAsync(user);
-
-        if (insertedUser is null)
-        {
-            return new BadRequestObjectResult(new MessageResponse(TextConstant.ProblemToSaveRecord));
-        }
-
-        return new CreatedResult("token", insertedUser.Id);
     }
 }

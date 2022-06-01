@@ -1,8 +1,9 @@
-namespace BookSearch.API.DDD.PasswordHasher;
-
-public interface IPasswordHasher
+namespace BookSearch.API.DDD.PasswordHasher
 {
-    string Hash(string password);
+    public interface IPasswordHasher
+    {
+        string Hash(string password);
 
-    (bool Verified, bool NeedsUpgrade) Check(string hash, string password);
+        (bool Verified, bool NeedsUpgrade) Check(string hash, string password);
+    }
 }

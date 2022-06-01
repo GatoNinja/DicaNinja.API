@@ -1,12 +1,10 @@
-using System.Net;
-using System.Net.Mail;
-
-namespace BookSearch.API.DDD.External;
-
-public class SmtpService : ISmtpService
+namespace BookSearch.API.DDD.External
 {
-    public void SendEmail(string to, string subject, string body)
+    public class SmtpService : ISmtpService
     {
-        throw new NotImplementedException();
+        public void SendEmail(string to, string subject, string body)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

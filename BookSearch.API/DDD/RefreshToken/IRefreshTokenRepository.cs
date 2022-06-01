@@ -1,12 +1,13 @@
-namespace BookSearch.API.DDD.RefreshToken;
-
-public interface IRefreshTokenRepository
+namespace BookSearch.API.DDD.RefreshToken
 {
-    string GenerateRefreshToken();
+    public interface IRefreshTokenRepository
+    {
+        string GenerateRefreshToken();
 
-    Task<RefreshTokenModel?> GetRefreshTokenAsync(string username, string value);
+        Task<RefreshToken?> GetRefreshTokenAsync(string username, string value);
 
-    Task SaveRefreshTokenAsync(Guid userId, string refreshToken);
+        Task SaveRefreshTokenAsync(Guid userId, string refreshToken);
 
-    Task InvalidateAsync(string value);
+        Task InvalidateAsync(string value);
+    }
 }

@@ -4,36 +4,37 @@ using BookSearch.API.Helpers;
 
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookSearch.API.DDD.Token;
-
-[Route("token")]
-public class TokenController : ControllerHelper
+namespace BookSearch.API.DDD.Token
 {
-    public TokenController(IUserRepository userRepository, ITokenService tokenService)
+    [Route("token")]
+    public class TokenController : ControllerHelper
     {
-        UserRepository = userRepository;
-        TokenService = tokenService;
-    }
-
-    public IUserRepository UserRepository { get; }
-
-    public ITokenService TokenService { get; }
-
-    [HttpPost, ProducesResponseType(StatusCodes.Status201Created), ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<TokenResponse>> PostTokenAsync([FromBody] LoginPayload request)
-    {
-        var (username, password) = request;
-        var user = await UserRepository.DoLoginAsync(username, password);
-
-        if (user is null)
+        public TokenController(IUserRepository userRepository, ITokenService tokenService)
         {
-            var messageResponse = new MessageResponse(TextConstant.WrongUserOrInvalidPassword);
-
-            return NotFound(messageResponse);
+            UserRepository = userRepository;
+            TokenService = tokenService;
         }
 
-        var token = await TokenService.GenerateTokenAsync(user);
+        public IUserRepository UserRepository { get; }
 
-        return new CreatedResult("token", token);
+        public ITokenService TokenService { get; }
+
+        [HttpPost, ProducesResponseType(StatusCodes.Status201Created), ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<TokenResponse>> PostTokenAsync([FromBody] LoginPayload request)
+        {
+            var (username, password) = request;
+            var user = await UserRepository.DoLoginAsync(username, password);
+
+            if (user is null)
+            {
+                var messageResponse = new MessageResponse(TextConstant.WrongUserOrInvalidPassword);
+
+                return NotFound(messageResponse);
+            }
+
+            var token = await TokenService.GenerateTokenAsync(user);
+
+            return new CreatedResult("token", token);
+        }
     }
 }

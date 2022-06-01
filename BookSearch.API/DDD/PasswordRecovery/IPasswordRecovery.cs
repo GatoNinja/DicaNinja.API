@@ -1,10 +1,11 @@
-namespace BookSearch.API.DDD.PasswordRecovery;
-
-public interface IPasswordRecoveryRepository
+namespace BookSearch.API.DDD.PasswordRecovery
 {
-    Task<PasswordRecoveryModel?> GetByEmailAndCode(string email, string code);
+    public interface IPasswordRecoveryRepository
+    {
+        Task<PasswordRecovery?> GetByEmailAndCode(string email, string code);
 
-    Task UseRecoveryCode(Guid recoverId);
+        Task UseRecoveryCode(Guid recoverId);
 
-    Task<PasswordRecoveryModel> InsertAsync(PasswordRecoveryModel model);
+        Task<PasswordRecovery> InsertAsync(PasswordRecovery model);
+    }
 }

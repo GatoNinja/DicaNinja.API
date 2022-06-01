@@ -5,33 +5,34 @@ using BookSearch.API.Startup;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookSearch.API.DDD.Util;
-
-[AllowAnonymous]
-[Route("[controller]")]
-public class UtilController : ControllerHelper
+namespace BookSearch.API.DDD.Util
 {
-    private ConfigurationReader Config { get; }
-
-    public UtilController(ConfigurationReader config)
+    [AllowAnonymous]
+    [Route("[controller]")]
+    public class UtilController : ControllerHelper
     {
-        Config = config;
-    }
+        private ConfigurationReader Config { get; }
 
-    [HttpGet("version")]
-    public ActionResult GetVersion()
-    {
-        var message = new MessageResponse(Config.Info.Version);
+        public UtilController(ConfigurationReader config)
+        {
+            Config = config;
+        }
 
-        return Ok(message);
-    }
+        [HttpGet("version")]
+        public ActionResult GetVersion()
+        {
+            var message = new MessageResponse(Config.Info.Version);
 
-    [HttpGet("unixtime")]
-    public ActionResult GetUnixtime()
-    {
-        var unixTime = DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
-        var message = new MessageResponse(unixTime);
+            return Ok(message);
+        }
 
-        return Ok(message);
+        [HttpGet("unixtime")]
+        public ActionResult GetUnixtime()
+        {
+            var unixTime = DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
+            var message = new MessageResponse(unixTime);
+
+            return Ok(message);
+        }
     }
 }

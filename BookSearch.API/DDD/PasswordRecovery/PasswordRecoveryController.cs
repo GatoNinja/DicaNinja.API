@@ -5,37 +5,38 @@ using BookSearch.API.Helpers;
 
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookSearch.API.DDD.PasswordRecovery;
-
-[Route("[controller]")]
-public class PasswordRecoveryController : ControllerHelper
+namespace BookSearch.API.DDD.PasswordRecovery
 {
-    public PasswordRecoveryController(IPasswordRecoveryRepository passwordRecovery, IUserRepository userRepository)
+    [Route("[controller]")]
+    public class PasswordRecoveryController : ControllerHelper
     {
-        PasswordRecovery = passwordRecovery;
-        UserRepository = userRepository;
-    }
-
-    private IPasswordRecoveryRepository PasswordRecovery { get; }
-
-    private IUserRepository UserRepository { get; }
-
-    [HttpPost]
-    public async Task<ActionResult> PostPasswordRecovery([FromBody] PasswordRecoveryPayload payload)
-    {
-        var recoveryCode = await PasswordRecovery.GetByEmailAndCode(payload.Email, payload.Code);
-
-        if (recoveryCode is null)
+        public PasswordRecoveryController(IPasswordRecoveryRepository passwordRecovery, IUserRepository userRepository)
         {
-            var messageResponse = new MessageResponse(TextConstant.PasswordRecoveryInvalidCode);
-
-            return new BadRequestObjectResult(messageResponse);
+            PasswordRecovery = passwordRecovery;
+            UserRepository = userRepository;
         }
 
-        await UserRepository.ChangePassword(payload.Email, payload.NewPassword);
-        await PasswordRecovery.UseRecoveryCode(recoveryCode.Id);
+        private IPasswordRecoveryRepository PasswordRecovery { get; }
 
-        return Ok();
+        private IUserRepository UserRepository { get; }
 
+        [HttpPost]
+        public async Task<ActionResult> PostPasswordRecovery([FromBody] PasswordRecoveryPayload payload)
+        {
+            var recoveryCode = await PasswordRecovery.GetByEmailAndCode(payload.Email, payload.Code);
+
+            if (recoveryCode is null)
+            {
+                var messageResponse = new MessageResponse(TextConstant.PasswordRecoveryInvalidCode);
+
+                return new BadRequestObjectResult(messageResponse);
+            }
+
+            await UserRepository.ChangePassword(payload.Email, payload.NewPassword);
+            await PasswordRecovery.UseRecoveryCode(recoveryCode.Id);
+
+            return Ok();
+
+        }
     }
 }

@@ -22,7 +22,26 @@ namespace BookSearch.API.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("BookSearch.API.DDD.Favorite.FavoriteModel", b =>
+            modelBuilder.Entity("AuthorBook", b =>
+                {
+                    b.Property<Guid>("AuthorsId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("authors_id");
+
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("book_id");
+
+                    b.HasKey("AuthorsId", "BookId")
+                        .HasName("pk_author_book");
+
+                    b.HasIndex("BookId")
+                        .HasDatabaseName("ix_author_book_book_id");
+
+                    b.ToTable("author_book", (string)null);
+                });
+
+            modelBuilder.Entity("BookSearch.API.DDD.Author.Author", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -37,15 +56,180 @@ namespace BookSearch.API.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("deleted");
 
-                    b.Property<string>("Identifier")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("identifier");
+                        .HasColumnName("name");
+
+                    b.Property<DateTimeOffset>("Updated")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated");
+
+                    b.HasKey("Id")
+                        .HasName("pk_authors");
+
+                    b.ToTable("authors", (string)null);
+                });
+
+            modelBuilder.Entity("BookSearch.API.DDD.Book.Book", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<double?>("AverageRating")
+                        .HasColumnType("double precision")
+                        .HasColumnName("average_ratting");
+
+                    b.Property<DateTimeOffset>("Created")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created");
+
+                    b.Property<DateTimeOffset?>("Deleted")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("text")
+                        .HasColumnName("image");
+
+                    b.Property<string>("Language")
+                        .HasColumnType("text")
+                        .HasColumnName("language");
+
+                    b.Property<int?>("PageCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("page_count");
+
+                    b.Property<string>("PublicationDate")
+                        .HasColumnType("text")
+                        .HasColumnName("publication_date");
+
+                    b.Property<string>("Publisher")
+                        .HasColumnType("text")
+                        .HasColumnName("publisher");
+
+                    b.Property<string>("Subtitle")
+                        .HasColumnType("text")
+                        .HasColumnName("subtitle");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("title");
+
+                    b.Property<DateTimeOffset>("Updated")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated");
+
+                    b.HasKey("Id")
+                        .HasName("pk_books");
+
+                    b.ToTable("books", (string)null);
+                });
+
+            modelBuilder.Entity("BookSearch.API.DDD.BookCategory.BookCategory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("book_id");
+
+                    b.Property<DateTimeOffset>("Created")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created");
+
+                    b.Property<DateTimeOffset?>("Deleted")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<DateTimeOffset>("Updated")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated");
+
+                    b.HasKey("Id")
+                        .HasName("pk_book_categories");
+
+                    b.HasIndex("BookId")
+                        .HasDatabaseName("ix_book_categories_book_id");
+
+                    b.ToTable("book_categories", (string)null);
+                });
+
+            modelBuilder.Entity("BookSearch.API.DDD.BookIdentifier.BookIdentifier", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("book_id");
+
+                    b.Property<DateTimeOffset>("Created")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created");
+
+                    b.Property<DateTimeOffset?>("Deleted")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted");
+
+                    b.Property<string>("Isbn")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("isbn");
 
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("type");
+
+                    b.Property<DateTimeOffset>("Updated")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated");
+
+                    b.HasKey("Id")
+                        .HasName("pk_book_identifiers");
+
+                    b.HasIndex("BookId")
+                        .HasDatabaseName("ix_book_identifiers_book_id");
+
+                    b.ToTable("book_identifiers", (string)null);
+                });
+
+            modelBuilder.Entity("BookSearch.API.DDD.Favorite.Favorite", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("book_id");
+
+                    b.Property<DateTimeOffset>("Created")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created");
+
+                    b.Property<DateTimeOffset?>("Deleted")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deleted");
 
                     b.Property<DateTimeOffset>("Updated")
                         .HasColumnType("timestamp with time zone")
@@ -58,10 +242,16 @@ namespace BookSearch.API.Migrations
                     b.HasKey("Id")
                         .HasName("pk_favorites");
 
+                    b.HasIndex("BookId")
+                        .HasDatabaseName("ix_favorites_book_id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_favorites_user_id");
+
                     b.ToTable("favorites", (string)null);
                 });
 
-            modelBuilder.Entity("BookSearch.API.DDD.PasswordRecovery.PasswordRecoveryModel", b =>
+            modelBuilder.Entity("BookSearch.API.DDD.PasswordRecovery.PasswordRecovery", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -98,20 +288,16 @@ namespace BookSearch.API.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
-                    b.Property<Guid>("UserModelId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_model_id");
-
                     b.HasKey("Id")
                         .HasName("pk_password_recoveries");
 
-                    b.HasIndex("UserModelId")
-                        .HasDatabaseName("ix_password_recoveries_user_model_id");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_password_recoveries_user_id");
 
                     b.ToTable("password_recoveries", (string)null);
                 });
 
-            modelBuilder.Entity("BookSearch.API.DDD.Person.PersonModel", b =>
+            modelBuilder.Entity("BookSearch.API.DDD.Person.Person", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -156,7 +342,7 @@ namespace BookSearch.API.Migrations
                     b.ToTable("people", (string)null);
                 });
 
-            modelBuilder.Entity("BookSearch.API.DDD.RefreshToken.RefreshTokenModel", b =>
+            modelBuilder.Entity("BookSearch.API.DDD.RefreshToken.RefreshToken", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -187,10 +373,6 @@ namespace BookSearch.API.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
-                    b.Property<Guid?>("UserModelId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_model_id");
-
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -200,13 +382,13 @@ namespace BookSearch.API.Migrations
                     b.HasKey("Id")
                         .HasName("pk_refresh_tokens");
 
-                    b.HasIndex("UserModelId")
-                        .HasDatabaseName("ix_refresh_tokens_user_model_id");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_refresh_tokens_user_id");
 
                     b.ToTable("refresh_tokens", (string)null);
                 });
 
-            modelBuilder.Entity("BookSearch.API.DDD.User.UserModel", b =>
+            modelBuilder.Entity("BookSearch.API.DDD.User.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -247,40 +429,113 @@ namespace BookSearch.API.Migrations
                     b.ToTable("users", (string)null);
                 });
 
-            modelBuilder.Entity("BookSearch.API.DDD.PasswordRecovery.PasswordRecoveryModel", b =>
+            modelBuilder.Entity("AuthorBook", b =>
                 {
-                    b.HasOne("BookSearch.API.DDD.User.UserModel", "UserModel")
+                    b.HasOne("BookSearch.API.DDD.Author.Author", null)
                         .WithMany()
-                        .HasForeignKey("UserModelId")
+                        .HasForeignKey("AuthorsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_password_recoveries_users_user_model_id");
+                        .HasConstraintName("fk_author_book_authors_authors_id");
+
+                    b.HasOne("BookSearch.API.DDD.Book.Book", null)
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_author_book_books_book_id");
+                });
+
+            modelBuilder.Entity("BookSearch.API.DDD.BookCategory.BookCategory", b =>
+                {
+                    b.HasOne("BookSearch.API.DDD.Book.Book", "Book")
+                        .WithMany("Categories")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_book_categories_books_book_id");
+
+                    b.Navigation("Book");
+                });
+
+            modelBuilder.Entity("BookSearch.API.DDD.BookIdentifier.BookIdentifier", b =>
+                {
+                    b.HasOne("BookSearch.API.DDD.Book.Book", "Book")
+                        .WithMany("Identifiers")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_book_identifiers_books_book_id");
+
+                    b.Navigation("Book");
+                });
+
+            modelBuilder.Entity("BookSearch.API.DDD.Favorite.Favorite", b =>
+                {
+                    b.HasOne("BookSearch.API.DDD.Book.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_favorites_books_book_id");
+
+                    b.HasOne("BookSearch.API.DDD.User.User", "User")
+                        .WithMany("Favorites")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_favorites_users_user_id");
+
+                    b.Navigation("Book");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BookSearch.API.DDD.PasswordRecovery.PasswordRecovery", b =>
+                {
+                    b.HasOne("BookSearch.API.DDD.User.User", "UserModel")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_password_recoveries_users_user_id");
 
                     b.Navigation("UserModel");
                 });
 
-            modelBuilder.Entity("BookSearch.API.DDD.Person.PersonModel", b =>
+            modelBuilder.Entity("BookSearch.API.DDD.Person.Person", b =>
                 {
-                    b.HasOne("BookSearch.API.DDD.User.UserModel", "User")
+                    b.HasOne("BookSearch.API.DDD.User.User", "User")
                         .WithOne("PersonModel")
-                        .HasForeignKey("BookSearch.API.DDD.Person.PersonModel", "UserId")
+                        .HasForeignKey("BookSearch.API.DDD.Person.Person", "UserId")
                         .HasConstraintName("fk_people_users_user_id");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BookSearch.API.DDD.RefreshToken.RefreshTokenModel", b =>
+            modelBuilder.Entity("BookSearch.API.DDD.RefreshToken.RefreshToken", b =>
                 {
-                    b.HasOne("BookSearch.API.DDD.User.UserModel", "UserModel")
+                    b.HasOne("BookSearch.API.DDD.User.User", "UserModel")
                         .WithMany("RefreshTokens")
-                        .HasForeignKey("UserModelId")
-                        .HasConstraintName("fk_refresh_tokens_users_user_model_id");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_refresh_tokens_users_user_id");
 
                     b.Navigation("UserModel");
                 });
 
-            modelBuilder.Entity("BookSearch.API.DDD.User.UserModel", b =>
+            modelBuilder.Entity("BookSearch.API.DDD.Book.Book", b =>
                 {
+                    b.Navigation("Categories");
+
+                    b.Navigation("Identifiers");
+                });
+
+            modelBuilder.Entity("BookSearch.API.DDD.User.User", b =>
+                {
+                    b.Navigation("Favorites");
+
                     b.Navigation("PersonModel")
                         .IsRequired();
 

@@ -1,5 +1,6 @@
-namespace BookSearch.API.DDD.Person;
-
-public interface IPersonRepository
+namespace BookSearch.API.DDD.Person
 {
+    public interface IPersonRepository
+    {
+    }
 }

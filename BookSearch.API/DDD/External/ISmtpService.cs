@@ -1,6 +1,7 @@
-namespace BookSearch.API.DDD.External;
-
-public interface ISmtpService
+namespace BookSearch.API.DDD.External
 {
-    void SendEmail(string to, string subject, string body);
+    public interface ISmtpService
+    {
+        void SendEmail(string to, string subject, string body);
+    }
 }

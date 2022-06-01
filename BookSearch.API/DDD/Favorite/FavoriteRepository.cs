@@ -1,52 +1,81 @@
 ﻿using BookSearch.API.Contexts;
+using BookSearch.API.DDD.Book;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace BookSearch.API.DDD.Favorite;
-
-public class FavoriteRepository : IFavoriteRepository
+namespace BookSearch.API.DDD.Favorite
 {
-    public FavoriteRepository(DefaultContext context)
+    public class FavoriteRepository : IFavoriteRepository
     {
-        Context = context;
-    }
-
-    private DefaultContext Context { get; }
-    
-    public async Task<int> Favorite(Guid userId, string identifier, string type)
-    {
-        var existingFavorite = await Context.Favorites.FirstOrDefaultAsync(f => f.UserId == userId && f.Identifier == identifier && f.Type == type);
-
-        if (existingFavorite is not null)
+        public FavoriteRepository(DefaultContext context, IBookRepository bookRepository, BookGoogleService bookGoogleService)
         {
-            Context.Remove(existingFavorite);
-            await Context.SaveChangesAsync();
-        }
-        else
-        {
-            var favorite = new FavoriteModel(userId, identifier, type);
-            Context.Add(favorite);
-            await Context.SaveChangesAsync();
+            Context = context;
+            BookRepository = bookRepository;
+            BookGoogleService = bookGoogleService;
         }
 
-        return await GetFavoritesCount(userId);
-    }
+        private DefaultContext Context { get; }
+        private IBookRepository BookRepository { get; }
+        private BookGoogleService BookGoogleService { get; }
+        
+        public async Task<int?> Favorite(Guid userId, string identifier, string type)
+        {
+            var existingFavorite = await FilterByUser(userId, identifier, type).FirstOrDefaultAsync();
+            
+            if (existingFavorite is not null)
+            {
+                Context.Remove(existingFavorite);
+                await Context.SaveChangesAsync();
+            }
+            else
+            {
+                var book = await BookRepository.GetByIdentifier(identifier, type);
 
-    public async Task<List<FavoriteModel>> GetFavoriteByUser(Guid userId, int page = 1, int pageSize = 10)
-    {
-        return await Context.Favorites.Where(favorite => favorite.UserId == userId)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-    }
+                if (book is null)
+                {
+                    book = await BookGoogleService.CreateBookFromGoogle(identifier);
 
-    public async Task<int> GetFavoritesCount(Guid userId)
-    {
-        return await Context.Favorites.CountAsync(favorite => favorite.UserId == userId);
-    }
+                    if (book is null)
+                    {
+                        return null;
+                    }
+                }
 
-    public async Task<bool> IsFavorite(Guid userId, string identifier, string type)
-    {
-        return await Context.Favorites.AnyAsync(favorite => favorite.UserId == userId && favorite.Identifier == identifier && favorite.Type == type);
+                var favorite = new Favorite(userId, book.Id);
+                Context.Add(favorite);
+                await Context.SaveChangesAsync();
+            }
+
+            return await GetFavoritesCount(userId);
+        }
+        
+        public async Task<List<Favorite>> GetFavoriteByUser(Guid userId, int page = 1, int pageSize = 10)
+        {
+            return await Context.Favorites.Where(favorite => favorite.UserId == userId)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+        }
+
+        public async Task<int> GetFavoritesCount(Guid userId)
+        {
+            return await Context.Favorites.CountAsync(favorite => favorite.UserId == userId);
+        }
+
+        public async Task<bool> IsFavorite(Guid userId, string identifier, string type)
+        {
+            return await FilterByUser(userId, identifier, type).AnyAsync();
+        }
+
+        private IQueryable<Favorite> FilterByUser(Guid userId, string identifier, string type)
+        {
+            var query = from favorite in Context.Favorites
+                        join book in Context.Books on favorite.BookId equals book.Id
+                        where favorite.UserId == userId && book.Identifiers.Any(i => i.Isbn == identifier && i.Type == type)
+                        select favorite;
+
+            return query;
+        }
+        
     }
 }

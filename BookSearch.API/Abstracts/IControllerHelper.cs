@@ -1,6 +1,7 @@
-namespace BookSearch.API.Abstracts;
-
-public interface IControllerHelper
+namespace BookSearch.API.Abstracts
 {
-    Guid UserId { get; }
+    public interface IControllerHelper
+    {
+        Guid UserId { get; }
+    }
 }

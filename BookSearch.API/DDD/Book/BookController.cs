@@ -1,34 +1,29 @@
 ﻿using BookSearch.API.Abstracts;
-using BookSearch.API.Contexts;
-using BookSearch.API.DDD.Favorite;
-using BookSearch.API.Startup;
-
-using Google.Apis.Books.v1;
-using Google.Apis.Services;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookSearch.API.DDD.Book;
-
-[Route("[controller]")]
-[ApiController]
-[Authorize]
-public class BookController : ControllerHelper
+namespace BookSearch.API.DDD.Book
 {
-
-    public BookController(BookGoogleService service)
+    [Route("[controller]")]
+    [ApiController]
+    [Authorize]
+    public class BookController : ControllerHelper
     {
-        Service = service;
-    }
 
-    private BookGoogleService Service { get; }
+        public BookController(BookGoogleService service)
+        {
+            Service = service;
+        }
 
-    [HttpGet]
-    public async Task<ActionResult<List<BookResponse>>> GetAsync([FromQuery] string query)
-    {
-        var books = await Service.QueryBooks(query);
+        private BookGoogleService Service { get; }
 
-        return Ok(books);
+        [HttpGet]
+        public async Task<ActionResult<List<BookResponse>>> GetAsync([FromQuery] string query)
+        {
+            var books = await Service.QueryBooks(query);
+
+            return Ok(books);
+        }
     }
 }

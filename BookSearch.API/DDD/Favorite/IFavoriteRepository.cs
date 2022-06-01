@@ -1,12 +1,13 @@
-﻿namespace BookSearch.API.DDD.Favorite;
-
-public interface IFavoriteRepository
+﻿namespace BookSearch.API.DDD.Favorite
 {
-    Task<List<FavoriteModel>> GetFavoriteByUser(Guid userId, int page, int pageSize);
+    public interface IFavoriteRepository
+    {
+        Task<List<Favorite>> GetFavoriteByUser(Guid userId, int page, int pageSize);
 
-    Task<int> GetFavoritesCount(Guid userId);
+        Task<int> GetFavoritesCount(Guid userId);
 
-    Task<int> Favorite(Guid userId, string identifier, string type);
+        Task<int?> Favorite(Guid userId, string identifier, string type);
 
-    Task<bool> IsFavorite(Guid userId, string identifier, string type);
+        Task<bool> IsFavorite(Guid userId, string identifier, string type);
+    }
 }

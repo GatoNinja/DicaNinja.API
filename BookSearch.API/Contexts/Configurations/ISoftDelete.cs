@@ -1,6 +1,7 @@
-namespace BookSearch.API.Contexts.Configurations;
-
-internal interface ISoftDelete
+namespace BookSearch.API.Contexts.Configurations
 {
-    DateTimeOffset? Deleted { get; }
+    internal interface ISoftDelete
+    {
+        DateTimeOffset? Deleted { get; }
+    }
 }

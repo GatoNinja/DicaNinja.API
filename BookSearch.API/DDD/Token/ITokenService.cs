@@ -1,14 +1,14 @@
-using BookSearch.API.DDD.User;
 
 using System.Security.Claims;
 
-namespace BookSearch.API.DDD.Token;
-
-public interface ITokenService
+namespace BookSearch.API.DDD.Token
 {
-    Task<TokenResponse> GenerateTokenAsync(UserModel userModel);
+    public interface ITokenService
+    {
+        Task<TokenResponse> GenerateTokenAsync(User.User userModel);
 
-    ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
+        ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
 
-    string GenerateAccessToken(IEnumerable<Claim> claims);
+        string GenerateAccessToken(IEnumerable<Claim> claims);
+    }
 }
