@@ -15,10 +15,13 @@ using System.Text;
 using System.Text.Json.Serialization;
 using BookSearch.API.DDD.Person;
 using BookSearch.API.DDD.Favorite;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
+
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                 {
@@ -34,8 +37,6 @@ builder.Services.AddDbContext<DefaultContext>(options => options.UseNpgsql(
         connectionString
         )
     .UseSnakeCaseNamingConvention()
-    .EnableSensitiveDataLogging()
-    .LogTo(Console.WriteLine, LogLevel.Information)
 );
 
 builder.Services.AddEndpointsApiExplorer();
@@ -54,7 +55,52 @@ builder.Services.AddAuthentication(options =>
                     ValidAudience = builder.Configuration["Info:Site"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["TokenSecurity"]))
                 });
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(config =>
+{
+    var apiName = builder.Configuration["Info.ProductName"];
+
+    config.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = apiName,
+        Version = builder.Configuration["Info:Version"],
+        Description = apiName,
+        Contact = new OpenApiContact
+        {
+            Name = builder.Configuration["Info:Name"],
+            Email = builder.Configuration["Info.Email"],
+        }
+    });
+
+    config.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+
+    config.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header,
+
+            },
+            new List<string>()
+        }
+    });
+});
+
 builder.Services.AddDbContext<DefaultContext>();
 
 builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
