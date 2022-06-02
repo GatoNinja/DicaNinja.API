@@ -1,9 +1,9 @@
-﻿namespace BookSearch.API.DDD.BookIdentifier
+﻿namespace BookSearch.API.DDD.Identifier
 {
-    public class BookIdentifierDTO
+    public class IdentifierDTO
     {
 
-        public BookIdentifierDTO(string identifier, string type)
+        public IdentifierDTO(string identifier, string type)
         {
             Isbn = identifier;
             Type = type;

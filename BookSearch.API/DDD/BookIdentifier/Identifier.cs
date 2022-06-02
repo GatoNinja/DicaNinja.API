@@ -3,12 +3,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BookSearch.API.DDD.BookIdentifier
+namespace BookSearch.API.DDD.Identifier
 {
-    [Table("book_identifiers")]
-    public record BookIdentifier : BaseModel
+    [Table("identifiers")]
+    public record Identifier : BaseModel
     {
-        public BookIdentifier(string isbn, string type)
+        public Identifier(string isbn, string type)
         {
             Isbn = isbn;
             Type = type;

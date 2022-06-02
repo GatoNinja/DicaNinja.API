@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookSearch.API.DDD.Favorite
 {
-    public record FavoritePayload(string isbn, string type);
+    public record FavoritePayload(string Isbn, string Type);
 
     [Route("[controller]")]
     [ApiController]
@@ -27,8 +27,8 @@ namespace BookSearch.API.DDD.Favorite
         [HttpPost]
         public async Task<ActionResult> CreateFavorite([FromBody] FavoritePayload payload)
         {
-            var count = await FavoriteRepository.Favorite(UserId, payload.isbn, payload.type);
-
+            var count = await FavoriteRepository.Favorite(UserId, payload.Isbn, payload.Type);
+            
             if (count is null)
             {
                 var messageResponse = new MessageResponse("Ocorreu um problema salvando o livro");
@@ -43,16 +43,6 @@ namespace BookSearch.API.DDD.Favorite
         public async Task<int> GetCount()
         {
             return await FavoriteRepository.GetFavoritesCount(UserId);
-        }
-
-        [HttpGet()]
-        public async Task<PagedResponse<List<FavoriteDTO>>> GetAll([FromQuery] Helpers.QueryString queryString)
-        {
-            var favorites = await FavoriteRepository.GetFavoriteByUser(UserId, queryString.Page, queryString.PerPage);
-            var totalRecords = await FavoriteRepository.GetFavoritesCount(UserId);
-            var mapped = Mapper.Map<List<FavoriteDTO>>(favorites);
-
-            return PaginationHelper.CreatePagedResponse<FavoriteDTO>(mapped, queryString, totalRecords);
         }
     }
 }

@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.ConfigureServices();
 
 var app = builder.Build();
+app.UseHttpLogging();
 
 app.UseSwagger();
 app.UseSwaggerUI();
@@ -19,7 +20,6 @@ app.UseCors(config =>
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

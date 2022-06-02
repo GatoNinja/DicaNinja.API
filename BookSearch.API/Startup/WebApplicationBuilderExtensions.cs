@@ -3,8 +3,8 @@
 using BookSearch.API.Contexts;
 using BookSearch.API.DDD.Author;
 using BookSearch.API.DDD.Book;
-using BookSearch.API.DDD.BookCategory;
-using BookSearch.API.DDD.BookIdentifier;
+using BookSearch.API.DDD.Identifier;
+using BookSearch.API.DDD.Category;
 using BookSearch.API.DDD.External;
 using BookSearch.API.DDD.Favorite;
 using BookSearch.API.DDD.PasswordHasher;
@@ -23,6 +23,7 @@ using Microsoft.OpenApi.Models;
 
 using System.Text;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.HttpLogging;
 
 namespace BookSearch.API.Startup
 {
@@ -38,9 +39,18 @@ namespace BookSearch.API.Startup
             AddAuthentication(services, config.Info, config.Security.TokenSecurity);
             AddSwagger(services, config.Info);
             AddAutomapper(services);
+            AddHttpLogging(services);
             ConfigureDependencyInjection(services);
 
             return builder;
+        }
+
+        private static void AddHttpLogging(IServiceCollection services)
+        {
+            services.AddHttpLogging(config =>
+            {
+                config.LoggingFields = HttpLoggingFields.RequestMethod | HttpLoggingFields.RequestPath | HttpLoggingFields.Response;
+            });
         }
 
         private static void AddAutomapper(IServiceCollection services)
@@ -59,9 +69,10 @@ namespace BookSearch.API.Startup
                     .ForMember(dest => dest.Categories, opt => opt.MapFrom(src => src.VolumeInfo.Categories))
                     .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.VolumeInfo.Description))
                     .ForMember(dest => dest.Publisher, opt => opt.MapFrom(src => src.VolumeInfo.Publisher))
-                    .ForMember(dest => dest.Authors, opt => opt.MapFrom(src => src.VolumeInfo.Authors));
+                    .ForMember(dest => dest.Authors, opt => opt.MapFrom(src => src.VolumeInfo.Authors))
+                    .ForMember(dest => dest.Id, opt => opt.Ignore());
 
-                config.CreateMap<BookIdentifierDTO, BookIdentifier>()                    
+                config.CreateMap<IdentifierDTO, Identifier>()
                     .ReverseMap();
 
                 config.CreateMap<BookResponse, Book>()
@@ -87,9 +98,9 @@ namespace BookSearch.API.Startup
             services.AddTransient<ISmtpService, SmtpService>();
             services.AddTransient<IFavoriteRepository, FavoriteRepository>();
             services.AddTransient<IBookRepository, BookRepository>();
-            services.AddTransient<IBookIdentifierRepository, BookIdentifierRepository>();
+            services.AddTransient<IIdentifierRepository, IdentifierRepository>();
             services.AddTransient<IAuthorRepository, AuthorRepository>();
-            services.AddTransient<IBookCategoryRepository, BookCategoryRepository>();
+            services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddTransient<BookGoogleService>();
         }
 

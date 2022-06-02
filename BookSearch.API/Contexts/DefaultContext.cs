@@ -1,9 +1,9 @@
 ﻿
 using BookSearch.API.DDD.Author;
 using BookSearch.API.DDD.Book;
-using BookSearch.API.DDD.BookCategory;
-using BookSearch.API.DDD.BookIdentifier;
+using BookSearch.API.DDD.Category;
 using BookSearch.API.DDD.Favorite;
+using BookSearch.API.DDD.Identifier;
 using BookSearch.API.DDD.PasswordRecovery;
 using BookSearch.API.DDD.Person;
 using BookSearch.API.DDD.RefreshToken;
@@ -33,9 +33,9 @@ namespace BookSearch.API.Contexts
 
         public DbSet<Author> Authors { get; set; } = default!;
 
-        public DbSet<BookCategory> BookCategories { get; set; } = default!;
+        public DbSet<Category> Categories { get; set; } = default!;
 
-        public DbSet<BookIdentifier> BookIdentifiers { get; set; } = default!;
+        public DbSet<Identifier> Identifiers { get; set; } = default!;
     }
 
 }

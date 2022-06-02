@@ -48,14 +48,6 @@ namespace BookSearch.API.DDD.Favorite
 
             return await GetFavoritesCount(userId);
         }
-        
-        public async Task<List<Favorite>> GetFavoriteByUser(Guid userId, int page = 1, int pageSize = 10)
-        {
-            return await Context.Favorites.Where(favorite => favorite.UserId == userId)
-                    .Skip((page - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToListAsync();
-        }
 
         public async Task<int> GetFavoritesCount(Guid userId)
         {

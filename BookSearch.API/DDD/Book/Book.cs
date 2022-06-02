@@ -36,8 +36,12 @@ namespace BookSearch.API.DDD.Book
         [Column("average_ratting")]
         public double? AverageRating { get; set; }
 
-        public virtual List<BookIdentifier.BookIdentifier> Identifiers { get; set; } = default!;
+        public virtual List<Identifier.Identifier> Identifiers { get; set; } = default!;
+
         public virtual List<Author.Author> Authors { get; set; } = default!;
-        public virtual List<BookCategory.BookCategory> Categories { get; set; } = default!;
+
+        public virtual List<Category.Category> Categories { get; set; } = default!;
+
+        public virtual List<Favorite.Favorite> Favorites { get; set; } = default!;
     }
 }

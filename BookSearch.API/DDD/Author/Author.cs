@@ -17,6 +17,6 @@ namespace BookSearch.API.DDD.Author
         [Required]
         public string Name { get; set; } = string.Empty;
 
-        public virtual List<Book.Book> Book { get; set; } = default!;
+        public virtual List<Book.Book> Books { get; set; } = default!;
     }
 }

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-using BookSearch.API.DDD.BookIdentifier;
+using BookSearch.API.DDD.Identifier;
 using BookSearch.API.Startup;
 
 using Google.Apis.Books.v1;
@@ -42,11 +42,11 @@ namespace BookSearch.API.DDD.Book
                     continue;
                 }
 
-                book.Identifiers = new List<BookIdentifierDTO>();
+                book.Identifiers = new List<IdentifierDTO>();
 
                 foreach (var identifier in identifiers)
                 {
-                    book.Identifiers.Add(new BookIdentifierDTO(identifier.Identifier, identifier.Type));
+                    book.Identifiers.Add(new IdentifierDTO(identifier.Identifier, identifier.Type));
                 }
             }
 
@@ -70,11 +70,11 @@ namespace BookSearch.API.DDD.Book
 
             var item = response.Items.First();
             var bookResponse = Mapper.Map<BookResponse>(item);
-            bookResponse.Identifiers = new List<BookIdentifierDTO>();
+            bookResponse.Identifiers = new List<IdentifierDTO>();
 
             foreach (var id in item.VolumeInfo.IndustryIdentifiers)
             {
-                bookResponse.Identifiers.Add(new BookIdentifierDTO(id.Identifier, id.Type));
+                bookResponse.Identifiers.Add(new IdentifierDTO(id.Identifier, id.Type));
             }
 
             var book = await BookRepository.CreateFromResponse(bookResponse);

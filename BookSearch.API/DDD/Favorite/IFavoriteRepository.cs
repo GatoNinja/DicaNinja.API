@@ -2,8 +2,6 @@
 {
     public interface IFavoriteRepository
     {
-        Task<List<Favorite>> GetFavoriteByUser(Guid userId, int page, int pageSize);
-
         Task<int> GetFavoritesCount(Guid userId);
 
         Task<int?> Favorite(Guid userId, string identifier, string type);
