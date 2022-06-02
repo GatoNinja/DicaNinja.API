@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 
 using BookSearch.API.Abstracts;
 using BookSearch.API.Helpers;
@@ -8,26 +8,24 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookSearch.API.Request;
 
-public record FavoritePayload(string Isbn, string Type);
-
 [Route("[controller]")]
 [ApiController]
 [Authorize]
-public class FavoriteController : ControllerHelper
+public class BookmarkController : ControllerHelper
 {
-    public FavoriteController(IFavoriteRepository favoriteRepository, IMapper mapper)
+    public BookmarkController(IBookmarkRepository bookmarkRepository, IMapper mapper)
     {
-        FavoriteRepository = favoriteRepository;
+        BookmarkRepository = bookmarkRepository;
         Mapper = mapper;
     }
 
-    private IFavoriteRepository FavoriteRepository { get; }
+    private IBookmarkRepository BookmarkRepository { get; }
     private IMapper Mapper { get; }
 
     [HttpPost]
-    public async Task<ActionResult> CreateFavorite([FromBody] FavoritePayload payload)
+    public async Task<ActionResult> CreateBookmark([FromBody] BookmarkRequest request)
     {
-        var count = await FavoriteRepository.Favorite(UserId, payload.Isbn, payload.Type);
+        var count = await BookmarkRepository.Bookmark(UserId, request.Isbn, request.Type);
 
         if (count is null)
         {
@@ -42,6 +40,6 @@ public class FavoriteController : ControllerHelper
     [HttpGet("count")]
     public async Task<int> GetCount()
     {
-        return await FavoriteRepository.GetFavoritesCount(UserId);
+        return await BookmarkRepository.GetBookmarkCount(UserId);
     }
 }

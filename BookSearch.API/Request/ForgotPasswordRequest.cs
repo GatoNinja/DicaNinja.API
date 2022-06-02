@@ -3,4 +3,4 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BookSearch.API.Request;
 
-public record ForgotPasswordPayload([Required, EmailAddress] string Email);
+public record ForgotPasswordRequest([Required, EmailAddress] string Email);

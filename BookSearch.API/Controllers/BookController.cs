@@ -17,7 +17,7 @@ namespace BookSearch.API.Controllers;
 public class BookController : ControllerHelper
 {
 
-    public BookController(BookGoogleService service, IBookRepository bookRepository, IMapper mapper, IAuthorRepository authorRepository, ICategoryRepository categoryRepository, IIdentifierRepository identifierRepository, IFavoriteRepository favoriteRepository)
+    public BookController(BookGoogleService service, IBookRepository bookRepository, IMapper mapper, IAuthorRepository authorRepository, ICategoryRepository categoryRepository, IIdentifierRepository identifierRepository, IBookmarkRepository bookmarkRepository)
     {
         Service = service;
         BookRepository = bookRepository;
@@ -25,7 +25,7 @@ public class BookController : ControllerHelper
         AuthorRepository = authorRepository;
         CategoryRepository = categoryRepository;
         IdentifierRepository = identifierRepository;
-        FavoriteRepository = favoriteRepository;
+        BookmarkRepository = bookmarkRepository;
     }
 
     private BookGoogleService Service { get; }
@@ -34,25 +34,25 @@ public class BookController : ControllerHelper
     public IAuthorRepository AuthorRepository { get; }
     public ICategoryRepository CategoryRepository { get; }
     public IIdentifierRepository IdentifierRepository { get; }
-    public IFavoriteRepository FavoriteRepository { get; }
+    public IBookmarkRepository BookmarkRepository { get; }
 
     [HttpGet]
     public async Task<ActionResult<List<BookResponse>>> GetAsync([FromQuery] string query)
     {
         var books = await Service.QueryBooks(query);
-        
-        await BookRepository.PopulateWithFavorites(books, UserId);
+
+        await BookRepository.PopulateWithBookmarks(books, UserId);
 
         return Ok(books);
     }
 
-    [HttpGet("favorite")]
-    public async Task<ActionResult<List<BookResponse>>> GetFavorites([FromQuery] Helpers.QueryString query)
+    [HttpGet("bookmark")]
+    public async Task<ActionResult<List<BookResponse>>> GetBookmarks([FromQuery] Helpers.QueryString query)
     {
-        var books = await BookRepository.GetFavorites(UserId, query.Page, query.PerPage);
-        var totalFavorites = await FavoriteRepository.GetFavoritesCount(UserId);
+        var books = await BookRepository.GetBookmarks(UserId, query.Page, query.PerPage);
+        var totalBookmarks = await BookmarkRepository.GetBookmarkCount(UserId);
         var mapped = Mapper.Map<List<BookResponse>>(books);
-        var paginated = PaginationHelper.CreatePagedResponse<BookResponse>(mapped, query, totalFavorites);
+        var paginated = PaginationHelper.CreatePagedResponse<BookResponse>(mapped, query, totalBookmarks);
 
         return Ok(paginated);
     }

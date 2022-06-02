@@ -81,11 +81,11 @@ public class BookRepository : IBookRepository
         return await Context.Books.FirstOrDefaultAsync(book => book.Identifiers.Any(i => i.Type == type && i.Isbn == identifier));
     }
 
-    public async Task<List<Book>> GetFavorites(Guid userId, int page, int perPage)
+    public async Task<List<Book>> GetBookmarks(Guid userId, int page, int perPage)
     {
         var query = from book in Context.Books
-                    join favorite in Context.Favorites on book.Id equals favorite.BookId
-                    where favorite.UserId == userId
+                    join bookmark in Context.Bookmarks on book.Id equals bookmark.BookId
+                    where bookmark.UserId == userId
                     select book;
 
         return await query
@@ -95,15 +95,15 @@ public class BookRepository : IBookRepository
                .ToListAsync();
     }
 
-    public async Task PopulateWithFavorites(IEnumerable<BookResponse> books, Guid userId)
+    public async Task PopulateWithBookmarks(IEnumerable<BookResponse> books, Guid userId)
     {
         foreach (var book in books)
         {
             foreach (var identifier in book.Identifiers)
             {
-                book.IsFavorite = await IsFavorite(userId, identifier.Isbn, identifier.Type);
+                book.IsBookmarked = await IsBookmark(userId, identifier.Isbn, identifier.Type);
 
-                if (book.IsFavorite)
+                if (book.IsBookmarked)
                 {
                     continue;
                 }
@@ -111,12 +111,12 @@ public class BookRepository : IBookRepository
         }
     }
 
-    private async Task<bool> IsFavorite(Guid userId, string identifier, string type)
+    private async Task<bool> IsBookmark(Guid userId, string identifier, string type)
     {
-        var query = from favorite in Context.Favorites
-                    join book in Context.Books on favorite.BookId equals book.Id
-                    where favorite.UserId == userId && book.Identifiers.Any(i => i.Isbn == identifier && i.Type == type)
-                    select favorite;
+        var query = from bookmark in Context.Bookmarks
+                    join book in Context.Books on bookmark.BookId equals book.Id
+                    where bookmark.UserId == userId && book.Identifiers.Any(i => i.Isbn == identifier && i.Type == type)
+                    select bookmark;
 
         return await query.AnyAsync();
     }

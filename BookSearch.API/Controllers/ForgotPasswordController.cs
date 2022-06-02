@@ -26,7 +26,7 @@ public class ForgotPasswordController : ControllerHelper
     private IUserRepository UserRepository { get; }
 
     [HttpPost]
-    public async Task<ActionResult> PostForgotPasswordAsync([FromBody] ForgotPasswordPayload request)
+    public async Task<ActionResult> PostForgotPasswordAsync([FromBody] ForgotPasswordRequest request)
     {
         var user = await UserRepository.GetByEmail(request.Email);
 

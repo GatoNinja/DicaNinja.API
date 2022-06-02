@@ -23,7 +23,7 @@ public class RefreshTokenController : ControllerHelper
     private ITokenService TokenService { get; }
 
     [HttpPost]
-    public async Task<ActionResult<RefreshTokenResponse>> RefreshAsync([FromBody] RefreshTokenPayload request)
+    public async Task<ActionResult<RefreshTokenResponse>> RefreshAsync([FromBody] RefreshTokenRequest request)
     {
         if (User.Identity is null)
         {

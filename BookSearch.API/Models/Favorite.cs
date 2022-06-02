@@ -5,10 +5,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookSearch.API.Models;
 
-[Table("favorites")]
-public record Favorite : BaseModel
+[Table("bookmarks")]
+public record Bookmark : BaseModel
 {
-    public Favorite(Guid userId, Guid bookId)
+    public Bookmark(Guid userId, Guid bookId)
     {
         UserId = userId;
         BookId = bookId;

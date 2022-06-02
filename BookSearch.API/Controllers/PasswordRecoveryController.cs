@@ -21,9 +21,9 @@ public class PasswordRecoveryController : ControllerHelper
     private IUserRepository UserRepository { get; }
 
     [HttpPost]
-    public async Task<ActionResult> PostPasswordRecovery([FromBody] PasswordRecoveryPayload payload)
+    public async Task<ActionResult> PostPasswordRecovery([FromBody] PasswordRecoveryRequest requst)
     {
-        var recoveryCode = await PasswordRecoveryRepository.GetByEmailAndCode(payload.Email, payload.Code);
+        var recoveryCode = await PasswordRecoveryRepository.GetByEmailAndCode(requst.Email, requst.Code);
 
         if (recoveryCode is null)
         {
@@ -32,7 +32,7 @@ public class PasswordRecoveryController : ControllerHelper
             return new BadRequestObjectResult(messageResponse);
         }
 
-        await UserRepository.ChangePassword(payload.Email, payload.NewPassword);
+        await UserRepository.ChangePassword(requst.Email, requst.NewPassword);
         await PasswordRecoveryRepository.UseRecoveryCode(recoveryCode.Id);
 
         return Ok();

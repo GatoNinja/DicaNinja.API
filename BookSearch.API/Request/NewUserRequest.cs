@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BookSearch.API.Request;
 
-public record NewUserPayload(
+public record NewUserRequest(
     [Required, MinLength(3), MaxLength(48)]
     string Username,
     [Required, MinLength(4), MaxLength(48)]

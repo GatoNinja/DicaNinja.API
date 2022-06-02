@@ -88,7 +88,7 @@ namespace BookSearch.API.Startup
             services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddTransient<IPasswordRecoveryRepository, PasswordRecoveryRepository>();
             services.AddTransient<ISmtpService, SmtpService>();
-            services.AddTransient<IFavoriteRepository, FavoriteRepository>();
+            services.AddTransient<IBookmarkRepository, BookmarkRepository>();
             services.AddTransient<IBookRepository, BookRepository>();
             services.AddTransient<IIdentifierRepository, IdentifierRepository>();
             services.AddTransient<IAuthorRepository, AuthorRepository>();

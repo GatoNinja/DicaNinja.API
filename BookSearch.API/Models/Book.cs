@@ -42,5 +42,5 @@ public record Book : BaseModel
 
     public virtual List<Category> Categories { get; set; } = default!;
 
-    public virtual List<Favorite> Favorites { get; set; } = default!;
+    public virtual List<Bookmark> Bookmarks { get; set; } = default!;
 }

@@ -9,7 +9,7 @@ public class DefaultContext : DbContext
     {
     }
 
-    public DbSet<Favorite> Favorites { get; set; } = default!;
+    public DbSet<Bookmark> Bookmarks { get; set; } = default!;
 
     public DbSet<User> Users { get; set; } = default!;
 

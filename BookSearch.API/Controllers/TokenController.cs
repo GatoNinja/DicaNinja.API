@@ -22,7 +22,7 @@ public class TokenController : ControllerHelper
     public ITokenService TokenService { get; }
 
     [HttpPost, ProducesResponseType(StatusCodes.Status201Created), ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<TokenResponse>> PostTokenAsync([FromBody] LoginPayload request)
+    public async Task<ActionResult<TokenResponse>> PostTokenAsync([FromBody] LoginRequest request)
     {
         var (username, password) = request;
         var user = await UserRepository.DoLoginAsync(username, password);

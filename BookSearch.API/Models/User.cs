@@ -52,6 +52,6 @@ public record User : BaseModel
     public virtual List<RefreshToken> RefreshTokens { get; set; } = default!;
 
     [JsonIgnore]
-    public virtual List<Favorite> Favorites { get; set; } = default!;
+    public virtual List<Bookmark> Bookmarks { get; set; } = default!;
 
 }

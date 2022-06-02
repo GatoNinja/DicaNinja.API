@@ -18,7 +18,7 @@ public class SignUpController : ControllerBase
     private IUserRepository UserRepository { get; }
 
     [HttpPost]
-    public async Task<ActionResult<Guid>> PostNewUserAsync([FromBody] NewUserPayload request)
+    public async Task<ActionResult<Guid>> PostNewUserAsync([FromBody] NewUserRequest request)
     {
         if (request.Password != request.ConfirmPassword)
         {
