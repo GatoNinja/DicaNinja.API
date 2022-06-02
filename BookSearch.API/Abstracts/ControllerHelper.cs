@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookSearch.API.Abstracts
 {
-    public class ControllerHelper : ControllerBase, IControllerHelper
+    public class ControllerHelper : ControllerBase
     {
         public Guid UserId
         {

@@ -1,18 +1,6 @@
 ﻿using AutoMapper;
 
 using BookSearch.API.Contexts;
-using BookSearch.API.DDD.Author;
-using BookSearch.API.DDD.Book;
-using BookSearch.API.DDD.Identifier;
-using BookSearch.API.DDD.Category;
-using BookSearch.API.DDD.External;
-using BookSearch.API.DDD.Favorite;
-using BookSearch.API.DDD.PasswordHasher;
-using BookSearch.API.DDD.PasswordRecovery;
-using BookSearch.API.DDD.Person;
-using BookSearch.API.DDD.RefreshToken;
-using BookSearch.API.DDD.Token;
-using BookSearch.API.DDD.User;
 
 using Google.Apis.Books.v1.Data;
 
@@ -24,6 +12,11 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.HttpLogging;
+using BookSearch.API.Response;
+using BookSearch.API.Models;
+using BookSearch.API.Repository.Interfaces;
+using BookSearch.API.Repository;
+using BookSearch.API.Services;
 
 namespace BookSearch.API.Startup
 {
@@ -57,7 +50,6 @@ namespace BookSearch.API.Startup
         {
             var config = new MapperConfiguration(config =>
             {
-                config.CreateMap<Favorite, FavoriteDTO>().ReverseMap();
                 config.CreateMap<Volume, BookResponse>()
                     .ForMember(dest => dest.PageCount, opt => opt.MapFrom(src => src.VolumeInfo.PageCount ?? 0))
                     .ForMember(dest => dest.PublicationDate, opt => opt.MapFrom(src => src.VolumeInfo.PublishedDate ?? string.Empty))
