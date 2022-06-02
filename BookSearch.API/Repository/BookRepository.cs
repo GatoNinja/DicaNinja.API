@@ -94,4 +94,31 @@ public class BookRepository : IBookRepository
                .Take(perPage)
                .ToListAsync();
     }
+
+    public async Task PopulateWithFavorites(IEnumerable<BookResponse> books, Guid userId)
+    {
+        foreach (var book in books)
+        {
+            foreach (var identifier in book.Identifiers)
+            {
+                book.IsFavorite = await IsFavorite(userId, identifier.Isbn, identifier.Type);
+
+                if (book.IsFavorite)
+                {
+                    continue;
+                }
+            }
+        }
+    }
+
+    private async Task<bool> IsFavorite(Guid userId, string identifier, string type)
+    {
+        var query = from favorite in Context.Favorites
+                    join book in Context.Books on favorite.BookId equals book.Id
+                    where favorite.UserId == userId && book.Identifiers.Any(i => i.Isbn == identifier && i.Type == type)
+                    select favorite;
+
+        return await query.AnyAsync();
+    }
+
 }

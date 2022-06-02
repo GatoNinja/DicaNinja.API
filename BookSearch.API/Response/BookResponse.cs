@@ -15,6 +15,7 @@ public class BookResponse
     public IEnumerable<string> Categories { get; set; } = default!;
     public IEnumerable<string> Authors { get; set; } = default!;
     public List<IdentifierDTO> Identifiers { get; set; } = default!;
+    public bool IsFavorite { get; set; } = false;
 
     public BookResponse()
     {

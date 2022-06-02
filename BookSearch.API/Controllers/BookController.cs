@@ -40,6 +40,8 @@ public class BookController : ControllerHelper
     public async Task<ActionResult<List<BookResponse>>> GetAsync([FromQuery] string query)
     {
         var books = await Service.QueryBooks(query);
+        
+        await BookRepository.PopulateWithFavorites(books, UserId);
 
         return Ok(books);
     }

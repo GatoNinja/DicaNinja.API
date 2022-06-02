@@ -10,4 +10,6 @@ public interface IBookRepository
     Task<Book?> CreateFromResponse(BookResponse response);
 
     Task<List<Book>> GetFavorites(Guid userId, int page, int perPage);
+
+    Task PopulateWithFavorites(IEnumerable<BookResponse> books, Guid userId);
 }

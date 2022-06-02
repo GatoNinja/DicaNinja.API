@@ -20,6 +20,7 @@ app.UseCors(config =>
 
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();
