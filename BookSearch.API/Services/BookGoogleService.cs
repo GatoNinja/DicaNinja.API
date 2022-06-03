@@ -56,7 +56,7 @@ public class BookGoogleService
 
     public async Task<Book?> CreateBookFromGoogle(string identifier)
     {
-        var request = Service.Volumes.List($"isbn:{identifier}");
+        var request = Service.Volumes.List(identifier);
         var response = await request.ExecuteAsync();
 
         if (response is null)

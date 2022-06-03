@@ -100,6 +100,11 @@ public class BookRepository : IBookRepository
     {
         foreach (var book in books)
         {
+            if (book?.Identifiers is null)
+            {
+                continue;
+            }
+
             foreach (var identifier in book.Identifiers)
             {
                 book.IsBookmarked = await IsBookmark(userId, identifier.Isbn, identifier.Type);
