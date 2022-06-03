@@ -33,7 +33,7 @@ public sealed class UserProvider : IUserProvider
     public async Task<User?> DoLoginAsync(string username, string password)
     {
         var query = from user in this.Context.Users
-                    where user.Username == username
+                    where user.Username == username || user.Email == username
                     select new User(user.Id, user.Username, user.Email, user.Password);
 
         var userFound = await query.FirstOrDefaultAsync();
@@ -107,12 +107,11 @@ public sealed class UserProvider : IUserProvider
         var query = from follower in this.Context.Followers
                     join user in this.Context.Users on follower.FollowedId equals user.Id
                     join person in this.Context.People on user.Id equals person.UserId
+                    orderby person.FirstName, person.LastName
                     where follower.UserId == userId
                     select new User(user.Id, user.Username, person);
 
         return await query.Skip((page - 1) * pageSize)
-            .OrderBy(user => user.Person.FirstName)
-            .ThenBy(user => user.Person.LastName)
             .Take(pageSize)
             .ToListAsync();
     }
@@ -120,14 +119,13 @@ public sealed class UserProvider : IUserProvider
     public async Task<IEnumerable<User>> GetFollowing(Guid userId, int page = 1, int pageSize = 10)
     {
         var query = from follower in this.Context.Followers
-                    join user in this.Context.Users on follower.UserId equals user.Id
+                    join user in this.Context.Users on follower.FollowedId equals user.Id
                     join person in this.Context.People on user.Id equals person.UserId
+                    orderby person.FirstName, person.LastName
                     where follower.FollowedId == userId
                     select new User(user.Id, user.Username, person);
 
         return await query.Skip((page - 1) * pageSize)
-            .OrderBy(user => user.Person.FirstName)
-            .ThenBy(user => user.Person.LastName)
             .Take(pageSize)
             .ToListAsync();
     }
