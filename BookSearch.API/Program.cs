@@ -2,14 +2,18 @@ using BookSearch.API.Startup;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.ConfigureServices();
 
 var app = builder.Build();
 app.UseHttpLogging();
 
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(config =>
+{
+    config.EnablePersistAuthorization();
+    config.EnableValidator();
+    config.EnableFilter();
+});
 
 app.UseCors(config =>
 {

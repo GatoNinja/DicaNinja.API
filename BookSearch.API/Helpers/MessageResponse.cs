@@ -1,9 +1,8 @@
-namespace BookSearch.API.Helpers
+namespace BookSearch.API.Helpers;
+
+public record MessageResponse(string Message, DateTimeOffset Timestamp)
 {
-    public record MessageResponse(string Message, DateTimeOffset Timestamp)
+    public MessageResponse(string message) : this(message, DateTimeOffset.Now)
     {
-        public MessageResponse(string message) : this(message, DateTimeOffset.Now)
-        {
-        }
     }
 }

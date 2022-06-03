@@ -8,7 +8,7 @@ using System.Text.Json.Serialization;
 namespace BookSearch.API.Models;
 
 [Table("people")]
-public record Person : BaseModel
+public class Person : BaseModel
 {
     public Person()
     {
@@ -18,7 +18,7 @@ public record Person : BaseModel
     public Person(string firstname, string lastname)
     {
         FirstName = firstname;
-        Lastname = lastname;
+        LastName = lastname;
     }
 
     [Required, MinLength(2), MaxLength(48)]
@@ -27,7 +27,7 @@ public record Person : BaseModel
 
     [Required, MinLength(2), MaxLength(48)]
     [Column("last_name")]
-    public string Lastname { get; set; } = default!;
+    public string LastName { get; set; } = default!;
 
     [Column("user_id")]
     public Guid? UserId { get; set; }

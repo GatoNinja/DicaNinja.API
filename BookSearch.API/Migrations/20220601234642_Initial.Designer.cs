@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace BookSearch.API.Migrations
 {
-    [DbContext(typeof(DefaultContext))]
+    [DbContext(typeof(BaseContext))]
     [Migration("20220601234642_Initial")]
     partial class Initial
     {

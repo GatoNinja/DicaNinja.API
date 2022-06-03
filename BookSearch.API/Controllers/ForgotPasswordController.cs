@@ -1,34 +1,33 @@
-
 using BookSearch.API.Abstracts;
 using BookSearch.API.Helpers;
 using BookSearch.API.Models;
-using BookSearch.API.Repository.Interfaces;
+using BookSearch.API.Providers.Interfaces;
 using BookSearch.API.Request;
 using BookSearch.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookSearch.API.Controller;
+namespace BookSearch.API.Controllers;
 
 [Route("[controller]")]
 public class ForgotPasswordController : ControllerHelper
 {
-    public ForgotPasswordController(ISmtpService smtpService, IPasswordRecoveryRepository passwordRecovery, IUserRepository userRepository)
+    public ForgotPasswordController(ISmtpService smtpService, IPasswordRecoveryProvider passwordRecoveryProvider, IUserProvider userProvider)
     {
         SmtpService = smtpService;
-        PasswordRecoveryRepositrory = passwordRecovery;
-        UserRepository = userRepository;
+        PasswordRecoveryProvider = passwordRecoveryProvider;
+        UserProvider = userProvider;
     }
 
     private ISmtpService SmtpService { get; }
 
-    private IPasswordRecoveryRepository PasswordRecoveryRepositrory { get; }
+    private IPasswordRecoveryProvider PasswordRecoveryProvider { get; }
 
-    private IUserRepository UserRepository { get; }
+    private IUserProvider UserProvider { get; }
 
     [HttpPost]
     public async Task<ActionResult> PostForgotPasswordAsync([FromBody] ForgotPasswordRequest request)
     {
-        var user = await UserRepository.GetByEmail(request.Email);
+        var user = await UserProvider.GetByEmail(request.Email);
 
         if (user is null)
         {
@@ -38,7 +37,7 @@ public class ForgotPasswordController : ControllerHelper
         }
 
         var passwordRecovery = new PasswordRecovery(user);
-        var inserted = await PasswordRecoveryRepositrory.InsertAsync(passwordRecovery);
+        var inserted = await PasswordRecoveryProvider.InsertAsync(passwordRecovery);
         var code = inserted.Code;
         var bodyMessage = @$"Seu código de recuperação para o login é {code}";
         SmtpService.SendEmail("ygor@ygorlazaro.com", "Recupere sua senha", bodyMessage);

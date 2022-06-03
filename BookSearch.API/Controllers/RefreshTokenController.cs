@@ -1,24 +1,23 @@
-
 using BookSearch.API.Abstracts;
 using BookSearch.API.Helpers;
-using BookSearch.API.Repository.Interfaces;
+using BookSearch.API.Providers.Interfaces;
 using BookSearch.API.Request;
 using BookSearch.API.Response;
 using BookSearch.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookSearch.API.Controller;
+namespace BookSearch.API.Controllers;
 
 [Route("[controller]")]
 public class RefreshTokenController : ControllerHelper
 {
-    public RefreshTokenController(IRefreshTokenRepository refreshTokenRepository, ITokenService tokenService)
+    public RefreshTokenController(IRefreshTokenProvider refreshTokenProvider, ITokenService tokenService)
     {
-        RefreshTokenRepository = refreshTokenRepository;
+        RefreshTokenProvider = refreshTokenProvider;
         TokenService = tokenService;
     }
 
-    private IRefreshTokenRepository RefreshTokenRepository { get; }
+    private IRefreshTokenProvider RefreshTokenProvider { get; }
 
     private ITokenService TokenService { get; }
 
@@ -41,7 +40,7 @@ public class RefreshTokenController : ControllerHelper
             return new NotFoundObjectResult(messageResponse);
         }
 
-        var refreshToken = await RefreshTokenRepository.GetRefreshTokenAsync(username, request.RefreshToken);
+        var refreshToken = await RefreshTokenProvider.GetRefreshTokenAsync(username, request.RefreshToken);
 
         if (refreshToken is null)
         {
@@ -64,12 +63,12 @@ public class RefreshTokenController : ControllerHelper
 
     private async Task<RefreshTokenResponse> CreateRefreshTokenResponse(Guid userId, string value)
     {
-        await RefreshTokenRepository.InvalidateAsync(value);
+        await RefreshTokenProvider.InvalidateAsync(value);
 
         var newAccessToken = TokenService.GenerateAccessToken(User.Claims);
-        var newRefreshToken = RefreshTokenRepository.GenerateRefreshToken();
+        var newRefreshToken = RefreshTokenProvider.GenerateRefreshToken();
 
-        await RefreshTokenRepository.SaveRefreshTokenAsync(userId, newRefreshToken);
+        await RefreshTokenProvider.SaveRefreshTokenAsync(userId, newRefreshToken);
 
         return new RefreshTokenResponse(newAccessToken, newRefreshToken);
     }

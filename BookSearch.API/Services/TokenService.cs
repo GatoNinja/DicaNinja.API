@@ -2,8 +2,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using BookSearch.API.Models;
-using BookSearch.API.Repository.Interfaces;
-using BookSearch.API.Response.Token;
+using BookSearch.API.Providers.Interfaces;
+using BookSearch.API.Response;
 using BookSearch.API.Startup;
 
 using Microsoft.IdentityModel.Tokens;
@@ -12,30 +12,30 @@ namespace BookSearch.API.Services;
 
 public sealed class TokenService : ITokenService
 {
-    public TokenService(IRefreshTokenRepository refreshTokenRepository, ConfigurationReader config)
+    public TokenService(IRefreshTokenProvider refreshTokenProvider, ConfigurationReader config)
     {
-        RefreshTokenRepository = refreshTokenRepository;
+        RefreshTokenProvider = refreshTokenProvider;
         Config = config;
     }
 
-    private IRefreshTokenRepository RefreshTokenRepository { get; }
+    private IRefreshTokenProvider RefreshTokenProvider { get; }
 
     private ConfigurationReader Config { get; }
 
     public async Task<TokenResponse> GenerateTokenAsync(User user)
     {
         var claims = new List<Claim>
-    {
-        new("Id", user.Id.ToString()),
-        new(ClaimTypes.Name, user.Username),
-        new(ClaimTypes.Role, Config.Security.DefaultUserRole),
-        new(ClaimTypes.Email, user.Email)
-    };
+        {
+            new("Id", user.Id.ToString()),
+            new(ClaimTypes.Name, user.Username),
+            new(ClaimTypes.Role, Config.Security.DefaultUserRole),
+            new(ClaimTypes.Email, user.Email)
+        };
 
         var accessToken = GenerateAccessToken(claims);
-        var refreshToken = RefreshTokenRepository.GenerateRefreshToken();
+        var refreshToken = RefreshTokenProvider.GenerateRefreshToken();
 
-        await RefreshTokenRepository.SaveRefreshTokenAsync(user.Id, refreshToken);
+        await RefreshTokenProvider.SaveRefreshTokenAsync(user.Id, refreshToken);
 
         return new TokenResponse(accessToken, refreshToken, user);
     }

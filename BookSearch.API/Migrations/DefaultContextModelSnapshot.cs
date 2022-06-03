@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace BookSearch.API.Migrations
 {
-    [DbContext(typeof(DefaultContext))]
+    [DbContext(typeof(BaseContext))]
     partial class DefaultContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -71,10 +71,6 @@ namespace BookSearch.API.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
-                    b.Property<DateTimeOffset?>("Deleted")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("deleted");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
@@ -104,10 +100,6 @@ namespace BookSearch.API.Migrations
                     b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
-
-                    b.Property<DateTimeOffset?>("Deleted")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("deleted");
 
                     b.Property<string>("Description")
                         .HasColumnType("text")
@@ -167,10 +159,6 @@ namespace BookSearch.API.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
-                    b.Property<DateTimeOffset?>("Deleted")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("deleted");
-
                     b.Property<DateTimeOffset>("Updated")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated");
@@ -206,10 +194,6 @@ namespace BookSearch.API.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
-                    b.Property<DateTimeOffset?>("Deleted")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("deleted");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
@@ -223,6 +207,42 @@ namespace BookSearch.API.Migrations
                         .HasName("pk_categories");
 
                     b.ToTable("categories", (string)null);
+                });
+
+            modelBuilder.Entity("BookSearch.API.Models.Follower", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("Created")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created");
+
+                    b.Property<Guid>("FollowedId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("follower_id");
+
+                    b.Property<DateTimeOffset>("Updated")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_followers");
+
+                    b.HasIndex("FollowedId")
+                        .HasDatabaseName("ix_followers_follower_id");
+
+                    b.HasIndex("UserId", "FollowedId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_followers_user_id_follower_id");
+
+                    b.ToTable("followers", (string)null);
                 });
 
             modelBuilder.Entity("BookSearch.API.Models.Identifier", b =>
@@ -239,10 +259,6 @@ namespace BookSearch.API.Migrations
                     b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
-
-                    b.Property<DateTimeOffset?>("Deleted")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("deleted");
 
                     b.Property<string>("Isbn")
                         .IsRequired()
@@ -284,10 +300,6 @@ namespace BookSearch.API.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
-                    b.Property<DateTimeOffset?>("Deleted")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("deleted");
-
                     b.Property<DateTimeOffset>("ExpireDate")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("expire_date");
@@ -323,10 +335,6 @@ namespace BookSearch.API.Migrations
                     b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
-
-                    b.Property<DateTimeOffset?>("Deleted")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("deleted");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -369,10 +377,6 @@ namespace BookSearch.API.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
-                    b.Property<DateTimeOffset?>("Deleted")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("deleted");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean")
                         .HasColumnName("is_active");
@@ -404,6 +408,51 @@ namespace BookSearch.API.Migrations
                     b.ToTable("refresh_tokens", (string)null);
                 });
 
+            modelBuilder.Entity("BookSearch.API.Models.Review", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("book_id");
+
+                    b.Property<DateTimeOffset>("Created")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("integer")
+                        .HasColumnName("rating");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)")
+                        .HasColumnName("text");
+
+                    b.Property<DateTimeOffset>("Updated")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_reviews");
+
+                    b.HasIndex("BookId")
+                        .HasDatabaseName("ix_reviews_book_id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_reviews_user_id");
+
+                    b.ToTable("reviews", (string)null);
+                });
+
             modelBuilder.Entity("BookSearch.API.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -414,10 +463,6 @@ namespace BookSearch.API.Migrations
                     b.Property<DateTimeOffset>("Created")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
-
-                    b.Property<DateTimeOffset?>("Deleted")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("deleted");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -500,6 +545,27 @@ namespace BookSearch.API.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("BookSearch.API.Models.Follower", b =>
+                {
+                    b.HasOne("BookSearch.API.Models.User", "User")
+                        .WithMany("Followers")
+                        .HasForeignKey("FollowedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_followers_users_user_id1");
+
+                    b.HasOne("BookSearch.API.Models.User", "FollowedUser")
+                        .WithMany("Following")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_followers_users_user_id");
+
+                    b.Navigation("FollowedUser");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("BookSearch.API.Models.Identifier", b =>
                 {
                     b.HasOne("BookSearch.API.Models.Book", "Book")
@@ -546,21 +612,46 @@ namespace BookSearch.API.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("BookSearch.API.Models.Review", b =>
+                {
+                    b.HasOne("BookSearch.API.Models.Book", null)
+                        .WithMany("Reviews")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_reviews_books_book_id");
+
+                    b.HasOne("BookSearch.API.Models.User", null)
+                        .WithMany("Reviews")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_reviews_users_user_id");
+                });
+
             modelBuilder.Entity("BookSearch.API.Models.Book", b =>
                 {
                     b.Navigation("Bookmarks");
 
                     b.Navigation("Identifiers");
+
+                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("BookSearch.API.Models.User", b =>
                 {
                     b.Navigation("Bookmarks");
 
+                    b.Navigation("Followers");
+
+                    b.Navigation("Following");
+
                     b.Navigation("PersonModel")
                         .IsRequired();
 
                     b.Navigation("RefreshTokens");
+
+                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,21 +1,21 @@
 using BookSearch.API.Enums;
 using BookSearch.API.Helpers;
 using BookSearch.API.Models;
-using BookSearch.API.Repository.Interfaces;
+using BookSearch.API.Providers.Interfaces;
 using BookSearch.API.Request;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookSearch.API.Controller;
+namespace BookSearch.API.Controllers;
 
 [Route("[controller]")]
 public class SignUpController : ControllerBase
 {
-    public SignUpController(IUserRepository userRepository)
+    public SignUpController(IUserProvider userProvider)
     {
-        UserRepository = userRepository;
+        UserProvider = userProvider;
     }
 
-    private IUserRepository UserRepository { get; }
+    private IUserProvider UserProvider { get; }
 
     [HttpPost]
     public async Task<ActionResult<Guid>> PostNewUserAsync([FromBody] NewUserRequest request)
@@ -29,7 +29,7 @@ public class SignUpController : ControllerBase
 
         var person = new Person(request.Firstname, request.Lastname);
         var user = new User(request.Username, request.Password, request.Email, person);
-        var validateNewUser = UserRepository.ValidateNewUser(user);
+        var validateNewUser = UserProvider.ValidateNewUser(user);
 
         if (validateNewUser == EnumNewUserCheck.ExistingEmail)
         {
@@ -45,7 +45,7 @@ public class SignUpController : ControllerBase
             return new BadRequestObjectResult(messageResponse);
         }
 
-        var insertedUser = await UserRepository.InsertAsync(user);
+        var insertedUser = await UserProvider.InsertAsync(user);
 
         if (insertedUser is null)
         {

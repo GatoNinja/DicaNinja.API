@@ -1,11 +1,10 @@
 using BookSearch.API.Abstracts;
 using BookSearch.API.Helpers;
 using BookSearch.API.Startup;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookSearch.API.Controller;
+namespace BookSearch.API.Controllers;
 
 [AllowAnonymous]
 [Route("[controller]")]
@@ -27,7 +26,7 @@ public class UtilController : ControllerHelper
     }
 
     [HttpGet("unixtime")]
-    public ActionResult GetUnixtime()
+    public ActionResult GetUnixTime()
     {
         var unixTime = DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
         var message = new MessageResponse(unixTime);

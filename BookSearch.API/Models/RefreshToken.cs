@@ -8,7 +8,7 @@ using System.Text.Json.Serialization;
 namespace BookSearch.API.Models;
 
 [Table("refresh_tokens")]
-public sealed record RefreshToken : BaseModel
+public sealed class RefreshToken : BaseModel
 {
     public RefreshToken()
     {

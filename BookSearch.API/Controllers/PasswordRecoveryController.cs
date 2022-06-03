@@ -1,29 +1,28 @@
-
 using BookSearch.API.Abstracts;
 using BookSearch.API.Helpers;
-using BookSearch.API.Repository.Interfaces;
+using BookSearch.API.Providers.Interfaces;
 using BookSearch.API.Request;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookSearch.API.Controller;
+namespace BookSearch.API.Controllers;
 
 [Route("[controller]")]
 public class PasswordRecoveryController : ControllerHelper
 {
-    public PasswordRecoveryController(IPasswordRecoveryRepository passwordRecovery, IUserRepository userRepository)
+    public PasswordRecoveryController(IPasswordRecoveryProvider passwordRecoveryProvider, IUserProvider userProvider)
     {
-        PasswordRecoveryRepository = passwordRecovery;
-        UserRepository = userRepository;
+        PasswordRecoveryProvider = passwordRecoveryProvider;
+        UserProvider = userProvider;
     }
 
-    private IPasswordRecoveryRepository PasswordRecoveryRepository { get; }
+    private IPasswordRecoveryProvider PasswordRecoveryProvider { get; }
 
-    private IUserRepository UserRepository { get; }
+    private IUserProvider UserProvider { get; }
 
     [HttpPost]
     public async Task<ActionResult> PostPasswordRecovery([FromBody] PasswordRecoveryRequest requst)
     {
-        var recoveryCode = await PasswordRecoveryRepository.GetByEmailAndCode(requst.Email, requst.Code);
+        var recoveryCode = await PasswordRecoveryProvider.GetByEmailAndCode(requst.Email, requst.Code);
 
         if (recoveryCode is null)
         {
@@ -32,8 +31,8 @@ public class PasswordRecoveryController : ControllerHelper
             return new BadRequestObjectResult(messageResponse);
         }
 
-        await UserRepository.ChangePassword(requst.Email, requst.NewPassword);
-        await PasswordRecoveryRepository.UseRecoveryCode(recoveryCode.Id);
+        await UserProvider.ChangePassword(requst.Email, requst.NewPassword);
+        await PasswordRecoveryProvider.UseRecoveryCode(recoveryCode.Id);
 
         return Ok();
 

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BookSearch.API.Models;
-using BookSearch.API.Repository.Interfaces;
+using BookSearch.API.Providers.Interfaces;
 using BookSearch.API.Response;
 using BookSearch.API.Startup;
 
@@ -11,7 +11,7 @@ namespace BookSearch.API.Services;
 
 public class BookGoogleService
 {
-    public BookGoogleService(ConfigurationReader config, IMapper mapper, IBookRepository bookRepository)
+    public BookGoogleService(ConfigurationReader config, IMapper mapper, IBookProvider bookProvider)
     {
         var service = new BooksService(new BaseClientService.Initializer()
         {
@@ -21,11 +21,11 @@ public class BookGoogleService
 
         Service = service;
         Mapper = mapper;
-        BookRepository = bookRepository;
+        BookProvider = bookProvider;
     }
 
     private IMapper Mapper { get; }
-    private IBookRepository BookRepository { get; }
+    private IBookProvider BookProvider { get; }
     private BooksService Service { get; }
 
     public async Task<IEnumerable<BookResponse>> QueryBooks(string query)
@@ -43,11 +43,11 @@ public class BookGoogleService
                 continue;
             }
 
-            book.Identifiers = new List<IdentifierDTO>();
+            book.Identifiers = new List<IdentifierResponse>();
 
             foreach (var identifier in identifiers)
             {
-                book.Identifiers.Add(new IdentifierDTO(identifier.Identifier, identifier.Type));
+                book.Identifiers.Add(new IdentifierResponse(identifier.Identifier, identifier.Type));
             }
         }
 
@@ -56,7 +56,7 @@ public class BookGoogleService
 
     public async Task<Book?> CreateBookFromGoogle(string identifier)
     {
-        var request = Service.Volumes.List($"isbn:{identifier}");
+        var request = Service.Volumes.List(identifier);
         var response = await request.ExecuteAsync();
 
         if (response is null)
@@ -71,14 +71,14 @@ public class BookGoogleService
 
         var item = response.Items.First();
         var bookResponse = Mapper.Map<BookResponse>(item);
-        bookResponse.Identifiers = new List<IdentifierDTO>();
+        bookResponse.Identifiers = new List<IdentifierResponse>();
 
         foreach (var id in item.VolumeInfo.IndustryIdentifiers)
         {
-            bookResponse.Identifiers.Add(new IdentifierDTO(id.Identifier, id.Type));
+            bookResponse.Identifiers.Add(new IdentifierResponse(id.Identifier, id.Type));
         }
 
-        var book = await BookRepository.CreateFromResponse(bookResponse);
+        var book = await BookProvider.CreateFromResponse(bookResponse);
 
 
 
