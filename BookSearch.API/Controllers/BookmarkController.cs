@@ -1,6 +1,6 @@
 using BookSearch.API.Abstracts;
 using BookSearch.API.Helpers;
-using BookSearch.API.Repository.Interfaces;
+using BookSearch.API.Providers.Interfaces;
 using BookSearch.API.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,17 +12,17 @@ namespace BookSearch.API.Controllers;
 [Authorize]
 public class BookmarkController : ControllerHelper
 {
-    public BookmarkController(IBookmarkRepository bookmarkRepository)
+    public BookmarkController(IBookmarkProvider bookmarkProvider)
     {
-        BookmarkRepository = bookmarkRepository;
+        BookmarkProvider = bookmarkProvider;
     }
 
-    private IBookmarkRepository BookmarkRepository { get; }
+    private IBookmarkProvider BookmarkProvider { get; }
 
     [HttpPost]
     public async Task<ActionResult> CreateBookmark([FromBody] BookmarkRequest request)
     {
-        var count = await BookmarkRepository.Bookmark(UserId, request.Isbn, request.Type);
+        var count = await BookmarkProvider.Bookmark(UserId, request.Isbn, request.Type);
 
         if (count is not null)
         {
@@ -38,6 +38,6 @@ public class BookmarkController : ControllerHelper
     [HttpGet("count")]
     public async Task<int> GetCount()
     {
-        return await BookmarkRepository.GetBookmarkCount(UserId);
+        return await BookmarkProvider.GetBookmarkCount(UserId);
     }
 }

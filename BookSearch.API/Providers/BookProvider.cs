@@ -2,29 +2,29 @@
 
 using BookSearch.API.Contexts;
 using BookSearch.API.Models;
-using BookSearch.API.Repository.Interfaces;
+using BookSearch.API.Providers.Interfaces;
 using BookSearch.API.Response;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace BookSearch.API.Repository;
+namespace BookSearch.API.Providers;
 
-public class BookRepository : IBookRepository
+public class BookProvider : IBookProvider
 {
-    public BookRepository(BaseContext context, IMapper mapper, IIdentifierRepository identifierRepository, IAuthorRepository authorRepository, ICategoryRepository categoryRepository)
+    public BookProvider(BaseContext context, IMapper mapper, IIdentifierProvider identifierProvider, IAuthorProvider authorProvider, ICategoryProvider categoryProvider)
     {
         Context = context;
         Mapper = mapper;
-        IdentifierRepository = identifierRepository;
-        AuthorRepository = authorRepository;
-        CategoryRepository = categoryRepository;
+        IdentifierProvider = identifierProvider;
+        AuthorProvider = authorProvider;
+        CategoryProvider = categoryProvider;
     }
 
     private BaseContext Context { get; }
     private IMapper Mapper { get; }
-    private IIdentifierRepository IdentifierRepository { get; }
-    private IAuthorRepository AuthorRepository { get; }
-    private ICategoryRepository CategoryRepository { get; }
+    private IIdentifierProvider IdentifierProvider { get; }
+    private IAuthorProvider AuthorProvider { get; }
+    private ICategoryProvider CategoryProvider { get; }
 
     public async Task<Book?> CreateFromResponse(BookResponse response)
     {
@@ -36,7 +36,7 @@ public class BookRepository : IBookRepository
 
         foreach (var identifier in response.Identifiers)
         {
-            var bookIdentifier = await IdentifierRepository.GetOrCreate(identifier);
+            var bookIdentifier = await IdentifierProvider.GetOrCreate(identifier);
 
             if (bookIdentifier is null)
             {
@@ -48,7 +48,7 @@ public class BookRepository : IBookRepository
 
         foreach (var author in response.Authors)
         {
-            var authorEntity = await AuthorRepository.GetOrCreate(author);
+            var authorEntity = await AuthorProvider.GetOrCreate(author);
 
             if (authorEntity is null)
             {
@@ -60,7 +60,7 @@ public class BookRepository : IBookRepository
 
         foreach (var category in response.Categories)
         {
-            var categoryEntity = await CategoryRepository.GetOrCreate(category);
+            var categoryEntity = await CategoryProvider.GetOrCreate(category);
 
             if (categoryEntity is null)
             {

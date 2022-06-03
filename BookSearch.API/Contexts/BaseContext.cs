@@ -9,6 +9,8 @@ public class BaseContext : DbContext
     {
     }
 
+    public DbSet<Follower> Followers { get; set; } = default!;
+
     public DbSet<Bookmark> Bookmarks { get; set; } = default!;
 
     public DbSet<User> Users { get; set; } = default!;
@@ -28,4 +30,21 @@ public class BaseContext : DbContext
     public DbSet<Identifier> Identifiers { get; set; } = default!;
 
     public DbSet<Review> Reviews { get; set; } = default!;
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        builder.Entity<Follower>()
+            .HasIndex(f => new { f.UserId, f.FollowedId })
+            .IsUnique();
+
+        builder.Entity<User>()
+            .HasMany<Follower>(u => u.Following)
+            .WithOne(f => f.FollowedUser)
+            .HasForeignKey(f => f.UserId);
+
+        builder.Entity<User>()
+            .HasMany<Follower>(u => u.Followers)
+            .WithOne(f => f.User)
+            .HasForeignKey(f => f.FollowedId);
+    }
 }

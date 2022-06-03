@@ -1,6 +1,6 @@
 ﻿using BookSearch.API.Abstracts;
 using BookSearch.API.Models;
-using BookSearch.API.Repository.Interfaces;
+using BookSearch.API.Providers.Interfaces;
 using BookSearch.API.Request;
 
 using Microsoft.AspNetCore.Authorization;
@@ -13,12 +13,12 @@ namespace BookSearch.API.Controllers;
 [Authorize]
 public class ReviewController : ControllerHelper
 {
-    public ReviewController(IReviewRepository reviewRepository)
+    public ReviewController(IReviewProvider reviewProvider)
     {
-        ReviewRepository = reviewRepository;
+        ReviewProvider = reviewProvider;
     }
 
-    private IReviewRepository ReviewRepository { get; }
+    private IReviewProvider ReviewProvider { get; }
 
     [HttpPost]
     public async Task<Guid> CreateReview([FromBody] ReviewRequest request)
@@ -26,6 +26,6 @@ public class ReviewController : ControllerHelper
         var (bookId, text, rating) = request;
         var review = new Review(UserId, bookId, text, rating);
 
-        return await ReviewRepository.CreateReview(review);
+        return await ReviewProvider.CreateReview(review);
     }
 }

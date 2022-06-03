@@ -1,9 +1,9 @@
 ﻿using BookSearch.API.Models;
 using BookSearch.API.Response;
 
-namespace BookSearch.API.Repository.Interfaces;
+namespace BookSearch.API.Providers.Interfaces;
 
-public interface IIdentifierRepository
+public interface IIdentifierProvider
 {
     Task<Identifier?> GetOrCreate(IdentifierResponse identifier);
 

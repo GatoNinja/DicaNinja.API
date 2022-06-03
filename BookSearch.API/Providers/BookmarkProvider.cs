@@ -1,22 +1,22 @@
 ﻿using BookSearch.API.Contexts;
 using BookSearch.API.Models;
-using BookSearch.API.Repository.Interfaces;
+using BookSearch.API.Providers.Interfaces;
 using BookSearch.API.Services;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookSearch.API.Repository;
+namespace BookSearch.API.Providers;
 
-public class BookmarkRepository : IBookmarkRepository
+public class BookmarkProvider : IBookmarkProvider
 {
-    public BookmarkRepository(BaseContext context, IBookRepository bookRepository, BookGoogleService bookGoogleService)
+    public BookmarkProvider(BaseContext context, IBookProvider bookProvider, BookGoogleService bookGoogleService)
     {
         Context = context;
-        BookRepository = bookRepository;
+        BookProvider = bookProvider;
         BookGoogleService = bookGoogleService;
     }
 
     private BaseContext Context { get; }
-    private IBookRepository BookRepository { get; }
+    private IBookProvider BookProvider { get; }
     private BookGoogleService BookGoogleService { get; }
 
     public async Task<int?> Bookmark(Guid userId, string identifier, string type)
@@ -30,7 +30,7 @@ public class BookmarkRepository : IBookmarkRepository
         }
         else
         {
-            var book = await BookRepository.GetByIdentifier(identifier, type);
+            var book = await BookProvider.GetByIdentifier(identifier, type);
 
             if (book is null)
             {
@@ -63,9 +63,9 @@ public class BookmarkRepository : IBookmarkRepository
     private IQueryable<Bookmark> FilterByUser(Guid userId, string identifier, string type)
     {
         var query = from bookmark in Context.Bookmarks
-            join book in Context.Books on bookmark.BookId equals book.Id
-            where bookmark.UserId == userId && book.Identifiers.Any(i => i.Isbn == identifier && i.Type == type)
-            select bookmark;
+                    join book in Context.Books on bookmark.BookId equals book.Id
+                    where bookmark.UserId == userId && book.Identifiers.Any(i => i.Isbn == identifier && i.Type == type)
+                    select bookmark;
 
         return query;
     }

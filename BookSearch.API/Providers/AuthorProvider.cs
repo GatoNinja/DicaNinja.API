@@ -1,13 +1,13 @@
 ﻿using BookSearch.API.Contexts;
 using BookSearch.API.Models;
-using BookSearch.API.Repository.Interfaces;
+using BookSearch.API.Providers.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookSearch.API.Repository;
+namespace BookSearch.API.Providers;
 
-public class AuthorRepository : IAuthorRepository
+public class AuthorProvider : IAuthorProvider
 {
-    public AuthorRepository(BaseContext context)
+    public AuthorProvider(BaseContext context)
     {
         Context = context;
     }

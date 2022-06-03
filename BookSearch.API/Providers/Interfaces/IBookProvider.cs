@@ -1,9 +1,9 @@
 ﻿using BookSearch.API.Models;
 using BookSearch.API.Response;
 
-namespace BookSearch.API.Repository.Interfaces;
+namespace BookSearch.API.Providers.Interfaces;
 
-public interface IBookRepository
+public interface IBookProvider
 {
     Task<Book?> GetByIdentifier(string identifier, string type);
 
@@ -12,7 +12,7 @@ public interface IBookRepository
     Task<List<Book>> GetBookmarks(Guid userId, int page, int perPage);
 
     Task PopulateWithBookmarks(IEnumerable<BookResponse> books, Guid userId);
-        
+
     Task<IEnumerable<Review>> GetReviews(Guid bookId, int page = 1, int perPage = 10);
     Task<double> AverageRating(Guid bookId);
 

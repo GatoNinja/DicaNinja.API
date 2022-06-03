@@ -10,6 +10,11 @@
             "args": [],
             "cwd": "${workspaceFolder}/BookSearch.API",
             "stopAtEntry": false,
+            "suppressJITOptimizations": true,
+            "logging": {
+                "elapsedTiming": true,
+                "moduleLoad": false
+            },
             "serverReadyAction": {
                 "action": "openExternally",
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)"

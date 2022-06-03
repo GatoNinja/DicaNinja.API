@@ -1,6 +1,6 @@
-﻿namespace BookSearch.API.Repository.Interfaces;
+﻿namespace BookSearch.API.Providers.Interfaces;
 
-public interface IBookmarkRepository
+public interface IBookmarkProvider
 {
     Task<int> GetBookmarkCount(Guid userId);
 

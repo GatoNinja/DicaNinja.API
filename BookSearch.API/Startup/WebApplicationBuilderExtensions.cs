@@ -14,9 +14,9 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.HttpLogging;
 using BookSearch.API.Response;
 using BookSearch.API.Models;
-using BookSearch.API.Repository.Interfaces;
-using BookSearch.API.Repository;
+using BookSearch.API.Providers.Interfaces;
 using BookSearch.API.Services;
+using BookSearch.API.Providers;
 
 namespace BookSearch.API.Startup;
 
@@ -69,6 +69,10 @@ public static class WebApplicationBuilderExtensions
 
             config.CreateMap<BookResponse, Book>()
                 .ReverseMap();
+
+            config.CreateMap<User, UserResponse>()
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Person.FirstName))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Person.LastName));
         });
 
         var mapper = config.CreateMapper();
@@ -82,18 +86,20 @@ public static class WebApplicationBuilderExtensions
 
         services.AddSingleton<ConfigurationReader>();
         services.AddTransient<IPasswordHasher, PasswordHasher>();
-        services.AddTransient<IUserRepository, UserRepository>();
-        services.AddTransient<IPersonRepository, PersonRepository>();
+        services.AddTransient<IUserProvider, UserProvider>();
+        services.AddTransient<IPersonProvider, PersonProvider>();
         services.AddTransient<ITokenService, TokenService>();
-        services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
-        services.AddTransient<IPasswordRecoveryRepository, PasswordRecoveryRepository>();
+        services.AddTransient<IRefreshTokenProvider, RefreshTokenProvider>();
+        services.AddTransient<IPasswordRecoveryProvider, PasswordRecoveryProvider>();
         services.AddTransient<ISmtpService, SmtpService>();
-        services.AddTransient<IBookmarkRepository, BookmarkRepository>();
-        services.AddTransient<IBookRepository, BookRepository>();
-        services.AddTransient<IIdentifierRepository, IdentifierRepository>();
-        services.AddTransient<IAuthorRepository, AuthorRepository>();
-        services.AddTransient<ICategoryRepository, CategoryRepository>();
-        services.AddTransient<IReviewRepository, ReviewRepository>();
+        services.AddTransient<IBookmarkProvider, BookmarkProvider>();
+        services.AddTransient<IBookProvider, BookProvider>();
+        services.AddTransient<IFollowerProvider, FollowerProvider>();
+        services.AddTransient<IIdentifierProvider, IdentifierProvider>();
+        services.AddTransient<IAuthorProvider, AuthorProvider>();
+        services.AddTransient<ICategoryProvider, CategoryProvider>();
+        services.AddTransient<IReviewProvider, ReviewProvider>();
+        services.AddTransient<IProfileProvider, ProfileProvider>();
         services.AddTransient<BookGoogleService>();
     }
 
@@ -151,7 +157,6 @@ public static class WebApplicationBuilderExtensions
                         Scheme = "oauth2",
                         Name = "Bearer",
                         In = ParameterLocation.Header,
-
                     },
                     new List<string>()
                 }

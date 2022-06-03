@@ -1,14 +1,14 @@
 ﻿using BookSearch.API.Contexts;
 using BookSearch.API.Models;
-using BookSearch.API.Repository.Interfaces;
+using BookSearch.API.Providers.Interfaces;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace BookSearch.API.Repository;
+namespace BookSearch.API.Providers;
 
-public class ReviewRepository : IReviewRepository
+public class ReviewProvider : IReviewProvider
 {
-    public ReviewRepository(BaseContext context)
+    public ReviewProvider(BaseContext context)
     {
         Context = context;
     }

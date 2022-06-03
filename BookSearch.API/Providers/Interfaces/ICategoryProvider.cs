@@ -1,8 +1,8 @@
 ﻿using BookSearch.API.Models;
 
-namespace BookSearch.API.Repository.Interfaces;
+namespace BookSearch.API.Providers.Interfaces;
 
-public interface ICategoryRepository
+public interface ICategoryProvider
 {
     Task<Category?> GetOrCreate(string categoryName);
 

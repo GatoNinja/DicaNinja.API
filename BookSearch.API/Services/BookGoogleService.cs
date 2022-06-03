@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BookSearch.API.Models;
-using BookSearch.API.Repository.Interfaces;
+using BookSearch.API.Providers.Interfaces;
 using BookSearch.API.Response;
 using BookSearch.API.Startup;
 
@@ -11,7 +11,7 @@ namespace BookSearch.API.Services;
 
 public class BookGoogleService
 {
-    public BookGoogleService(ConfigurationReader config, IMapper mapper, IBookRepository bookRepository)
+    public BookGoogleService(ConfigurationReader config, IMapper mapper, IBookProvider bookProvider)
     {
         var service = new BooksService(new BaseClientService.Initializer()
         {
@@ -21,11 +21,11 @@ public class BookGoogleService
 
         Service = service;
         Mapper = mapper;
-        BookRepository = bookRepository;
+        BookProvider = bookProvider;
     }
 
     private IMapper Mapper { get; }
-    private IBookRepository BookRepository { get; }
+    private IBookProvider BookProvider { get; }
     private BooksService Service { get; }
 
     public async Task<IEnumerable<BookResponse>> QueryBooks(string query)
@@ -78,7 +78,7 @@ public class BookGoogleService
             bookResponse.Identifiers.Add(new IdentifierResponse(id.Identifier, id.Type));
         }
 
-        var book = await BookRepository.CreateFromResponse(bookResponse);
+        var book = await BookProvider.CreateFromResponse(bookResponse);
 
 
 

@@ -8,7 +8,12 @@ var app = builder.Build();
 app.UseHttpLogging();
 
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(config =>
+{
+    config.EnablePersistAuthorization();
+    config.EnableValidator();
+    config.EnableFilter();
+});
 
 app.UseCors(config =>
 {

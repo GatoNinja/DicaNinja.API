@@ -1,8 +1,8 @@
 ﻿using BookSearch.API.Models;
 
-namespace BookSearch.API.Repository.Interfaces;
+namespace BookSearch.API.Providers.Interfaces;
 
-public interface IAuthorRepository
+public interface IAuthorProvider
 {
     Task<Author?> GetOrCreate(string authorName);
 

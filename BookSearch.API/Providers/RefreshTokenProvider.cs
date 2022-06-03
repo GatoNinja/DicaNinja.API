@@ -2,21 +2,21 @@ using System.Security.Cryptography;
 
 using BookSearch.API.Contexts;
 using BookSearch.API.Models;
-using BookSearch.API.Repository.Interfaces;
+using BookSearch.API.Providers.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookSearch.API.Repository;
+namespace BookSearch.API.Providers;
 
-public sealed class RefreshTokenRepository : IRefreshTokenRepository
+public sealed class RefreshTokenProvider : IRefreshTokenProvider
 {
-    public RefreshTokenRepository(BaseContext context, IUserRepository userRepository)
+    public RefreshTokenProvider(BaseContext context, IUserProvider userProvider)
     {
         Context = context;
-        UserRepository = userRepository;
+        UserProvider = userProvider;
     }
 
     private BaseContext Context { get; }
-    private IUserRepository UserRepository { get; }
+    private IUserProvider UserProvider { get; }
 
     public string GenerateRefreshToken()
     {
@@ -31,20 +31,20 @@ public sealed class RefreshTokenRepository : IRefreshTokenRepository
     public async Task<RefreshToken?> GetRefreshTokenAsync(string username, string value)
     {
         var query = from refreshToken in Context.RefreshTokens
-            join user in Context.Users on refreshToken.UserId equals user.Id
-            let selectedUser = new User(user.Id, user.Username, user.Email)
-            where user.Username == username
-                  && refreshToken.IsActive
-                  && refreshToken.Value == value
-            select new RefreshToken(refreshToken.Id, refreshToken.Value, refreshToken.RefreshTokenExpiryTime,
-                selectedUser);
+                    join user in Context.Users on refreshToken.UserId equals user.Id
+                    let selectedUser = new User(user.Id, user.Username, user.Email)
+                    where user.Username == username
+                          && refreshToken.IsActive
+                          && refreshToken.Value == value
+                    select new RefreshToken(refreshToken.Id, refreshToken.Value, refreshToken.RefreshTokenExpiryTime,
+                        selectedUser);
 
         return await query.FirstOrDefaultAsync();
     }
 
     public async Task SaveRefreshTokenAsync(Guid userId, string refreshTokenValue)
     {
-        var user = await UserRepository.GetByIdAsync(userId);
+        var user = await UserProvider.GetByIdAsync(userId);
 
         if (user is null)
         {

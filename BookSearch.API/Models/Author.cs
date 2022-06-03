@@ -20,7 +20,7 @@ public class Author : BaseModel
 
     [Column("name")]
     [Required]
-    public string Name { get; set; }
+    public string Name { get; set; } = default!;
 
     public virtual IEnumerable<Book> Books { get; set; } = default!;
 }

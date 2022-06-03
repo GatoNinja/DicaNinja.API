@@ -1,14 +1,14 @@
 ﻿using BookSearch.API.Contexts;
 using BookSearch.API.Models;
-using BookSearch.API.Repository.Interfaces;
+using BookSearch.API.Providers.Interfaces;
 using BookSearch.API.Response;
 using Microsoft.EntityFrameworkCore;
 
-namespace BookSearch.API.Repository;
+namespace BookSearch.API.Providers;
 
-public class IdentifierRepository : IIdentifierRepository
+public class IdentifierProvider : IIdentifierProvider
 {
-    public IdentifierRepository(BaseContext context)
+    public IdentifierProvider(BaseContext context)
     {
         Context = context;
     }

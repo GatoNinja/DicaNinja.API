@@ -23,7 +23,7 @@ public class Review : BaseModel
 
     [Column("text")]
     [MaxLength(2048)]
-    public string Text { get; set; }
+    public string Text { get; set; } = default!;
 
     [Column("rating")]
     [Range(1, 5)]

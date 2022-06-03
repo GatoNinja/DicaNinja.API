@@ -1,6 +1,4 @@
-﻿using BookSearch.API.Models;
-
-namespace BookSearch.API.Response;
+﻿namespace BookSearch.API.Response;
 
 public class BookResponse
 {

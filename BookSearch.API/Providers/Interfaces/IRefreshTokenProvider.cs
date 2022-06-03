@@ -1,8 +1,8 @@
 using BookSearch.API.Models;
 
-namespace BookSearch.API.Repository.Interfaces;
+namespace BookSearch.API.Providers.Interfaces;
 
-public interface IRefreshTokenRepository
+public interface IRefreshTokenProvider
 {
     string GenerateRefreshToken();
 
