@@ -11,8 +11,8 @@ public sealed class RefreshTokenProvider : IRefreshTokenProvider
 {
     public RefreshTokenProvider(BaseContext context, IUserProvider userProvider)
     {
-        Context = context;
-        UserProvider = userProvider;
+        this.Context = context;
+        this.UserProvider = userProvider;
     }
 
     private BaseContext Context { get; }
@@ -30,8 +30,8 @@ public sealed class RefreshTokenProvider : IRefreshTokenProvider
 
     public async Task<RefreshToken?> GetRefreshTokenAsync(string username, string value)
     {
-        var query = from refreshToken in Context.RefreshTokens
-                    join user in Context.Users on refreshToken.UserId equals user.Id
+        var query = from refreshToken in this.Context.RefreshTokens
+                    join user in this.Context.Users on refreshToken.UserId equals user.Id
                     let selectedUser = new User(user.Id, user.Username, user.Email)
                     where user.Username == username
                           && refreshToken.IsActive
@@ -44,7 +44,7 @@ public sealed class RefreshTokenProvider : IRefreshTokenProvider
 
     public async Task SaveRefreshTokenAsync(Guid userId, string refreshTokenValue)
     {
-        var user = await UserProvider.GetByIdAsync(userId);
+        var user = await this.UserProvider.GetByIdAsync(userId);
 
         if (user is null)
         {
@@ -53,14 +53,14 @@ public sealed class RefreshTokenProvider : IRefreshTokenProvider
 
         var refreshToken = new RefreshToken(refreshTokenValue, userId, true);
 
-        Context.RefreshTokens.Add(refreshToken);
-        await Context.SaveChangesAsync();
+        this.Context.RefreshTokens.Add(refreshToken);
+        await this.Context.SaveChangesAsync();
     }
 
     public async Task InvalidateAsync(string value)
     {
         var refreshTokenFound =
-            await Context.RefreshTokens.FirstOrDefaultAsync(refreshToken => refreshToken.Value == value);
+            await this.Context.RefreshTokens.FirstOrDefaultAsync(refreshToken => refreshToken.Value == value);
 
         if (refreshTokenFound is null)
         {
@@ -69,7 +69,7 @@ public sealed class RefreshTokenProvider : IRefreshTokenProvider
 
         refreshTokenFound.IsActive = false;
 
-        Context.Entry(refreshTokenFound).State = EntityState.Modified;
-        await Context.SaveChangesAsync();
+        this.Context.Entry(refreshTokenFound).State = EntityState.Modified;
+        await this.Context.SaveChangesAsync();
     }
 }

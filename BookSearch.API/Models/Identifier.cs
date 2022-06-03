@@ -1,4 +1,4 @@
-﻿using BookSearch.API.Abstracts;
+using BookSearch.API.Abstracts;
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -8,10 +8,14 @@ namespace BookSearch.API.Models;
 [Table("identifiers")]
 public class Identifier : BaseModel
 {
+    public Identifier()
+    {
+
+    }
     public Identifier(string isbn, string type)
     {
-        Isbn = isbn;
-        Type = type;
+        this.Isbn = isbn;
+        this.Type = type;
     }
 
     [Column("isbn")]

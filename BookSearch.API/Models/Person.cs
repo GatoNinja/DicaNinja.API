@@ -17,8 +17,8 @@ public class Person : BaseModel
 
     public Person(string firstname, string lastname)
     {
-        FirstName = firstname;
-        LastName = lastname;
+        this.FirstName = firstname;
+        this.LastName = lastname;
     }
 
     [Required, MinLength(2), MaxLength(48)]

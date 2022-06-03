@@ -7,43 +7,41 @@ using BookSearch.API.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookSearch.API.Providers;
+namespace BookSearch.API.Controllers;
 
 [Route("[controller]")]
 [ApiController]
 [Authorize]
 public class UserController : ControllerHelper
 {
-    public UserController(IUserProvider userProvider, IFollowerProvider followerProvider, IMapper mapper)
+    public UserController(IUserProvider userProvider, IMapper mapper)
     {
-        UserProvider = userProvider;
-        FollowerProvider = followerProvider;
-        Mapper = mapper;
+        this.UserProvider = userProvider;
+        this.Mapper = mapper;
     }
 
     private IUserProvider UserProvider { get; }
-    private IFollowerProvider FollowerProvider { get; }
     private IMapper Mapper { get; }
 
     [HttpGet("followers")]
     public async Task<ActionResult<IEnumerable<User>>> GetFollowers([FromQuery] QueryParameters query)
     {
-        var followers = await UserProvider.GetFollowers(UserId, query.Page, query.PerPage);
-        var total = await UserProvider.GetFollowersCount(UserId);
-        var mapped = Mapper.Map<IEnumerable<UserResponse>>(followers);
+        var followers = await this.UserProvider.GetFollowers(this.UserId, query.Page, query.PerPage);
+        var total = await this.UserProvider.GetFollowersCount(this.UserId);
+        var mapped = this.Mapper.Map<IEnumerable<UserResponse>>(followers);
         var paginated = PaginationHelper.CreatePagedResponse<UserResponse>(mapped, query, total);
 
-        return Ok(followers);
+        return this.Ok(paginated);
     }
 
     [HttpGet("following")]
     public async Task<ActionResult<IEnumerable<User>>> GetFollowing([FromQuery] QueryParameters query)
     {
-        var following = await UserProvider.GetFollowing(UserId, query.Page, query.PerPage);
-        var total = await UserProvider.GetFollowingCount(UserId);
-        var mapped = Mapper.Map<IEnumerable<UserResponse>>(following);
+        var following = await this.UserProvider.GetFollowing(this.UserId, query.Page, query.PerPage);
+        var total = await this.UserProvider.GetFollowingCount(this.UserId);
+        var mapped = this.Mapper.Map<IEnumerable<UserResponse>>(following);
         var paginated = PaginationHelper.CreatePagedResponse<UserResponse>(mapped, query, total);
 
-        return Ok(following);
+        return this.Ok(paginated);
     }
 }

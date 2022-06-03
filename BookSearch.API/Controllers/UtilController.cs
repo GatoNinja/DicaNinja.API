@@ -14,15 +14,15 @@ public class UtilController : ControllerHelper
 
     public UtilController(ConfigurationReader config)
     {
-        Config = config;
+        this.Config = config;
     }
 
     [HttpGet("version")]
     public ActionResult GetVersion()
     {
-        var message = new MessageResponse(Config.Info.Version);
+        var message = new MessageResponse(this.Config.Info.Version);
 
-        return Ok(message);
+        return this.Ok(message);
     }
 
     [HttpGet("unixtime")]
@@ -31,6 +31,6 @@ public class UtilController : ControllerHelper
         var unixTime = DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
         var message = new MessageResponse(unixTime);
 
-        return Ok(message);
+        return this.Ok(message);
     }
 }

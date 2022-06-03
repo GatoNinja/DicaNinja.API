@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -15,34 +15,34 @@ public class User : BaseModel
 
     public User(Guid id, string username, string email) : this()
     {
-        Id = id;
-        Username = username;
-        Email = email;
+        this.Id = id;
+        this.Username = username;
+        this.Email = email;
     }
 
     public User(Guid id, string username, Person person)
     {
-        Id = id;
-        Username = username;
-        Person = person;
+        this.Id = id;
+        this.Username = username;
+        this.Person = person;
     }
 
     public User(string username, string password, string email, Person person)
     {
-        Username = username;
-        Password = password;
-        Email = email;
-        Person = person;
+        this.Username = username;
+        this.Password = password;
+        this.Email = email;
+        this.Person = person;
     }
 
     public User(Guid id, string username, string email, string password) : this(id, username, email)
     {
-        Password = password;
+        this.Password = password;
     }
 
     public User(Guid id, string username, string email, Person person) : this(id, username, email)
     {
-        Person = person;
+        this.Person = person;
     }
 
     [Required, MinLength(3), MaxLength(48)]

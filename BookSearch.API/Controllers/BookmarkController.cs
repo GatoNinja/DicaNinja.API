@@ -14,7 +14,7 @@ public class BookmarkController : ControllerHelper
 {
     public BookmarkController(IBookmarkProvider bookmarkProvider)
     {
-        BookmarkProvider = bookmarkProvider;
+        this.BookmarkProvider = bookmarkProvider;
     }
 
     private IBookmarkProvider BookmarkProvider { get; }
@@ -22,11 +22,11 @@ public class BookmarkController : ControllerHelper
     [HttpPost]
     public async Task<ActionResult> CreateBookmark([FromBody] BookmarkRequest request)
     {
-        var count = await BookmarkProvider.Bookmark(UserId, request.Isbn, request.Type);
+        var count = await this.BookmarkProvider.Bookmark(this.UserId, request.Isbn, request.Type);
 
         if (count is not null)
         {
-            return Ok(count);
+            return this.Ok(count);
         }
 
         var messageResponse = new MessageResponse("Ocorreu um problema salvando o livro");
@@ -38,6 +38,6 @@ public class BookmarkController : ControllerHelper
     [HttpGet("count")]
     public async Task<int> GetCount()
     {
-        return await BookmarkProvider.GetBookmarkCount(UserId);
+        return await this.BookmarkProvider.GetBookmarkCount(this.UserId);
     }
 }

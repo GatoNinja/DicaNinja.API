@@ -12,24 +12,24 @@ public sealed class RefreshToken : BaseModel
 {
     public RefreshToken()
     {
-        IsActive = true;
+        this.IsActive = true;
     }
 
     public RefreshToken(Guid id, string value, DateTimeOffset refreshTokenExpiryTime, User user)
     {
-        Id = id;
-        Value = value;
-        RefreshTokenExpiryTime = refreshTokenExpiryTime;
-        UserId = user.Id;
-        User = user;
+        this.Id = id;
+        this.Value = value;
+        this.RefreshTokenExpiryTime = refreshTokenExpiryTime;
+        this.UserId = user.Id;
+        this.User = user;
     }
 
     public RefreshToken(string refreshTokenValue, Guid userId, bool isActive)
     {
-        Value = refreshTokenValue;
-        IsActive = isActive;
-        UserId = userId;
-        IsActive = isActive;
+        this.Value = refreshTokenValue;
+        this.IsActive = isActive;
+        this.UserId = userId;
+        this.IsActive = isActive;
     }
 
     [Required, MaxLength(255), MinLength(32)]

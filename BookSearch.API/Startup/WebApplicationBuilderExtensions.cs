@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 
 using BookSearch.API.Contexts;
 
@@ -196,10 +196,9 @@ public static class WebApplicationBuilderExtensions
 
     private static string GetImage(Volume src)
     {
-        if (src.VolumeInfo.ImageLinks?.Thumbnail is null)
-            return src.VolumeInfo.ImageLinks?.Thumbnail ?? string.Empty;
-
-        return src.VolumeInfo.ImageLinks?.SmallThumbnail ?? string.Empty;
+        return src.VolumeInfo.ImageLinks?.Thumbnail is null
+            ? src.VolumeInfo.ImageLinks?.Thumbnail ?? string.Empty
+            : src.VolumeInfo.ImageLinks?.SmallThumbnail ?? string.Empty;
     }
 
 }

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -8,9 +8,9 @@ public abstract class BaseModel
 {
     public BaseModel()
     {
-        Created = DateTimeOffset.Now;
-        Updated = DateTimeOffset.Now;
-        Id = Guid.Empty;
+        this.Created = DateTimeOffset.Now;
+        this.Updated = DateTimeOffset.Now;
+        this.Id = Guid.Empty;
     }
 
     [Key, Required]

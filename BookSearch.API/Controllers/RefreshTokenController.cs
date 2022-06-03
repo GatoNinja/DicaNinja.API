@@ -13,8 +13,8 @@ public class RefreshTokenController : ControllerHelper
 {
     public RefreshTokenController(IRefreshTokenProvider refreshTokenProvider, ITokenService tokenService)
     {
-        RefreshTokenProvider = refreshTokenProvider;
-        TokenService = tokenService;
+        this.RefreshTokenProvider = refreshTokenProvider;
+        this.TokenService = tokenService;
     }
 
     private IRefreshTokenProvider RefreshTokenProvider { get; }
@@ -24,14 +24,14 @@ public class RefreshTokenController : ControllerHelper
     [HttpPost]
     public async Task<ActionResult<RefreshTokenResponse>> RefreshAsync([FromBody] RefreshTokenRequest request)
     {
-        if (User.Identity is null)
+        if (this.User.Identity is null)
         {
             var messageResponse = new MessageResponse(TextConstant.RefreshTokenNull);
 
             return new UnauthorizedObjectResult(messageResponse);
         }
 
-        var username = User.Identity.Name;
+        var username = this.User.Identity.Name;
 
         if (username is null)
         {
@@ -40,7 +40,7 @@ public class RefreshTokenController : ControllerHelper
             return new NotFoundObjectResult(messageResponse);
         }
 
-        var refreshToken = await RefreshTokenProvider.GetRefreshTokenAsync(username, request.RefreshToken);
+        var refreshToken = await this.RefreshTokenProvider.GetRefreshTokenAsync(username, request.RefreshToken);
 
         if (refreshToken is null)
         {
@@ -56,19 +56,19 @@ public class RefreshTokenController : ControllerHelper
             return new BadRequestObjectResult(messageResponse);
         }
 
-        var refreshTokenResponse = await CreateRefreshTokenResponse(UserId, refreshToken.Value);
+        var refreshTokenResponse = await this.CreateRefreshTokenResponse(this.UserId, refreshToken.Value);
 
         return new OkObjectResult(refreshTokenResponse);
     }
 
     private async Task<RefreshTokenResponse> CreateRefreshTokenResponse(Guid userId, string value)
     {
-        await RefreshTokenProvider.InvalidateAsync(value);
+        await this.RefreshTokenProvider.InvalidateAsync(value);
 
-        var newAccessToken = TokenService.GenerateAccessToken(User.Claims);
-        var newRefreshToken = RefreshTokenProvider.GenerateRefreshToken();
+        var newAccessToken = this.TokenService.GenerateAccessToken(this.User.Claims);
+        var newRefreshToken = this.RefreshTokenProvider.GenerateRefreshToken();
 
-        await RefreshTokenProvider.SaveRefreshTokenAsync(userId, newRefreshToken);
+        await this.RefreshTokenProvider.SaveRefreshTokenAsync(userId, newRefreshToken);
 
         return new RefreshTokenResponse(newAccessToken, newRefreshToken);
     }

@@ -1,4 +1,4 @@
-﻿using BookSearch.API.Abstracts;
+using BookSearch.API.Abstracts;
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -8,6 +8,25 @@ namespace BookSearch.API.Models;
 [Table("books")]
 public class Book : BaseModel
 {
+    public Book()
+    {
+
+    }
+    
+    public Book(string Title, string Subtitle, string Language, string Description, int PageCount, string Publisher, string PublicationDate, string Image, double AverageRating)
+    {
+
+        this.Title = Title;
+        this.Subtitle = Subtitle;
+        this.Language = Language;
+        this.Description = Description;
+        this.PageCount = PageCount;
+        this.Publisher = Publisher;
+        this.PublicationDate = PublicationDate;
+        this.Image = Image;
+        this.AverageRating = AverageRating;
+    }
+
     [Column("title")]
     [Required]
     public string Title { get; set; } = string.Empty;

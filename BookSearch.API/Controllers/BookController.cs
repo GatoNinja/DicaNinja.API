@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 
 using BookSearch.API.Abstracts;
 using BookSearch.API.Helpers;
@@ -19,13 +19,13 @@ public class BookController : ControllerHelper
 
     public BookController(BookGoogleService service, IBookProvider bookProvider, IMapper mapper, IAuthorProvider authorProvider, ICategoryProvider categoryProvider, IIdentifierProvider identifierProvider, IBookmarkProvider bookmarkProvider)
     {
-        Service = service;
-        BookProvider = bookProvider;
-        Mapper = mapper;
-        AuthorProvider = authorProvider;
-        CategoryProvider = categoryProvider;
-        IdentifierProvider = identifierProvider;
-        BookmarkProvider = bookmarkProvider;
+        this.Service = service;
+        this.BookProvider = bookProvider;
+        this.Mapper = mapper;
+        this.AuthorProvider = authorProvider;
+        this.CategoryProvider = categoryProvider;
+        this.IdentifierProvider = identifierProvider;
+        this.BookmarkProvider = bookmarkProvider;
     }
 
     private BookGoogleService Service { get; }
@@ -39,73 +39,73 @@ public class BookController : ControllerHelper
     [HttpGet]
     public async Task<ActionResult<List<BookResponse>>> GetAsync([FromQuery] string query)
     {
-        var books = await Service.QueryBooks(query);
+        var books = await this.Service.QueryBooks(query);
 
-        await BookProvider.PopulateWithBookmarks(books, UserId);
+        await this.BookProvider.PopulateWithBookmarks(books, this.UserId);
 
-        return Ok(books);
+        return this.Ok(books);
     }
 
     [HttpGet("bookmark")]
-    public async Task<ActionResult<List<BookResponse>>> GetBookmarks([FromQuery] Helpers.QueryParameters query)
+    public async Task<ActionResult<List<BookResponse>>> GetBookmarks([FromQuery] QueryParameters query)
     {
-        var books = await BookProvider.GetBookmarks(UserId, query.Page, query.PerPage);
-        var totalBookmarks = await BookmarkProvider.GetBookmarkCount(UserId);
-        var mapped = Mapper.Map<List<BookResponse>>(books);
+        var books = await this.BookProvider.GetBookmarks(this.UserId, query.Page, query.PerPage);
+        var totalBookmarks = await this.BookmarkProvider.GetBookmarkCount(this.UserId);
+        var mapped = this.Mapper.Map<List<BookResponse>>(books);
         var paginated = PaginationHelper.CreatePagedResponse<BookResponse>(mapped, query, totalBookmarks);
 
-        return Ok(paginated);
+        return this.Ok(paginated);
     }
 
     [HttpGet("{bookId:guid}")]
     public async Task<ActionResult<BookResponse>> GetBook([FromRoute] Guid bookId)
     {
-        var book = await BookProvider.GetById(bookId);
+        var book = await this.BookProvider.GetById(bookId);
 
         if (book == null)
         {
-            return NotFound();
+            return this.NotFound();
         }
 
-        var mapped = Mapper.Map<BookResponse>(book);
-        var internalRating = await BookProvider.AverageRating(bookId);
+        var mapped = this.Mapper.Map<BookResponse>(book);
+        var internalRating = await this.BookProvider.AverageRating(bookId);
 
         mapped.InternalRating = internalRating;
 
 
-        return Ok(mapped);
+        return this.Ok(mapped);
     }
 
     [HttpGet("{bookId:guid}/author")]
     public async Task<ActionResult<List<Author>>> GetAuthors([FromRoute] Guid bookId)
     {
-        var authors = await AuthorProvider.GetByBook(bookId);
+        var authors = await this.AuthorProvider.GetByBook(bookId);
 
-        return Ok(authors);
+        return this.Ok(authors);
     }
 
     [HttpGet("{bookId:guid}/identifier")]
     public async Task<ActionResult<List<Identifier>>> GetIdentifiers([FromRoute] Guid bookId)
     {
-        var identifiers = await IdentifierProvider.GetByBook(bookId);
+        var identifiers = await this.IdentifierProvider.GetByBook(bookId);
 
-        return Ok(identifiers);
+        return this.Ok(identifiers);
     }
 
     [HttpGet("{bookId:guid}/category")]
     public async Task<ActionResult<List<Category>>> GetCategories([FromRoute] Guid bookId)
     {
-        var categories = await CategoryProvider.GetByBook(bookId);
+        var categories = await this.CategoryProvider.GetByBook(bookId);
 
-        return Ok(categories);
+        return this.Ok(categories);
     }
 
     [HttpGet("{bookId:guid}/review")]
     public async Task<ActionResult<List<Category>>> GetReviews([FromRoute] Guid bookId, [FromQuery]QueryParameters query)
     {
-        var reviews = await BookProvider.GetReviews(bookId, query.Page, query.PerPage);
+        var reviews = await this.BookProvider.GetReviews(bookId, query.Page, query.PerPage);
 
-        return Ok(reviews);
+        return this.Ok(reviews);
     }
 
 }

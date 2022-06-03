@@ -2,13 +2,13 @@ using BookSearch.API.Enums;
 using BookSearch.API.Providers;
 using BookSearch.API.Tests.Abstracts;
 
-namespace BookSearch.API.Tests.Repositores;
+namespace BookSearch.API.Tests.Repositories;
 
 public class UserProviderTest : BaseTest
 {
     public UserProviderTest() : base()
     {
-        this.UserProvider = new UserProvider(Context, PasswordHasher);
+        this.UserProvider = new UserProvider(this.Context, this.PasswordHasher);
     }
 
     public UserProvider UserProvider { get; }
@@ -16,66 +16,76 @@ public class UserProviderTest : BaseTest
     [Test]
     public async Task GetByEmailTest()
     {
-        var mock = Users.First();
-        var user = await UserProvider.GetByEmail(mock.Email);
+        var mock = this.Users.First();
+        var user = await this.UserProvider.GetByEmail(mock.Email);
 
-        Assert.IsNotNull(user);
-        Assert.IsNotNull(user?.Id);
-        Assert.AreEqual(user?.Username, mock.Username);
-        Assert.AreEqual(user?.Email, mock.Email);
-        Assert.IsNull(user?.Password);
-        Assert.IsNull(user?.Person);
+        Assert.That(user, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(user?.Id, Is.Not.Null);
+            Assert.That(mock.Username, Is.EqualTo(user?.Username));
+            Assert.That(mock.Email, Is.EqualTo(user?.Email));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(user?.Password, Is.Null);
+            Assert.That(user?.Person, Is.Null);
+        });
+        user = await this.UserProvider.GetByEmail("test@gatoninja.com.br");
 
-        user = await UserProvider.GetByEmail("test@gatoninja.com.br");
-
-        Assert.IsNull(user);
+        Assert.That(user, Is.Null);
     }
 
     [Test]
     public async Task GetByIdTest()
     {
-        var mock = Users.First();
-        var user = await UserProvider.GetByIdAsync(mock.Id);
+        var mock = this.Users.First();
+        var user = await this.UserProvider.GetByIdAsync(mock.Id);
 
-        Assert.IsNotNull(user);
-        Assert.IsNotNull(user?.Id);
-        Assert.IsNull(user?.Password);
-        Assert.AreEqual(user?.Username, mock.Username);
-        Assert.AreEqual(user?.Email, mock.Email);
-        Assert.AreEqual(user?.Person.FirstName, mock.Person.FirstName);
-        Assert.AreEqual(user?.Person.LastName, mock.Person.LastName);
+        Assert.That(user, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(user?.Id, Is.Not.Null);
+            Assert.That(user?.Password, Is.Null);
+            Assert.That(mock.Username, Is.EqualTo(user?.Username));
+            Assert.That(mock.Email, Is.EqualTo(user?.Email));
+            Assert.That(mock.Person.FirstName, Is.EqualTo(user?.Person.FirstName));
+            Assert.That(mock.Person.LastName, Is.EqualTo(user?.Person.LastName));
+        });
+        
+        user = await this.UserProvider.GetByIdAsync(Guid.NewGuid());
 
-        user = await UserProvider.GetByIdAsync(Guid.NewGuid());
-
-        Assert.IsNull(user);
+        Assert.That(user, Is.Null);
     }
 
     [Test]
     public async Task DoLoginAsyncTest()
     {
-        var mock = Users.First();
-        var user = await UserProvider.DoLoginAsync(mock.Username, "ninja");
+        var mock = this.Users.First();
+        var user = await this.UserProvider.DoLoginAsync(mock.Username, "ninja");
 
-        Assert.IsNotNull(user);
-        Assert.IsNotNull(user?.Id);
-        Assert.IsNull(user?.Password);
-        Assert.AreEqual(user?.Username, mock.Username);
-        Assert.AreEqual(user?.Email, mock.Email);
-        Assert.IsNull(user?.Person);
+        Assert.That(user, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(user?.Id, Is.Not.Null);
+            Assert.That(user?.Password, Is.Null);
+            Assert.That(mock.Username, Is.EqualTo(user?.Username));
+            Assert.That(mock.Email, Is.EqualTo(user?.Email));
+            Assert.That(user?.Person, Is.Null);
+        });
+        user = await this.UserProvider.DoLoginAsync("test", "test");
 
-        user = await UserProvider.DoLoginAsync("test", "test");
-
-        Assert.IsNull(user);
+        Assert.That(user, Is.Null);
     }
 
     [Test]
     public async Task InsertAsyncTest()
     {
-        var mock = Users.First();
+        var mock = this.Users.First();
         mock.Id = Guid.Empty;
-        var user = await UserProvider.InsertAsync(mock);
+        var user = await this.UserProvider.InsertAsync(mock);
 
-        Assert.IsNull(user);
+        Assert.That(user, Is.Null);
 
         // var newUser = new User("admin", "admin", "admin@gatoninja.com.br", new Person("Admin", "Admin"));
         // var insertedUser = await UserProvider.InsertAsync(newUser);
@@ -91,31 +101,31 @@ public class UserProviderTest : BaseTest
     [Test]
     public void ChangePasswordAsyncTest()
     {
-        var mock = Users.First();
+        var mock = this.Users.First();
 
         Assert.DoesNotThrowAsync(async () =>
         {
-            await UserProvider.ChangePassword(mock.Email, "ninjanovo");
+            await this.UserProvider.ChangePassword(mock.Email, "ninjanovo");
         });
     }
 
     [Test]
     public void ValidateNewUserTest()
     {
-        var mock = Users.First();
-        var existingUsername = UserProvider.ValidateNewUser(mock);
+        var mock = this.Users.First();
+        var existingUsername = this.UserProvider.ValidateNewUser(mock);
 
-        Assert.AreEqual(existingUsername, EnumNewUserCheck.ExistingUsername);
+        Assert.That(EnumNewUserCheck.ExistingUsername, Is.EqualTo(existingUsername));
 
         mock.Username = "novousername";
-        var existingEmail = UserProvider.ValidateNewUser(mock);
+        var existingEmail = this.UserProvider.ValidateNewUser(mock);
 
-        Assert.AreEqual(existingEmail, EnumNewUserCheck.ExistingEmail);
+        Assert.That(EnumNewUserCheck.ExistingEmail, Is.EqualTo(existingEmail));
 
         mock.Email = "novo@gatoninja.com.br";
 
-        var valid = UserProvider.ValidateNewUser(mock);
+        var valid = this.UserProvider.ValidateNewUser(mock);
 
-        Assert.AreEqual(valid, EnumNewUserCheck.Valid);
+        Assert.That(EnumNewUserCheck.Valid, Is.EqualTo(valid));
     }
 }

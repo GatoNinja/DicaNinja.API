@@ -1,4 +1,4 @@
-﻿using BookSearch.API.Abstracts;
+using BookSearch.API.Abstracts;
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,7 +15,7 @@ public class Category : BaseModel
 
     public Category(string categoryName) : this()
     {
-        Name = categoryName;
+        this.Name = categoryName;
     }
 
     [Column("name")]

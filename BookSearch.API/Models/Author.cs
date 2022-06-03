@@ -1,4 +1,4 @@
-﻿using BookSearch.API.Abstracts;
+using BookSearch.API.Abstracts;
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,7 +15,7 @@ public class Author : BaseModel
 
     public Author(string name)
     {
-        Name = name;
+        this.Name = name;
     }
 
     [Column("name")]

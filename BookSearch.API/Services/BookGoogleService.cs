@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BookSearch.API.Models;
 using BookSearch.API.Providers.Interfaces;
 using BookSearch.API.Response;
@@ -19,9 +19,9 @@ public class BookGoogleService
             ApplicationName = config.Google.Application,
         });
 
-        Service = service;
-        Mapper = mapper;
-        BookProvider = bookProvider;
+        this.Service = service;
+        this.Mapper = mapper;
+        this.BookProvider = bookProvider;
     }
 
     private IMapper Mapper { get; }
@@ -30,9 +30,9 @@ public class BookGoogleService
 
     public async Task<IEnumerable<BookResponse>> QueryBooks(string query)
     {
-        var request = Service.Volumes.List(query);
+        var request = this.Service.Volumes.List(query);
         var response = await request.ExecuteAsync();
-        var books = Mapper.Map<List<BookResponse>>(response.Items);
+        var books = this.Mapper.Map<List<BookResponse>>(response.Items);
 
         foreach (var book in books)
         {
@@ -56,7 +56,7 @@ public class BookGoogleService
 
     public async Task<Book?> CreateBookFromGoogle(string identifier)
     {
-        var request = Service.Volumes.List(identifier);
+        var request = this.Service.Volumes.List(identifier);
         var response = await request.ExecuteAsync();
 
         if (response is null)
@@ -70,7 +70,7 @@ public class BookGoogleService
         }
 
         var item = response.Items.First();
-        var bookResponse = Mapper.Map<BookResponse>(item);
+        var bookResponse = this.Mapper.Map<BookResponse>(item);
         bookResponse.Identifiers = new List<IdentifierResponse>();
 
         foreach (var id in item.VolumeInfo.IndustryIdentifiers)
@@ -78,7 +78,7 @@ public class BookGoogleService
             bookResponse.Identifiers.Add(new IdentifierResponse(id.Identifier, id.Type));
         }
 
-        var book = await BookProvider.CreateFromResponse(bookResponse);
+        var book = await this.BookProvider.CreateFromResponse(bookResponse);
 
 
 

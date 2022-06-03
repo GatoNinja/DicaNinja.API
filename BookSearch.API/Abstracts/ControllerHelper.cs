@@ -10,7 +10,7 @@ public class ControllerHelper : ControllerBase
     {
         get
         {
-            var claim = User.Claims.FirstOrDefault(claimToSearch => claimToSearch.Type == "Id");
+            var claim = this.User.Claims.FirstOrDefault(claimToSearch => claimToSearch.Type == "Id");
 
             if (claim is null)
             {

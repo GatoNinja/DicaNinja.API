@@ -13,7 +13,7 @@ public class ProfileController : ControllerHelper
 {
     public ProfileController(IProfileProvider profileProvider)
     {
-        ProfileProvider = profileProvider;
+        this.ProfileProvider = profileProvider;
     }
 
     private IProfileProvider ProfileProvider { get; }
@@ -21,13 +21,13 @@ public class ProfileController : ControllerHelper
     [HttpGet]
     public async Task<ActionResult<UserProfileResponse>> GetUserProfileAsync()
     {
-        var userProfile = await ProfileProvider.GetUserProfileAsync(UserId);
+        var userProfile = await this.ProfileProvider.GetUserProfileAsync(this.UserId);
 
         if (userProfile is null)
         {
-            return NotFound();
+            return this.NotFound();
         }
 
-        return Ok(userProfile);
+        return this.Ok(userProfile);
     }
 }

@@ -4,8 +4,8 @@ public record QueryParameters
 {
     public QueryParameters()
     {
-        Page = Page < 1 ? 1 : Page;
-        PerPage = PerPage > 10 ? 10 : PerPage;
+        this.Page = this.Page < 1 ? 1 : this.Page;
+        this.PerPage = this.PerPage > 10 ? 10 : this.PerPage;
     }
 
     public int Page { get; } = 1;

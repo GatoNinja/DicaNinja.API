@@ -1,4 +1,4 @@
-﻿using BookSearch.API.Abstracts;
+using BookSearch.API.Abstracts;
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,8 +15,8 @@ public class Bookmark : BaseModel
     
     public Bookmark(Guid userId, Guid bookId)
     {
-        UserId = userId;
-        BookId = bookId;
+        this.UserId = userId;
+        this.BookId = bookId;
     }
 
     [Column("user_id")]

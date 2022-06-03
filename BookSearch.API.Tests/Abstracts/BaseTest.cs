@@ -2,6 +2,7 @@ using BookSearch.API.Contexts;
 using BookSearch.API.Models;
 using BookSearch.API.Services;
 using BookSearch.API.Startup;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
@@ -14,12 +15,40 @@ public abstract class BaseTest
 
     protected PasswordHasher PasswordHasher { get; }
 
-    protected List<User> Users = new List<User>
+    protected List<User> Users = new()
     {
-        new User("gato", "ninja", "ninja@gatoninja.com.br", new Person("Gato", "Ninja"))
+        new User("gato", "ninja", "ninja@gatoninja.com.br", new Person("Gato", "Ninja")) { Reviews = new()},
+        new User("guest", "guest", "guest@gatoninja.com.br", new Person("Guest", "User"))
     };
 
-    public BaseTest()
+    protected List<Author> Authors = new() { new Author("Douglas Adams") };
+
+    protected List<Category> Categories = new()
+    {
+        new Category("Aventura")
+    };
+
+    protected List<Book> Books = new()
+    {
+        new Book("A vida, o universo e tudo o mais", "O guia do mochileiro das galáxias", "pt", "Lindo livro", 100, "A Brasileia", DateTime.Now.ToShortDateString(), "imagem.png", 4.9)
+    };
+
+    protected List<Identifier> Identifiers = new()
+    {
+        new Identifier{ Type = "ISBN_13", Isbn = "123434534566"},
+        new Identifier { Type = "ISBN_10", Isbn = "123434224"}
+    };
+
+    protected List<Review> Reviews = new()
+    {
+        //new Review()
+        //{
+        //    Rating = 4,
+        //    Text = "Meu review lindo",
+        //}
+    };
+
+    protected BaseTest()
     {
         var inMemorySettings = new Dictionary<string, string> {
                                 {"HashIterations", "10000"}
@@ -29,23 +58,47 @@ public abstract class BaseTest
             .AddInMemoryCollection(inMemorySettings)
             .Build();
         var configurationReader = new ConfigurationReader(configuration);
-        PasswordHasher = new PasswordHasher(configurationReader);
+        this.PasswordHasher = new PasswordHasher(configurationReader);
 
-        foreach (var user in Users)
+        foreach (var user in this.Users)
         {
-            user.Password = PasswordHasher.Hash(user.Password);
+            user.Password = this.PasswordHasher.Hash(user.Password);
         }
 
         var contextOptions = new DbContextOptionsBuilder<BaseContext>()
                 .UseInMemoryDatabase("BookSearch")
                 .ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                 .Options;
-        Context = new BaseContext(contextOptions);
+        this.Context = new BaseContext(contextOptions);
 
-        Context.Database.EnsureDeleted();
-        Context.Database.EnsureCreated();
+        this.Context.Database.EnsureDeleted();
+        this.Context.Database.EnsureCreated();
 
-        Context.Users.AddRange(Users);
-        Context.SaveChanges();
+        var firstUser = this.Users.First();
+
+        foreach (var book in this.Books)
+        {
+            book.Authors = new();
+            book.Bookmarks = new();
+            book.Categories = new();
+            book.Identifiers = new();
+            book.Reviews = new();
+
+            book.Authors.AddRange(this.Authors);
+            book.Bookmarks.Add(new Bookmark
+            {
+                User = firstUser
+            });
+            book.Categories.AddRange(this.Categories);
+            book.Identifiers.AddRange(this.Identifiers);
+            book.Reviews.AddRange(this.Reviews);
+        }
+
+        firstUser.Reviews = new();
+        firstUser.Reviews.AddRange(this.Reviews);
+        
+        this.Context.Users.AddRange(this.Users);
+        this.Context.Books.AddRange(this.Books);
+        this.Context.SaveChanges();
     }
 }

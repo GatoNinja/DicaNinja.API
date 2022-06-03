@@ -13,9 +13,9 @@ public class ForgotPasswordController : ControllerHelper
 {
     public ForgotPasswordController(ISmtpService smtpService, IPasswordRecoveryProvider passwordRecoveryProvider, IUserProvider userProvider)
     {
-        SmtpService = smtpService;
-        PasswordRecoveryProvider = passwordRecoveryProvider;
-        UserProvider = userProvider;
+        this.SmtpService = smtpService;
+        this.PasswordRecoveryProvider = passwordRecoveryProvider;
+        this.UserProvider = userProvider;
     }
 
     private ISmtpService SmtpService { get; }
@@ -27,7 +27,7 @@ public class ForgotPasswordController : ControllerHelper
     [HttpPost]
     public async Task<ActionResult> PostForgotPasswordAsync([FromBody] ForgotPasswordRequest request)
     {
-        var user = await UserProvider.GetByEmail(request.Email);
+        var user = await this.UserProvider.GetByEmail(request.Email);
 
         if (user is null)
         {
@@ -37,11 +37,11 @@ public class ForgotPasswordController : ControllerHelper
         }
 
         var passwordRecovery = new PasswordRecovery(user);
-        var inserted = await PasswordRecoveryProvider.InsertAsync(passwordRecovery);
+        var inserted = await this.PasswordRecoveryProvider.InsertAsync(passwordRecovery);
         var code = inserted.Code;
         var bodyMessage = @$"Seu código de recuperação para o login é {code}";
-        SmtpService.SendEmail("ygor@ygorlazaro.com", "Recupere sua senha", bodyMessage);
+        this.SmtpService.SendEmail("ygor@ygorlazaro.com", "Recupere sua senha", bodyMessage);
 
-        return Ok(new MessageResponse("Seu e-mail de recuperação foi enviado"));
+        return this.Ok(new MessageResponse("Seu e-mail de recuperação foi enviado"));
     }
 }

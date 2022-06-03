@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 
 using BookSearch.API.Contexts;
 using BookSearch.API.Models;
@@ -13,11 +13,11 @@ public class BookProvider : IBookProvider
 {
     public BookProvider(BaseContext context, IMapper mapper, IIdentifierProvider identifierProvider, IAuthorProvider authorProvider, ICategoryProvider categoryProvider)
     {
-        Context = context;
-        Mapper = mapper;
-        IdentifierProvider = identifierProvider;
-        AuthorProvider = authorProvider;
-        CategoryProvider = categoryProvider;
+        this.Context = context;
+        this.Mapper = mapper;
+        this.IdentifierProvider = identifierProvider;
+        this.AuthorProvider = authorProvider;
+        this.CategoryProvider = categoryProvider;
     }
 
     private BaseContext Context { get; }
@@ -28,7 +28,7 @@ public class BookProvider : IBookProvider
 
     public async Task<Book?> CreateFromResponse(BookResponse response)
     {
-        var book = Mapper.Map<Book>(response);
+        var book = this.Mapper.Map<Book>(response);
 
         book.Identifiers.RemoveAll(identifier => identifier.Id == Guid.Empty);
         book.Authors.RemoveAll(identifier => identifier.Id == Guid.Empty);
@@ -36,7 +36,7 @@ public class BookProvider : IBookProvider
 
         foreach (var identifier in response.Identifiers)
         {
-            var bookIdentifier = await IdentifierProvider.GetOrCreate(identifier);
+            var bookIdentifier = await this.IdentifierProvider.GetOrCreate(identifier);
 
             if (bookIdentifier is null)
             {
@@ -48,7 +48,7 @@ public class BookProvider : IBookProvider
 
         foreach (var author in response.Authors)
         {
-            var authorEntity = await AuthorProvider.GetOrCreate(author);
+            var authorEntity = await this.AuthorProvider.GetOrCreate(author);
 
             if (authorEntity is null)
             {
@@ -60,7 +60,7 @@ public class BookProvider : IBookProvider
 
         foreach (var category in response.Categories)
         {
-            var categoryEntity = await CategoryProvider.GetOrCreate(category);
+            var categoryEntity = await this.CategoryProvider.GetOrCreate(category);
 
             if (categoryEntity is null)
             {
@@ -70,22 +70,22 @@ public class BookProvider : IBookProvider
             book.Categories.Add(categoryEntity);
         }
 
-        Context.Books.Add(book);
+        this.Context.Books.Add(book);
 
-        await Context.SaveChangesAsync();
+        await this.Context.SaveChangesAsync();
 
         return book;
     }
 
     public async Task<Book?> GetByIdentifier(string identifier, string type)
     {
-        return await Context.Books.FirstOrDefaultAsync(book => book.Identifiers.Any(i => i.Type == type && i.Isbn == identifier));
+        return await this.Context.Books.FirstOrDefaultAsync(book => book.Identifiers.Any(i => i.Type == type && i.Isbn == identifier));
     }
 
     public async Task<List<Book>> GetBookmarks(Guid userId, int page, int perPage)
     {
-        var query = from book in Context.Books
-                    join bookmark in Context.Bookmarks on book.Id equals bookmark.BookId
+        var query = from book in this.Context.Books
+                    join bookmark in this.Context.Bookmarks on book.Id equals bookmark.BookId
                     where bookmark.UserId == userId
                     select book;
 
@@ -107,7 +107,7 @@ public class BookProvider : IBookProvider
 
             foreach (var identifier in book.Identifiers)
             {
-                book.IsBookmarked = await IsBookmark(userId, identifier.Isbn, identifier.Type);
+                book.IsBookmarked = await this.IsBookmark(userId, identifier.Isbn, identifier.Type);
 
                 if (book.IsBookmarked)
                 {
@@ -119,7 +119,7 @@ public class BookProvider : IBookProvider
 
     public async Task<IEnumerable<Review>> GetReviews(Guid bookId, int page = 1, int perPage = 10)
     {
-        var query = Context.Reviews.Where(review => review.BookId == bookId);
+        var query = this.Context.Reviews.Where(review => review.BookId == bookId);
 
         return await query
             .OrderByDescending(review => review.Created)
@@ -130,20 +130,20 @@ public class BookProvider : IBookProvider
 
     public async Task<double> AverageRating(Guid bookId)
     {
-        return await Context.Reviews
+        return await this.Context.Reviews
             .Where(review => review.BookId == bookId)
             .AverageAsync(review => review.Rating);
     }
 
     public async Task<Book?> GetById(Guid bookId)
     {
-        return await Context.Books.FirstOrDefaultAsync(book => book.Id == bookId);
+        return await this.Context.Books.FirstOrDefaultAsync(book => book.Id == bookId);
     }
 
     private async Task<bool> IsBookmark(Guid userId, string identifier, string type)
     {
-        var query = from bookmark in Context.Bookmarks
-                    join book in Context.Books on bookmark.BookId equals book.Id
+        var query = from bookmark in this.Context.Bookmarks
+                    join book in this.Context.Books on bookmark.BookId equals book.Id
                     where bookmark.UserId == userId && book.Identifiers.Any(i => i.Isbn == identifier && i.Type == type)
                     select bookmark;
 

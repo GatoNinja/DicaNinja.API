@@ -14,8 +14,8 @@ public class Follower : BaseModel
 
     public Follower(Guid userId, Guid followedUserId)
     {
-        UserId = userId;
-        FollowedId = followedUserId;
+        this.UserId = userId;
+        this.FollowedId = followedUserId;
     }
 
     [Required]
