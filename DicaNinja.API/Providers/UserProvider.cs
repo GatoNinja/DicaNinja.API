@@ -167,4 +167,3 @@ public sealed class UserProvider : IUserProvider
         return await query.FirstOrDefaultAsync();
     }
 }
-7
