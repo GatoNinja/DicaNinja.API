@@ -108,7 +108,7 @@ public sealed class UserProvider : IUserProvider
                     join user in this.Context.Users on follower.FollowedId equals user.Id
                     join person in this.Context.People on user.Id equals person.UserId
                     orderby person.FirstName, person.LastName
-                    where follower.UserId == userId
+                    where follower.FollowedId == userId
                     select new User(user.Id, user.Username, person);
 
         return await query.Skip((page - 1) * pageSize)
@@ -122,7 +122,7 @@ public sealed class UserProvider : IUserProvider
                     join user in this.Context.Users on follower.FollowedId equals user.Id
                     join person in this.Context.People on user.Id equals person.UserId
                     orderby person.FirstName, person.LastName
-                    where follower.FollowedId == userId
+                    where follower.UserId == userId
                     select new User(user.Id, user.Username, person);
 
         return await query.Skip((page - 1) * pageSize)
@@ -157,9 +157,11 @@ public sealed class UserProvider : IUserProvider
 
     public async Task<User?> GetByUsernameOrEmail(string parameter)
     {
+        _ = Guid.TryParse(parameter, out var id);
+
         var query = from user in this.Context.Users
                     join person in this.Context.People on user.Id equals person.UserId
-                    where user.Email == parameter || user.Username == parameter
+                    where user.Email == parameter || user.Username == parameter || user.Id == id
                     select new User(user.Id, user.Username, user.Email, person);
 
         return await query.FirstOrDefaultAsync();

@@ -132,7 +132,9 @@ public class BookProvider : IBookProvider
     {
         return await this.Context.Reviews
             .Where(review => review.BookId == bookId)
-            .AverageAsync(review => review.Rating);
+            .Select(review => review.Rating)
+            .DefaultIfEmpty()
+            .AverageAsync(rating => rating);
     }
 
     public async Task<Book?> GetById(Guid bookId)

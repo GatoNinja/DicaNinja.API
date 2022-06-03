@@ -24,11 +24,11 @@ public class FollowerController : ControllerHelper
     [HttpPost()]
     public async Task<ActionResult<bool>> ChangeFollowStatus([FromBody] FollowInfo request)
     {
-        if (request.Status == EnumStatusFollow.Follow)
+        return request.Status switch
         {
-            return await this.FollowerProvider.Follow(this.UserId, request.FollowerId);
-        }
-
-        return await this.FollowerProvider.Unfollow(this.UserId, request.FollowerId);
+            EnumStatusFollow.Follow => await this.FollowerProvider.Follow(this.UserId, request.FollowerId),
+            EnumStatusFollow.Unfollow => await this.FollowerProvider.Unfollow(this.UserId, request.FollowerId),
+            _ => throw new NotImplementedException()
+        };
     }
 }
