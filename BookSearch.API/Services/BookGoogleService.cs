@@ -43,11 +43,11 @@ public class BookGoogleService
                 continue;
             }
 
-            book.Identifiers = new List<IdentifierDTO>();
+            book.Identifiers = new List<IdentifierResponse>();
 
             foreach (var identifier in identifiers)
             {
-                book.Identifiers.Add(new IdentifierDTO(identifier.Identifier, identifier.Type));
+                book.Identifiers.Add(new IdentifierResponse(identifier.Identifier, identifier.Type));
             }
         }
 
@@ -71,11 +71,11 @@ public class BookGoogleService
 
         var item = response.Items.First();
         var bookResponse = Mapper.Map<BookResponse>(item);
-        bookResponse.Identifiers = new List<IdentifierDTO>();
+        bookResponse.Identifiers = new List<IdentifierResponse>();
 
         foreach (var id in item.VolumeInfo.IndustryIdentifiers)
         {
-            bookResponse.Identifiers.Add(new IdentifierDTO(id.Identifier, id.Type));
+            bookResponse.Identifiers.Add(new IdentifierResponse(id.Identifier, id.Type));
         }
 
         var book = await BookRepository.CreateFromResponse(bookResponse);

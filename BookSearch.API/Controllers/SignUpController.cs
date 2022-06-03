@@ -5,7 +5,7 @@ using BookSearch.API.Repository.Interfaces;
 using BookSearch.API.Request;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookSearch.API.Controller;
+namespace BookSearch.API.Controllers;
 
 [Route("[controller]")]
 public class SignUpController : ControllerBase

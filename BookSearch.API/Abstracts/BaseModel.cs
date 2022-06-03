@@ -1,35 +1,27 @@
-﻿
-using BookSearch.API.Contexts.Configurations;
-
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
-namespace BookSearch.API.Abstracts
+namespace BookSearch.API.Abstracts;
+
+public abstract class BaseModel
 {
-    public abstract record BaseModel : ISoftDelete
+    public BaseModel()
     {
-        protected BaseModel()
-        {
-            Created = DateTimeOffset.Now;
-            Updated = DateTimeOffset.Now;
-            Id = Guid.Empty;
-        }
-
-        [Key, Required]
-        [Column("id")]
-        public Guid Id { get; set; }
-
-        [JsonIgnore, Required]
-        [Column("created")]
-        public DateTimeOffset Created { get; set; }
-
-        [Required, JsonIgnore]
-        [Column("updated")]
-        public DateTimeOffset Updated { get; set; }
-
-        [JsonIgnore]
-        [Column("deleted")]
-        public DateTimeOffset? Deleted { get; set; }
+        Created = DateTimeOffset.Now;
+        Updated = DateTimeOffset.Now;
+        Id = Guid.Empty;
     }
+
+    [Key, Required]
+    [Column("id")]
+    public Guid Id { get; set; }
+
+    [JsonIgnore, Required]
+    [Column("created")]
+    public DateTimeOffset Created { get; set; }
+
+    [Required, JsonIgnore]
+    [Column("updated")]
+    public DateTimeOffset Updated { get; set; }
 }

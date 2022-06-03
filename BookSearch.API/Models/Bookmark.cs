@@ -6,8 +6,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace BookSearch.API.Models;
 
 [Table("bookmarks")]
-public record Bookmark : BaseModel
+public class Bookmark : BaseModel
 {
+    public Bookmark()
+    {
+        
+    }
+    
     public Bookmark(Guid userId, Guid bookId)
     {
         UserId = userId;

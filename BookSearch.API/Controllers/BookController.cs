@@ -31,10 +31,10 @@ public class BookController : ControllerHelper
     private BookGoogleService Service { get; }
     private IBookRepository BookRepository { get; }
     private IMapper Mapper { get; }
-    public IAuthorRepository AuthorRepository { get; }
-    public ICategoryRepository CategoryRepository { get; }
-    public IIdentifierRepository IdentifierRepository { get; }
-    public IBookmarkRepository BookmarkRepository { get; }
+    private IAuthorRepository AuthorRepository { get; }
+    private ICategoryRepository CategoryRepository { get; }
+    private IIdentifierRepository IdentifierRepository { get; }
+    private IBookmarkRepository BookmarkRepository { get; }
 
     [HttpGet]
     public async Task<ActionResult<List<BookResponse>>> GetAsync([FromQuery] string query)
@@ -47,7 +47,7 @@ public class BookController : ControllerHelper
     }
 
     [HttpGet("bookmark")]
-    public async Task<ActionResult<List<BookResponse>>> GetBookmarks([FromQuery] Helpers.QueryString query)
+    public async Task<ActionResult<List<BookResponse>>> GetBookmarks([FromQuery] Helpers.QueryParameters query)
     {
         var books = await BookRepository.GetBookmarks(UserId, query.Page, query.PerPage);
         var totalBookmarks = await BookmarkRepository.GetBookmarkCount(UserId);
@@ -57,7 +57,26 @@ public class BookController : ControllerHelper
         return Ok(paginated);
     }
 
-    [HttpGet("{bookId}/author")]
+    [HttpGet("{bookId:guid}")]
+    public async Task<ActionResult<BookResponse>> GetBook([FromRoute] Guid bookId)
+    {
+        var book = await BookRepository.GetById(bookId);
+
+        if (book == null)
+        {
+            return NotFound();
+        }
+
+        var mapped = Mapper.Map<BookResponse>(book);
+        var internalRating = await BookRepository.AverageRating(bookId);
+
+        mapped.InternalRating = internalRating;
+
+
+        return Ok(mapped);
+    }
+
+    [HttpGet("{bookId:guid}/author")]
     public async Task<ActionResult<List<Author>>> GetAuthors([FromRoute] Guid bookId)
     {
         var authors = await AuthorRepository.GetByBook(bookId);
@@ -65,7 +84,7 @@ public class BookController : ControllerHelper
         return Ok(authors);
     }
 
-    [HttpGet("{bookId}/identifier")]
+    [HttpGet("{bookId:guid}/identifier")]
     public async Task<ActionResult<List<Identifier>>> GetIdentifiers([FromRoute] Guid bookId)
     {
         var identifiers = await IdentifierRepository.GetByBook(bookId);
@@ -73,12 +92,20 @@ public class BookController : ControllerHelper
         return Ok(identifiers);
     }
 
-    [HttpGet("{bookId}/category")]
+    [HttpGet("{bookId:guid}/category")]
     public async Task<ActionResult<List<Category>>> GetCategories([FromRoute] Guid bookId)
     {
         var categories = await CategoryRepository.GetByBook(bookId);
 
         return Ok(categories);
+    }
+
+    [HttpGet("{bookId:guid}/review")]
+    public async Task<ActionResult<List<Category>>> GetReviews([FromRoute] Guid bookId, [FromQuery]QueryParameters query)
+    {
+        var reviews = await BookRepository.GetReviews(bookId, query.Page, query.PerPage);
+
+        return Ok(reviews);
     }
 
 }

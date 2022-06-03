@@ -1,4 +1,6 @@
-﻿namespace BookSearch.API.Response;
+﻿using BookSearch.API.Models;
+
+namespace BookSearch.API.Response;
 
 public class BookResponse
 {
@@ -14,8 +16,9 @@ public class BookResponse
     public double AverageRating { get; set; }
     public IEnumerable<string> Categories { get; set; } = default!;
     public IEnumerable<string> Authors { get; set; } = default!;
-    public List<IdentifierDTO> Identifiers { get; set; } = default!;
+    public List<IdentifierResponse> Identifiers { get; set; } = default!;
     public bool IsBookmarked { get; set; } = false;
+    public double InternalRating { get; set; }
 
     public BookResponse()
     {

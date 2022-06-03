@@ -1,7 +1,7 @@
 
 using System.Security.Claims;
 using BookSearch.API.Models;
-using BookSearch.API.Response.Token;
+using BookSearch.API.Response;
 
 namespace BookSearch.API.Services;
 

@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace BookSearch.API.Migrations
 {
-    [DbContext(typeof(DefaultContext))]
+    [DbContext(typeof(BaseContext))]
     [Migration("20220602164500_Bookmark")]
     partial class Bookmark
     {

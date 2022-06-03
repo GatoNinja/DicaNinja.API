@@ -9,22 +9,22 @@ namespace BookSearch.API.Repository;
 
 public class PasswordRecoveryRepository : IPasswordRecoveryRepository
 {
-    public PasswordRecoveryRepository(DefaultContext context)
+    public PasswordRecoveryRepository(BaseContext context)
     {
         Context = context;
     }
 
-    private DefaultContext Context { get; }
+    private BaseContext Context { get; }
 
     public async Task<PasswordRecovery?> GetByEmailAndCode(string email, string code)
     {
         var query = from passwordRecovery in Context.PasswordRecoveries
-                    join user in Context.Users on passwordRecovery.UserId equals user.Id
-                    where user.Email == email
-                          && passwordRecovery.Code == code
-                          && passwordRecovery.IsActive
-                          && passwordRecovery.ExpireDate >= DateTimeOffset.Now
-                    select passwordRecovery;
+            join user in Context.Users on passwordRecovery.UserId equals user.Id
+            where user.Email == email
+                  && passwordRecovery.Code == code
+                  && passwordRecovery.IsActive
+                  && passwordRecovery.ExpireDate >= DateTimeOffset.Now
+            select passwordRecovery;
 
         return await query.FirstOrDefaultAsync();
     }

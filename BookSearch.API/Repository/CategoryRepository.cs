@@ -7,12 +7,12 @@ namespace BookSearch.API.Repository;
 
 public class CategoryRepository : ICategoryRepository
 {
-    public CategoryRepository(DefaultContext context)
+    public CategoryRepository(BaseContext context)
     {
         Context = context;
     }
 
-    private DefaultContext Context { get; }
+    private BaseContext Context { get; }
 
     public async Task<List<Category>> GetByBook(Guid bookId)
     {

@@ -8,7 +8,7 @@ using System.Text.Json.Serialization;
 namespace BookSearch.API.Models;
 
 [Table("people")]
-public record Person : BaseModel
+public class Person : BaseModel
 {
     public Person()
     {

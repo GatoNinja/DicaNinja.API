@@ -9,13 +9,13 @@ namespace BookSearch.API.Repository;
 
 public sealed class RefreshTokenRepository : IRefreshTokenRepository
 {
-    public RefreshTokenRepository(DefaultContext context, IUserRepository userRepository)
+    public RefreshTokenRepository(BaseContext context, IUserRepository userRepository)
     {
         Context = context;
         UserRepository = userRepository;
     }
 
-    private DefaultContext Context { get; }
+    private BaseContext Context { get; }
     private IUserRepository UserRepository { get; }
 
     public string GenerateRefreshToken()
@@ -31,13 +31,13 @@ public sealed class RefreshTokenRepository : IRefreshTokenRepository
     public async Task<RefreshToken?> GetRefreshTokenAsync(string username, string value)
     {
         var query = from refreshToken in Context.RefreshTokens
-                    join user in Context.Users on refreshToken.UserId equals user.Id
-                    let selectedUser = new User(user.Id, user.Username, user.Email)
-                    where user.Username == username
-                          && refreshToken.IsActive
-                          && refreshToken.Value == value
-                    select new RefreshToken(refreshToken.Id, refreshToken.Value, refreshToken.RefreshTokenExpiryTime,
-                        selectedUser);
+            join user in Context.Users on refreshToken.UserId equals user.Id
+            let selectedUser = new User(user.Id, user.Username, user.Email)
+            where user.Username == username
+                  && refreshToken.IsActive
+                  && refreshToken.Value == value
+            select new RefreshToken(refreshToken.Id, refreshToken.Value, refreshToken.RefreshTokenExpiryTime,
+                selectedUser);
 
         return await query.FirstOrDefaultAsync();
     }

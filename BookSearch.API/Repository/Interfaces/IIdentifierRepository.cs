@@ -5,7 +5,7 @@ namespace BookSearch.API.Repository.Interfaces;
 
 public interface IIdentifierRepository
 {
-    Task<Identifier?> GetOrCreate(IdentifierDTO identifier);
+    Task<Identifier?> GetOrCreate(IdentifierResponse identifier);
 
     Task<List<Identifier>> GetByBook(Guid bookId);
 }

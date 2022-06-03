@@ -7,7 +7,7 @@ using BookSearch.API.Abstracts;
 namespace BookSearch.API.Models;
 
 [Table("users")]
-public record User : BaseModel
+public class User : BaseModel
 {
     public User()
     {
@@ -54,4 +54,5 @@ public record User : BaseModel
     [JsonIgnore]
     public virtual List<Bookmark> Bookmarks { get; set; } = default!;
 
+    public virtual List<Review> Reviews { get; set; } = default!;
 }

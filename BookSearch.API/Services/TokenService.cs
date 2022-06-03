@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using BookSearch.API.Models;
 using BookSearch.API.Repository.Interfaces;
-using BookSearch.API.Response.Token;
+using BookSearch.API.Response;
 using BookSearch.API.Startup;
 
 using Microsoft.IdentityModel.Tokens;
@@ -25,12 +25,12 @@ public sealed class TokenService : ITokenService
     public async Task<TokenResponse> GenerateTokenAsync(User user)
     {
         var claims = new List<Claim>
-    {
-        new("Id", user.Id.ToString()),
-        new(ClaimTypes.Name, user.Username),
-        new(ClaimTypes.Role, Config.Security.DefaultUserRole),
-        new(ClaimTypes.Email, user.Email)
-    };
+        {
+            new("Id", user.Id.ToString()),
+            new(ClaimTypes.Name, user.Username),
+            new(ClaimTypes.Role, Config.Security.DefaultUserRole),
+            new(ClaimTypes.Email, user.Email)
+        };
 
         var accessToken = GenerateAccessToken(claims);
         var refreshToken = RefreshTokenRepository.GenerateRefreshToken();

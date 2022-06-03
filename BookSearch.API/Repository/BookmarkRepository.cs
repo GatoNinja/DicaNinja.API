@@ -8,14 +8,14 @@ namespace BookSearch.API.Repository;
 
 public class BookmarkRepository : IBookmarkRepository
 {
-    public BookmarkRepository(DefaultContext context, IBookRepository bookRepository, BookGoogleService bookGoogleService)
+    public BookmarkRepository(BaseContext context, IBookRepository bookRepository, BookGoogleService bookGoogleService)
     {
         Context = context;
         BookRepository = bookRepository;
         BookGoogleService = bookGoogleService;
     }
 
-    private DefaultContext Context { get; }
+    private BaseContext Context { get; }
     private IBookRepository BookRepository { get; }
     private BookGoogleService BookGoogleService { get; }
 
@@ -63,9 +63,9 @@ public class BookmarkRepository : IBookmarkRepository
     private IQueryable<Bookmark> FilterByUser(Guid userId, string identifier, string type)
     {
         var query = from bookmark in Context.Bookmarks
-                    join book in Context.Books on bookmark.BookId equals book.Id
-                    where bookmark.UserId == userId && book.Identifiers.Any(i => i.Isbn == identifier && i.Type == type)
-                    select bookmark;
+            join book in Context.Books on bookmark.BookId equals book.Id
+            where bookmark.UserId == userId && book.Identifiers.Any(i => i.Isbn == identifier && i.Type == type)
+            select bookmark;
 
         return query;
     }

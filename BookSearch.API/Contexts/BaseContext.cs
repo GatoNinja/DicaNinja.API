@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookSearch.API.Contexts;
 
-public class DefaultContext : DbContext
+public class BaseContext : DbContext
 {
-    public DefaultContext(DbContextOptions<DefaultContext> options) : base(options)
+    public BaseContext(DbContextOptions<BaseContext> options) : base(options)
     {
     }
 
@@ -26,5 +26,6 @@ public class DefaultContext : DbContext
     public DbSet<Category> Categories { get; set; } = default!;
 
     public DbSet<Identifier> Identifiers { get; set; } = default!;
-}
 
+    public DbSet<Review> Reviews { get; set; } = default!;
+}

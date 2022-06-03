@@ -6,8 +6,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace BookSearch.API.Models;
 
 [Table("authors")]
-public record Author : BaseModel
+public class Author : BaseModel
 {
+    public Author()
+    {
+            
+    }
+
     public Author(string name)
     {
         Name = name;
@@ -15,7 +20,7 @@ public record Author : BaseModel
 
     [Column("name")]
     [Required]
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; }
 
-    public virtual List<Book> Books { get; set; } = default!;
+    public virtual IEnumerable<Book> Books { get; set; } = default!;
 }

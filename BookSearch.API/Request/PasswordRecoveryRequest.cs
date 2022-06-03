@@ -5,9 +5,9 @@ namespace BookSearch.API.Request;
 
 public record PasswordRecoveryRequest(
     [Required,MinLength(4),MaxLength(7)]
-string Code,
+    string Code,
     [Required, EmailAddress]
-string Email,
+    string Email,
     [Required,MinLength(4),MaxLength(48)]
-string NewPassword
+    string NewPassword
 );

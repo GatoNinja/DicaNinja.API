@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace BookSearch.API.Models;
 
 [Table("categories")]
-public record Category : BaseModel
+public class Category : BaseModel
 {
     public Category()
     {
@@ -25,5 +25,5 @@ public record Category : BaseModel
     [Column("book_id")]
     public Guid BookId { get; set; }
 
-    public virtual List<Book> Books { get; set; } = default!;
+    public virtual IEnumerable<Book> Books { get; set; } = default!;
 }

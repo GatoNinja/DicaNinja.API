@@ -2,11 +2,11 @@ using BookSearch.API.Abstracts;
 using BookSearch.API.Helpers;
 using BookSearch.API.Repository.Interfaces;
 using BookSearch.API.Request;
-using BookSearch.API.Response.Token;
+using BookSearch.API.Response;
 using BookSearch.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookSearch.API.Controller;
+namespace BookSearch.API.Controllers;
 
 [Route("token")]
 public class TokenController : ControllerHelper
@@ -17,9 +17,9 @@ public class TokenController : ControllerHelper
         TokenService = tokenService;
     }
 
-    public IUserRepository UserRepository { get; }
+    private IUserRepository UserRepository { get; }
 
-    public ITokenService TokenService { get; }
+    private ITokenService TokenService { get; }
 
     [HttpPost, ProducesResponseType(StatusCodes.Status201Created), ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<TokenResponse>> PostTokenAsync([FromBody] LoginRequest request)

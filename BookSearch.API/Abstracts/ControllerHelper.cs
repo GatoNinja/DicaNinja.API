@@ -2,23 +2,22 @@ using BookSearch.API.Helpers;
 
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookSearch.API.Abstracts
+namespace BookSearch.API.Abstracts;
+
+public class ControllerHelper : ControllerBase
 {
-    public class ControllerHelper : ControllerBase
+    protected Guid UserId
     {
-        public Guid UserId
+        get
         {
-            get
+            var claim = User.Claims.FirstOrDefault(claimToSearch => claimToSearch.Type == "Id");
+
+            if (claim is null)
             {
-                var claim = User.Claims.FirstOrDefault(clainToSearch => clainToSearch.Type == "Id");
-
-                if (claim is null)
-                {
-                    throw new BadHttpRequestException(TextConstant.ForbiddenUser);
-                }
-
-                return Guid.Parse(claim.Value);
+                throw new BadHttpRequestException(TextConstant.ForbiddenUser);
             }
+
+            return Guid.Parse(claim.Value);
         }
     }
 }

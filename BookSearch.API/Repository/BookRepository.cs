@@ -4,13 +4,14 @@ using BookSearch.API.Contexts;
 using BookSearch.API.Models;
 using BookSearch.API.Repository.Interfaces;
 using BookSearch.API.Response;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace BookSearch.API.Repository;
 
 public class BookRepository : IBookRepository
 {
-    public BookRepository(DefaultContext context, IMapper mapper, IIdentifierRepository identifierRepository, IAuthorRepository authorRepository, ICategoryRepository categoryRepository)
+    public BookRepository(BaseContext context, IMapper mapper, IIdentifierRepository identifierRepository, IAuthorRepository authorRepository, ICategoryRepository categoryRepository)
     {
         Context = context;
         Mapper = mapper;
@@ -19,7 +20,7 @@ public class BookRepository : IBookRepository
         CategoryRepository = categoryRepository;
     }
 
-    private DefaultContext Context { get; }
+    private BaseContext Context { get; }
     private IMapper Mapper { get; }
     private IIdentifierRepository IdentifierRepository { get; }
     private IAuthorRepository AuthorRepository { get; }
@@ -89,10 +90,10 @@ public class BookRepository : IBookRepository
                     select book;
 
         return await query
-               .OrderBy(book => book.Title)
-               .Skip((page - 1) * perPage)
-               .Take(perPage)
-               .ToListAsync();
+            .OrderBy(book => book.Title)
+            .Skip((page - 1) * perPage)
+            .Take(perPage)
+            .ToListAsync();
     }
 
     public async Task PopulateWithBookmarks(IEnumerable<BookResponse> books, Guid userId)
@@ -109,6 +110,29 @@ public class BookRepository : IBookRepository
                 }
             }
         }
+    }
+
+    public async Task<IEnumerable<Review>> GetReviews(Guid bookId, int page = 1, int perPage = 10)
+    {
+        var query = Context.Reviews.Where(review => review.BookId == bookId);
+
+        return await query
+            .OrderByDescending(review => review.Created)
+            .Skip((page - 1) * perPage)
+            .Take(perPage)
+            .ToListAsync();
+    }
+
+    public async Task<double> AverageRating(Guid bookId)
+    {
+        return await Context.Reviews
+            .Where(review => review.BookId == bookId)
+            .AverageAsync(review => review.Rating);
+    }
+
+    public async Task<Book?> GetById(Guid bookId)
+    {
+        return await Context.Books.FirstOrDefaultAsync(book => book.Id == bookId);
     }
 
     private async Task<bool> IsBookmark(Guid userId, string identifier, string type)

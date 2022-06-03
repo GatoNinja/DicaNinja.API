@@ -8,7 +8,7 @@ using System.Text.Json.Serialization;
 namespace BookSearch.API.Models;
 
 [Table("password_recoveries")]
-public record PasswordRecovery : BaseModel
+public class PasswordRecovery : BaseModel
 {
     public PasswordRecovery()
     {

@@ -12,4 +12,9 @@ public interface IBookRepository
     Task<List<Book>> GetBookmarks(Guid userId, int page, int perPage);
 
     Task PopulateWithBookmarks(IEnumerable<BookResponse> books, Guid userId);
+        
+    Task<IEnumerable<Review>> GetReviews(Guid bookId, int page = 1, int perPage = 10);
+    Task<double> AverageRating(Guid bookId);
+
+    Task<Book?> GetById(Guid bookId);
 }

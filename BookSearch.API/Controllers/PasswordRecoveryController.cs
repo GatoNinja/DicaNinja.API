@@ -1,11 +1,10 @@
-
 using BookSearch.API.Abstracts;
 using BookSearch.API.Helpers;
 using BookSearch.API.Repository.Interfaces;
 using BookSearch.API.Request;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookSearch.API.Controller;
+namespace BookSearch.API.Controllers;
 
 [Route("[controller]")]
 public class PasswordRecoveryController : ControllerHelper

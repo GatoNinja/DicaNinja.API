@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace BookSearch.API.Models;
 
 [Table("identifiers")]
-public record Identifier : BaseModel
+public class Identifier : BaseModel
 {
     public Identifier(string isbn, string type)
     {
@@ -16,11 +16,11 @@ public record Identifier : BaseModel
 
     [Column("isbn")]
     [Required]
-    public string Isbn { get; set; } = string.Empty;
+    public string Isbn { get; set; }
 
     [Column("type")]
     [Required]
-    public string Type { get; set; } = string.Empty;
+    public string Type { get; set; }
 
     [Column("book_id")]
     public Guid BookId { get; set; }

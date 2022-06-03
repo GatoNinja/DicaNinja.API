@@ -1,4 +1,3 @@
-
 using BookSearch.API.Abstracts;
 using BookSearch.API.Helpers;
 using BookSearch.API.Repository.Interfaces;
@@ -7,7 +6,7 @@ using BookSearch.API.Response;
 using BookSearch.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookSearch.API.Controller;
+namespace BookSearch.API.Controllers;
 
 [Route("[controller]")]
 public class RefreshTokenController : ControllerHelper

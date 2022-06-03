@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace BookSearch.API.Models;
 
 [Table("books")]
-public record Book : BaseModel
+public class Book : BaseModel
 {
     [Column("title")]
     [Required]
@@ -43,4 +43,6 @@ public record Book : BaseModel
     public virtual List<Category> Categories { get; set; } = default!;
 
     public virtual List<Bookmark> Bookmarks { get; set; } = default!;
+
+    public virtual List<Review> Reviews { get; set; } = default!;
 }
