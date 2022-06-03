@@ -6,9 +6,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/BookSearch.API/bin/Debug/net6.0/BookSearch.API.dll",
+            "program": "${workspaceFolder}/DicaNinja.API/bin/Debug/net6.0/DicaNinja.API.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/BookSearch.API",
+            "cwd": "${workspaceFolder}/DicaNinja.API",
             "stopAtEntry": false,
             "suppressJITOptimizations": true,
             "logging": {

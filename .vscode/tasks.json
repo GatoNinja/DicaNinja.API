@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/BookSearch.API/BookSearch.API.csproj",
+                "${workspaceFolder}/DicaNinja.API/DicaNinja.API.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/BookSearch.API/BookSearch.API.csproj",
+                "${workspaceFolder}/DicaNinja.API/DicaNinja.API.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -33,7 +33,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/BookSearch.API/BookSearch.API.csproj"
+                "${workspaceFolder}/DicaNinja.API/DicaNinja.API.csproj"
             ],
             "problemMatcher": "$msCompile"
         }
