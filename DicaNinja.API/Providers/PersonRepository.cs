@@ -6,10 +6,8 @@ namespace DicaNinja.API.Providers;
 
 public sealed class PersonProvider : IPersonProvider
 {
-    public Person(DefaultContext
-
     public async Task<Person> UpdatePersonAsync(Person person)
     {
-        var currentPerson = await Context
+        throw new NotImplementedException();
     }
 }
