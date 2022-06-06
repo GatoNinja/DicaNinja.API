@@ -11,7 +11,8 @@ public abstract class BaseModel
         this.Created = DateTimeOffset.Now;
     }
 
-    [Key, Required]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [Key]
     [Column("id")]
     public Guid Id { get; set; }
 

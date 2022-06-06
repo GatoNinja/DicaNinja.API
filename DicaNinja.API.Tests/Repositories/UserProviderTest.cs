@@ -1,5 +1,6 @@
 
 using DicaNinja.API.Enums;
+using DicaNinja.API.Models;
 using DicaNinja.API.Providers;
 using DicaNinja.API.Tests.Abstracts;
 
@@ -87,16 +88,6 @@ public class UserProviderTest : BaseTest
         var user = await this.UserProvider.InsertAsync(mock);
 
         Assert.That(user, Is.Null);
-
-        // var newUser = new User("admin", "admin", "admin@gatoninja.com.br", new Person("Admin", "Admin"));
-        // var insertedUser = await UserProvider.InsertAsync(newUser);
-
-        // Assert.IsNotNull(insertedUser);
-        // Assert.IsNotNull(insertedUser?.Id);
-        // Assert.IsNull(insertedUser?.Password);
-        // Assert.AreEqual(insertedUser?.Username, mock.Username);
-        // Assert.AreEqual(insertedUser?.Email, mock.Email);
-        // Assert.IsNull(insertedUser?.Person);
     }
 
     [Test]

@@ -13,7 +13,7 @@ public class User : BaseModel
     {
     }
 
-    public User(Guid id, string username, string email) : this()
+    public User(Guid id, string username, string email)
     {
         this.Id = id;
         this.Username = username;

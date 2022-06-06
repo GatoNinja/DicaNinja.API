@@ -68,8 +68,8 @@ public abstract class BaseTest
 
         var contextOptions = new DbContextOptionsBuilder<BaseContext>()
                 .UseInMemoryDatabase("DicaNinja")
-                .ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                 .Options;
+
         this.Context = new BaseContext(contextOptions);
 
         this.Context.Database.EnsureDeleted();

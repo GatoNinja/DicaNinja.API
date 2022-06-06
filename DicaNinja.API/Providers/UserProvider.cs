@@ -61,6 +61,10 @@ public sealed class UserProvider : IUserProvider
 
         user.Password = this.PasswordHasher.Hash(user.Password);
 
+        user.Person.Id = Guid.Empty;
+        user.Person.UserId = Guid.Empty;
+        user.Id = Guid.Empty;
+
         this.Context.Users.Add(user);
         await this.Context.SaveChangesAsync();
 
@@ -69,8 +73,7 @@ public sealed class UserProvider : IUserProvider
 
     public async Task<User?> GetByEmail(string email)
     {
-        return await this.Context.Users.Select(user => new User(user.Id, user.Username, user.Email))
-                                  .FirstOrDefaultAsync(user => user.Email == email);
+        return await this.Context.Users.Select(user => new User(user.Id, user.Username, user.Email)).FirstOrDefaultAsync(user => user.Email == email);
     }
 
     public async Task ChangePassword(string email, string password)

@@ -51,6 +51,11 @@ public class BaseContext : DbContext
             .HasForeignKey(f => f.FollowedId);
     }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+    }
+
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         foreach (var item in this.ChangeTracker.Entries())

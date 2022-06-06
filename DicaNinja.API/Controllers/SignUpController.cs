@@ -49,11 +49,8 @@ public class SignUpController : ControllerBase
 
         var insertedUser = await this.UserProvider.InsertAsync(user);
 
-        if (insertedUser is null)
-        {
-            return new BadRequestObjectResult(new MessageResponse(TextConstant.ProblemToSaveRecord));
-        }
-
-        return new CreatedResult("token", insertedUser.Id);
+        return insertedUser is null
+            ? (ActionResult<Guid>)new BadRequestObjectResult(new MessageResponse(TextConstant.ProblemToSaveRecord))
+            : (ActionResult<Guid>)new CreatedResult("token", insertedUser.Id);
     }
 }

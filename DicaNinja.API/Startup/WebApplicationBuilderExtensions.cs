@@ -16,6 +16,7 @@ using DicaNinja.API.Models;
 using DicaNinja.API.Services;
 using DicaNinja.API.Response;
 using DicaNinja.API.Contexts;
+using DicaNinja.API.Validations;
 
 namespace DicaNinja.API.Startup;
 
@@ -104,7 +105,10 @@ public static class WebApplicationBuilderExtensions
 
     private static void AddController(IServiceCollection services)
     {
-        services.AddControllers()
+        services.AddControllers(options =>
+            {
+                options.Filters.Add(new ValidateModelFilter());
+            })
             .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.AllowTrailingCommas = false;
@@ -190,6 +194,8 @@ public static class WebApplicationBuilderExtensions
         {
             options.UseNpgsql(connectionString)
                 .UseSnakeCaseNamingConvention();
+
+            options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
     }
 
