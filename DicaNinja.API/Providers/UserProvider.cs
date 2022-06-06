@@ -61,8 +61,6 @@ public sealed class UserProvider : IUserProvider
 
         user.Password = this.PasswordHasher.Hash(user.Password);
 
-        user.Id = Guid.Empty;
-
         this.Context.Users.Add(user);
         await this.Context.SaveChangesAsync();
 

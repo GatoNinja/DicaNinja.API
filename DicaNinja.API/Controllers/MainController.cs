@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DicaNinja.API.Controllers;
 
-[Route("[controller]")]
+[Route("8[controller]")]
 [ApiController]
 [AllowAnonymous]
 public class MainController : ControllerBase

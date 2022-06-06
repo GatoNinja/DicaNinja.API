@@ -9,8 +9,6 @@ public abstract class BaseModel
     public BaseModel()
     {
         this.Created = DateTimeOffset.Now;
-        this.Updated = DateTimeOffset.Now;
-        this.Id = Guid.Empty;
     }
 
     [Key, Required]
@@ -21,7 +19,7 @@ public abstract class BaseModel
     [Column("created")]
     public DateTimeOffset Created { get; set; }
 
-    [Required, JsonIgnore]
+    [JsonIgnore]
     [Column("updated")]
-    public DateTimeOffset Updated { get; set; }
+    public DateTimeOffset? Updated { get; set; }
 }

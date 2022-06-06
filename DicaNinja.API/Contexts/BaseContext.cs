@@ -1,4 +1,5 @@
-﻿
+
+using DicaNinja.API.Abstracts;
 using DicaNinja.API.Models;
 
 using Microsoft.EntityFrameworkCore;
@@ -48,5 +49,23 @@ public class BaseContext : DbContext
             .HasMany(u => u.Followers)
             .WithOne(f => f.User)
             .HasForeignKey(f => f.FollowedId);
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        foreach (var item in this.ChangeTracker.Entries())
+        {
+            if (item.Entity is BaseModel model)
+            {
+                model.Created = DateTime.UtcNow;
+
+                if (item.State == EntityState.Modified)
+                {
+                    model.Updated = DateTime.UtcNow;
+                }
+            }
+        }
+
+        return base.SaveChangesAsync(cancellationToken);
     }
 }
