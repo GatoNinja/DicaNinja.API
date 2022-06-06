@@ -21,11 +21,11 @@ public class Identifier : BaseModel
 
     [Column("isbn")]
     [Required]
-    public string Isbn { get; set; }
-
+    public string Isbn { get; set; } = string.Empty;
+    
     [Column("type")]
     [Required]
-    public string Type { get; set; }
+    public string Type { get; set; } = string.Empty;
 
     [Column("book_id")]
     public Guid BookId { get; set; }

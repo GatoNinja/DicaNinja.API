@@ -166,4 +166,9 @@ public sealed class UserProvider : IUserProvider
 
         return await query.FirstOrDefaultAsync();
     }
+
+    public async Task<int> GetCount()
+    {
+        return await this.Context.Users.CountAsync();
+    }
 }

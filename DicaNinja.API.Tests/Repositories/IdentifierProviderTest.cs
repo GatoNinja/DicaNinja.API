@@ -27,9 +27,12 @@ public class IdentifierProviderTest : BaseTest
         foreach (var identifier in identifiers)
         {
             Assert.That(identifier.Isbn, Is.Not.Null);
-            Assert.That(identifier.Isbn, Has.Length);
+            Assert.Multiple(() =>
+            {
+                Assert.That(identifier.Isbn, Has.Length);
 
-            Assert.That(identifier.Type, Is.Not.Null);
+                Assert.That(identifier.Type, Is.Not.Null);
+            });
             Assert.That(identifier.Type, Has.Length);
         }
     }

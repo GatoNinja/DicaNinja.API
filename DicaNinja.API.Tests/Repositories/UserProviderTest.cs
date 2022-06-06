@@ -116,17 +116,17 @@ public class UserProviderTest : BaseTest
         var mock = this.Users.First();
         var existingUsername = this.UserProvider.ValidateNewUser(mock);
 
-        Assert.That(EnumNewUserCheck.ExistingUsername, Is.EqualTo(existingUsername));
+        Assert.That(existingUsername, Is.EqualTo(EnumNewUserCheck.ExistingUsername));
 
         mock.Username = "novousername";
         var existingEmail = this.UserProvider.ValidateNewUser(mock);
 
-        Assert.That(EnumNewUserCheck.ExistingEmail, Is.EqualTo(existingEmail));
+        Assert.That(existingEmail, Is.EqualTo(EnumNewUserCheck.ExistingEmail));
 
         mock.Email = "novo@gatoninja.com.br";
 
         var valid = this.UserProvider.ValidateNewUser(mock);
 
-        Assert.That(EnumNewUserCheck.Valid, Is.EqualTo(valid));
+        Assert.That(valid, Is.EqualTo(EnumNewUserCheck.Valid));
     }
 }

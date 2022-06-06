@@ -152,4 +152,17 @@ public class BookProvider : IBookProvider
         return await query.AnyAsync();
     }
 
+    public async Task<IEnumerable<Book>> GetBooks(int page = 1, int perPage = 10)
+    {
+        return await this.Context.Books
+            .OrderBy(book => Guid.NewGuid())
+            .Skip((page - 1) * perPage)
+            .Take(perPage)
+            .ToListAsync();
+    }
+
+    public async Task<int> GetCount()
+    {
+        return await this.Context.Books.CountAsync();
+    }
 }

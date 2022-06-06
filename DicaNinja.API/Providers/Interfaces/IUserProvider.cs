@@ -20,4 +20,5 @@ public interface IUserProvider
     Task<int> GetCategoriesCount(Guid userId);
     Task<int> GetFollowingCount(Guid userId);
     Task<User?> GetByUsernameOrEmail(string parameter);
+    Task<int> GetCount();
 }

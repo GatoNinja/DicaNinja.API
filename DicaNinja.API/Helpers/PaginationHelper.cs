@@ -3,10 +3,10 @@ namespace DicaNinja.API.Helpers;
 public static class PaginationHelper
 {
     public static PagedResponse<IEnumerable<T>> CreatePagedResponse<T>(IEnumerable<T> pagedData,
-        QueryParameters validQueryString, int totalRecords)
+        QueryParameters queryString, int totalRecords)
     {
-        var response = new PagedResponse<IEnumerable<T>>(pagedData, validQueryString.Page, validQueryString.PerPage);
-        var totalPages = totalRecords / (double)validQueryString.Page;
+        var response = new PagedResponse<IEnumerable<T>>(pagedData, queryString.Page, queryString.PerPage);
+        var totalPages = totalRecords / (double)queryString.PerPage;
         var roundedTotalPages = Convert.ToInt32(Math.Ceiling(totalPages));
 
         response.TotalPages = roundedTotalPages;

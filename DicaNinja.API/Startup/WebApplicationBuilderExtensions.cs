@@ -111,7 +111,7 @@ public static class WebApplicationBuilderExtensions
                 options.JsonSerializerOptions.MaxDepth = 0;
                 options.JsonSerializerOptions.IgnoreReadOnlyFields = true;
                 options.JsonSerializerOptions.IgnoreReadOnlyProperties = true;
-                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
+                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             });
     }
 

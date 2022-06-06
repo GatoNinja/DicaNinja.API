@@ -21,6 +21,11 @@ public class CategoryProvider : ICategoryProvider
         return await this.Context.Categories.Where(category => category.Books.Any(book => book.Id == bookId)).ToListAsync();
     }
 
+    public async Task<int> GetCount()
+    {
+        return await this.Context.Categories.CountAsync();
+    }
+
     public async Task<Category?> GetOrCreate(string categoryName)
     {
         var category = await this.Context.Categories.FirstOrDefaultAsync(c => c.Name == categoryName);

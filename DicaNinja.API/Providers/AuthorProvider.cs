@@ -24,6 +24,11 @@ public class AuthorProvider : IAuthorProvider
             .ToListAsync();
     }
 
+    public async Task<int> GetCount()
+    {
+        return await this.Context.Authors.CountAsync();
+    }
+
     public async Task<Author?> GetOrCreate(string authorName)
     {
         var author = await this.Context.Authors.FirstOrDefaultAsync(a => a.Name == authorName);
