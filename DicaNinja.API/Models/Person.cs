@@ -32,6 +32,9 @@ public class Person : BaseModel
     [Column("user_id")]
     public Guid? UserId { get; set; }
 
+    [Column("image")]
+    public string? Image { get; set; }
+
     [JsonIgnore]
     public virtual User? User { get; set; }
 }

@@ -16,6 +16,8 @@ app.UseSwaggerUI(config =>
     config.EnableFilter();
 });
 
+app.UseDeveloperExceptionPage();
+
 app.UseCors(config =>
 {
     config.AllowAnyHeader();

@@ -1,4 +1,4 @@
-﻿
+
 using System.ComponentModel.DataAnnotations;
 
 namespace DicaNinja.API.Request;
@@ -10,7 +10,7 @@ public record NewUserRequest(
     string Password,
     [Required, MinLength(4), MaxLength(48)]
     string ConfirmPassword,
-    [Required, EmailAddress]
+    [Required, EmailAddress(ErrorMessage = "O endereço de e-mail é inválido")]
     string Email,
     [Required, MinLength(2), MaxLength(48)]
     string Firstname,
