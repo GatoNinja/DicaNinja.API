@@ -17,8 +17,8 @@ public class Person : BaseModel
 
     public Person(string firstname, string lastname)
     {
-        this.FirstName = firstname;
-        this.LastName = lastname;
+        FirstName = firstname;
+        LastName = lastname;
     }
 
     [Required, MinLength(2), MaxLength(48)]
@@ -34,6 +34,11 @@ public class Person : BaseModel
 
     [Column("image")]
     public string? Image { get; set; }
+
+    [Column("description")]
+    [MaxLength(200)]
+    [MinLength(5)]
+    public string? Description { get; set; }
 
     [JsonIgnore]
     public virtual User? User { get; set; }

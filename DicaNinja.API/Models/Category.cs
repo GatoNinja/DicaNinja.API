@@ -16,7 +16,7 @@ public class Category : BaseModel
 
     public Category(string categoryName) : this()
     {
-        this.Name = categoryName;
+        Name = categoryName;
     }
 
     [Column("name")]

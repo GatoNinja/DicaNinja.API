@@ -16,7 +16,7 @@ public class Author : BaseModel
 
     public Author(string name)
     {
-        this.Name = name;
+        Name = name;
     }
 
     [Column("name")]

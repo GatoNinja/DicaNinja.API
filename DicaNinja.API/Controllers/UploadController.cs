@@ -13,7 +13,7 @@ public class UploadController: ControllerHelper
 
     public UploadController(IWebHostEnvironment environment)
     {
-        this.Environment = environment;
+        Environment = environment;
     }
 
     private IWebHostEnvironment Environment { get; }
@@ -25,7 +25,7 @@ public class UploadController: ControllerHelper
         {
             try
             {
-                var fullPath = Path.Combine(this.Environment.ContentRootPath, "images", base.UserId.ToString());
+                var fullPath = Path.Combine(Environment.ContentRootPath, "images", UserId.ToString());
                 var extension = Path.GetExtension(file.FileName);
                 var newName = $"{Guid.NewGuid()}{extension}";
 
@@ -37,7 +37,7 @@ public class UploadController: ControllerHelper
                 await file.CopyToAsync(filestream);
                 filestream.Flush();
                 
-                return $"\\imagens\\{base.UserId}\\{newName}";
+                return $"\\imagens\\{UserId}\\{newName}";
             }
             catch (Exception ex)
             {

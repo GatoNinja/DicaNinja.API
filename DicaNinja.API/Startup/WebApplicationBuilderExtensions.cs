@@ -14,6 +14,7 @@ using DicaNinja.API.Providers.Interfaces;
 using DicaNinja.API.Providers;
 using DicaNinja.API.Models;
 using DicaNinja.API.Services;
+using DicaNinja.API.Request;
 using DicaNinja.API.Response;
 using DicaNinja.API.Contexts;
 using DicaNinja.API.Validations;
@@ -73,6 +74,27 @@ public static class WebApplicationBuilderExtensions
             config.CreateMap<User, UserResponse>()
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Person.FirstName))
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Person.LastName));
+
+            config.CreateMap<Person, PersonRequest>()
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.User.Id))
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image))
+                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.Username))
+                .ForMember(dest => dest.PersonId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ReverseMap();
+
+            config.CreateMap<Person, PersonResponse>()
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.User.Id))
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
+                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image))
+                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.Username))
+                .ForMember(dest => dest.PersonId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ReverseMap();            
+
         });
 
         var mapper = config.CreateMapper();

@@ -11,24 +11,24 @@ public class CategoryProvider : ICategoryProvider
 {
     public CategoryProvider(BaseContext context)
     {
-        this.Context = context;
+        Context = context;
     }
 
     private BaseContext Context { get; }
 
     public async Task<List<Category>> GetByBook(Guid bookId)
     {
-        return await this.Context.Categories.Where(category => category.Books.Any(book => book.Id == bookId)).ToListAsync();
+        return await Context.Categories.Where(category => category.Books.Any(book => book.Id == bookId)).ToListAsync();
     }
 
     public async Task<int> GetCount()
     {
-        return await this.Context.Categories.CountAsync();
+        return await Context.Categories.CountAsync();
     }
 
     public async Task<Category?> GetOrCreate(string categoryName)
     {
-        var category = await this.Context.Categories.FirstOrDefaultAsync(c => c.Name == categoryName);
+        var category = await Context.Categories.FirstOrDefaultAsync(c => c.Name == categoryName);
 
         if (category is not null)
         {
@@ -37,7 +37,7 @@ public class CategoryProvider : ICategoryProvider
 
         category = new Category(categoryName);
 
-        this.Context.Categories.Add(category);
+        Context.Categories.Add(category);
 
         return category;
     }

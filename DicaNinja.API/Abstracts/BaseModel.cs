@@ -8,7 +8,7 @@ public abstract class BaseModel
 {
     public BaseModel()
     {
-        this.Created = DateTimeOffset.Now;
+        Created = DateTimeOffset.Now;
     }
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

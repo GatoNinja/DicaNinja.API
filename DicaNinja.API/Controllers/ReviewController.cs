@@ -16,7 +16,7 @@ public class ReviewController : ControllerHelper
 {
     public ReviewController(IReviewProvider reviewProvider)
     {
-        this.ReviewProvider = reviewProvider;
+        ReviewProvider = reviewProvider;
     }
 
     private IReviewProvider ReviewProvider { get; }
@@ -25,8 +25,8 @@ public class ReviewController : ControllerHelper
     public async Task<Guid> CreateReview([FromBody] ReviewRequest request)
     {
         var (bookId, text, rating) = request;
-        var review = new Review(this.UserId, bookId, text, rating);
+        var review = new Review(UserId, bookId, text, rating);
 
-        return await this.ReviewProvider.CreateReview(review);
+        return await ReviewProvider.CreateReview(review);
     }
 }

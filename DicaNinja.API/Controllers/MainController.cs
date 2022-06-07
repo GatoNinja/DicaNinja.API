@@ -18,11 +18,11 @@ public class MainController : ControllerBase
 {
     public MainController(IMapper mapper, IBookProvider bookProvider, IUserProvider userProvider, IAuthorProvider authorProvider, ICategoryProvider categoriProvider)
     {
-        this.Mapper = mapper;
-        this.BookProvider = bookProvider;
-        this.AuthorProvider = authorProvider;
-        this.CategoriProvider = categoriProvider;
-        this.UserProvider = userProvider;
+        Mapper = mapper;
+        BookProvider = bookProvider;
+        AuthorProvider = authorProvider;
+        CategoriProvider = categoriProvider;
+        UserProvider = userProvider;
     }
 
     private IMapper Mapper { get; }
@@ -34,15 +34,15 @@ public class MainController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<PagedResponse<IEnumerable<BookResponse>>>> Get([FromQuery] QueryParameters query)
     {
-        var books = await this.BookProvider.GetBooks();
-        var totalBooks = await this.BookProvider.GetCount();
-        var totalAuthors = await this.AuthorProvider.GetCount();
-        var totalCategories = await this.CategoriProvider.GetCount();
-        var totalUsers = await this.UserProvider.GetCount();
-        var mapped = this.Mapper.Map<IEnumerable<BookResponse>>(books);
+        var books = await BookProvider.GetBooks();
+        var totalBooks = await BookProvider.GetCount();
+        var totalAuthors = await AuthorProvider.GetCount();
+        var totalCategories = await CategoriProvider.GetCount();
+        var totalUsers = await UserProvider.GetCount();
+        var mapped = Mapper.Map<IEnumerable<BookResponse>>(books);
         var paginated = PaginationHelper.CreatePagedResponse(mapped, query, totalBooks);
         var response = new MainResponse(paginated, totalBooks, totalAuthors, totalCategories, totalUsers);
         
-        return this.Ok(response);
+        return Ok(response);
     }
 }

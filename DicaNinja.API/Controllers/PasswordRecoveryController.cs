@@ -13,8 +13,8 @@ public class PasswordRecoveryController : ControllerHelper
 {
     public PasswordRecoveryController(IPasswordRecoveryProvider passwordRecoveryProvider, IUserProvider userProvider)
     {
-        this.PasswordRecoveryProvider = passwordRecoveryProvider;
-        this.UserProvider = userProvider;
+        PasswordRecoveryProvider = passwordRecoveryProvider;
+        UserProvider = userProvider;
     }
 
     private IPasswordRecoveryProvider PasswordRecoveryProvider { get; }
@@ -24,7 +24,7 @@ public class PasswordRecoveryController : ControllerHelper
     [HttpPost]
     public async Task<ActionResult> PostPasswordRecovery([FromBody] PasswordRecoveryRequest requst)
     {
-        var recoveryCode = await this.PasswordRecoveryProvider.GetByEmailAndCode(requst.Email, requst.Code);
+        var recoveryCode = await PasswordRecoveryProvider.GetByEmailAndCode(requst.Email, requst.Code);
 
         if (recoveryCode is null)
         {
@@ -33,10 +33,10 @@ public class PasswordRecoveryController : ControllerHelper
             return new BadRequestObjectResult(messageResponse);
         }
 
-        await this.UserProvider.ChangePassword(requst.Email, requst.NewPassword);
-        await this.PasswordRecoveryProvider.UseRecoveryCode(recoveryCode.Id);
+        await UserProvider.ChangePassword(requst.Email, requst.NewPassword);
+        await PasswordRecoveryProvider.UseRecoveryCode(recoveryCode.Id);
 
-        return this.Ok();
+        return Ok();
 
     }
 }

@@ -12,9 +12,9 @@ public class BookmarkProvider : IBookmarkProvider
 {
     public BookmarkProvider(BaseContext context, IBookProvider bookProvider, BookGoogleService bookGoogleService)
     {
-        this.Context = context;
-        this.BookProvider = bookProvider;
-        this.BookGoogleService = bookGoogleService;
+        Context = context;
+        BookProvider = bookProvider;
+        BookGoogleService = bookGoogleService;
     }
 
     private BaseContext Context { get; }
@@ -23,20 +23,20 @@ public class BookmarkProvider : IBookmarkProvider
 
     public async Task<int?> Bookmark(Guid userId, string identifier, string type)
     {
-        var existingBookmark = await this.FilterByUser(userId, identifier, type).FirstOrDefaultAsync();
+        var existingBookmark = await FilterByUser(userId, identifier, type).FirstOrDefaultAsync();
 
         if (existingBookmark is not null)
         {
-            this.Context.Remove(existingBookmark);
-            await this.Context.SaveChangesAsync();
+            Context.Remove(existingBookmark);
+            await Context.SaveChangesAsync();
         }
         else
         {
-            var book = await this.BookProvider.GetByIdentifier(identifier, type);
+            var book = await BookProvider.GetByIdentifier(identifier, type);
 
             if (book is null)
             {
-                book = await this.BookGoogleService.CreateBookFromGoogle(identifier);
+                book = await BookGoogleService.CreateBookFromGoogle(identifier);
 
                 if (book is null)
                 {
@@ -45,27 +45,27 @@ public class BookmarkProvider : IBookmarkProvider
             }
 
             var bookmark = new Bookmark(userId, book.Id);
-            this.Context.Add(bookmark);
-            await this.Context.SaveChangesAsync();
+            Context.Add(bookmark);
+            await Context.SaveChangesAsync();
         }
 
-        return await this.GetBookmarkCount(userId);
+        return await GetBookmarkCount(userId);
     }
 
     public async Task<int> GetBookmarkCount(Guid userId)
     {
-        return await this.Context.Bookmarks.CountAsync(bookmark => bookmark.UserId == userId);
+        return await Context.Bookmarks.CountAsync(bookmark => bookmark.UserId == userId);
     }
 
     public async Task<bool> IsBookmarked(Guid userId, string identifier, string type)
     {
-        return await this.FilterByUser(userId, identifier, type).AnyAsync();
+        return await FilterByUser(userId, identifier, type).AnyAsync();
     }
 
     private IQueryable<Bookmark> FilterByUser(Guid userId, string identifier, string type)
     {
-        var query = from bookmark in this.Context.Bookmarks
-                    join book in this.Context.Books on bookmark.BookId equals book.Id
+        var query = from bookmark in Context.Bookmarks
+                    join book in Context.Books on bookmark.BookId equals book.Id
                     where bookmark.UserId == userId && book.Identifiers.Any(i => i.Isbn == identifier && i.Type == type)
                     select bookmark;
 

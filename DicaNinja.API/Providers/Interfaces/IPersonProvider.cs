@@ -4,5 +4,5 @@ namespace DicaNinja.API.Providers.Interfaces;
 
 public interface IPersonProvider
 {
-    Task<Person> UpdatePersonAsync(Person person);
+    Task<Person?> UpdatePersonAsync(Guid userId, Person person);
 }

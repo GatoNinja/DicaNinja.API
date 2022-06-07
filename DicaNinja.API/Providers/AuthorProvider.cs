@@ -11,14 +11,14 @@ public class AuthorProvider : IAuthorProvider
 {
     public AuthorProvider(BaseContext context)
     {
-        this.Context = context;
+        Context = context;
     }
 
     private BaseContext Context { get; }
 
     public async Task<List<Author>> GetByBook(Guid bookId)
     {
-        return await this.Context.Authors
+        return await Context.Authors
             .Where(author => author.Books.Any(book => book.Id == bookId))
             .OrderBy(author => author.Name)
             .ToListAsync();
@@ -26,12 +26,12 @@ public class AuthorProvider : IAuthorProvider
 
     public async Task<int> GetCount()
     {
-        return await this.Context.Authors.CountAsync();
+        return await Context.Authors.CountAsync();
     }
 
     public async Task<Author?> GetOrCreate(string authorName)
     {
-        var author = await this.Context.Authors.FirstOrDefaultAsync(a => a.Name == authorName);
+        var author = await Context.Authors.FirstOrDefaultAsync(a => a.Name == authorName);
 
         if (author is not null)
         {
@@ -40,7 +40,7 @@ public class AuthorProvider : IAuthorProvider
 
         author = new Author(authorName);
 
-        this.Context.Authors.Add(author);
+        Context.Authors.Add(author);
 
         return author;
     }

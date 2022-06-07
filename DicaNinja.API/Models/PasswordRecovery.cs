@@ -13,14 +13,14 @@ public class PasswordRecovery : BaseModel
 {
     public PasswordRecovery()
     {
-        this.IsActive = true;
-        this.ExpireDate = DateTimeOffset.Now.AddHours(12);
+        IsActive = true;
+        ExpireDate = DateTimeOffset.Now.AddHours(12);
     }
 
     public PasswordRecovery(User user) : this()
     {
-        this.User = user;
-        this.UserId = user.Id;
+        User = user;
+        UserId = user.Id;
     }
 
     [Required, DefaultValue(true)]

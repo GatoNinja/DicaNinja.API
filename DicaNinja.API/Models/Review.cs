@@ -16,10 +16,10 @@ public class Review : BaseModel
     }
     public Review(Guid userId, Guid bookId, string text, int rating)
     {
-        this.UserId = userId;
-        this.BookId = bookId;
-        this.Text = text;
-        this.Rating = rating;
+        UserId = userId;
+        BookId = bookId;
+        Text = text;
+        Rating = rating;
     }
 
     [Column("text")]

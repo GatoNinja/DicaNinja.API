@@ -16,8 +16,8 @@ public class Bookmark : BaseModel
 
     public Bookmark(Guid userId, Guid bookId)
     {
-        this.UserId = userId;
-        this.BookId = bookId;
+        UserId = userId;
+        BookId = bookId;
     }
 
     [Column("user_id")]

@@ -13,19 +13,19 @@ public class IdentifierProvider : IIdentifierProvider
 {
     public IdentifierProvider(BaseContext context)
     {
-        this.Context = context;
+        Context = context;
     }
 
     private BaseContext Context { get; }
 
     public async Task<List<Identifier>> GetByBook(Guid bookId)
     {
-        return await this.Context.Identifiers.Where(identifier => identifier.BookId == bookId).ToListAsync();
+        return await Context.Identifiers.Where(identifier => identifier.BookId == bookId).ToListAsync();
     }
 
     public async Task<Identifier?> GetOrCreate(IdentifierResponse bookIdentifier)
     {
-        var identifier = await this.Context.Identifiers.FirstOrDefaultAsync(identifier => identifier.Isbn == bookIdentifier.Isbn && identifier.Type == bookIdentifier.Type);
+        var identifier = await Context.Identifiers.FirstOrDefaultAsync(identifier => identifier.Isbn == bookIdentifier.Isbn && identifier.Type == bookIdentifier.Type);
 
         if (identifier is not null)
         {
@@ -34,7 +34,7 @@ public class IdentifierProvider : IIdentifierProvider
 
         identifier = new Identifier(bookIdentifier.Isbn, bookIdentifier.Type);
 
-        this.Context.Identifiers.Add(identifier);
+        Context.Identifiers.Add(identifier);
 
         return identifier;
     }

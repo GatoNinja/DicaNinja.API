@@ -4,8 +4,8 @@ public sealed record PagedResponse<T> : Response<T>
 {
     internal PagedResponse(T data, int page, int perPage) : base(data)
     {
-        this.Page = page;
-        this.PerPage = perPage;
+        Page = page;
+        PerPage = perPage;
     }
 
     public int Page { get; }

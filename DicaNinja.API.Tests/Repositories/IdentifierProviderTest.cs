@@ -9,7 +9,7 @@ public class IdentifierProviderTest : BaseTest
 {
     public IdentifierProviderTest() : base()
     {
-        this.IdentifierProvider = new IdentifierProvider(this.Context);
+        IdentifierProvider = new IdentifierProvider(Context);
     }
 
     public IdentifierProvider IdentifierProvider { get; }
@@ -17,8 +17,8 @@ public class IdentifierProviderTest : BaseTest
     [Test]
     public async Task GetByBookTest()
     {
-        var mock = this.Books.First();
-        var identifiers = await this.IdentifierProvider.GetByBook(mock.Id);
+        var mock = Books.First();
+        var identifiers = await IdentifierProvider.GetByBook(mock.Id);
 
         Assert.That(identifiers, Is.Not.Null);
         CollectionAssert.AllItemsAreNotNull(identifiers);
@@ -40,8 +40,8 @@ public class IdentifierProviderTest : BaseTest
     [Test]
     public async Task GetOrCreateTest()
     {
-        var mock = this.Identifiers.First();
-        var identifier = await this.IdentifierProvider.GetOrCreate(new IdentifierResponse
+        var mock = Identifiers.First();
+        var identifier = await IdentifierProvider.GetOrCreate(new IdentifierResponse
         {
             Isbn = mock.Isbn,
             Type = mock.Type
@@ -55,7 +55,7 @@ public class IdentifierProviderTest : BaseTest
             Isbn = "21341213123",
             Type = "ISBN-13"
         };
-        identifier = await this.IdentifierProvider.GetOrCreate(newMock);
+        identifier = await IdentifierProvider.GetOrCreate(newMock);
 
         Assert.That(identifier, Is.Not.Null);
         Assert.Multiple(() =>

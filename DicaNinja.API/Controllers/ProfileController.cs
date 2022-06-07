@@ -16,7 +16,7 @@ public class ProfileController : ControllerHelper
 {
     public ProfileController(IProfileProvider profileProvider)
     {
-        this.ProfileProvider = profileProvider;
+        ProfileProvider = profileProvider;
     }
 
     private IProfileProvider ProfileProvider { get; }
@@ -24,7 +24,7 @@ public class ProfileController : ControllerHelper
     [HttpGet]
     public async Task<ActionResult<UserProfileResponse>> GetUserProfileAsync()
     {
-        var userProfile = await this.ProfileProvider.GetUserProfileAsync(this.UserId);
+        var userProfile = await ProfileProvider.GetUserProfileAsync(UserId);
 
         return userProfile is null ? this.NotFound() : this.Ok(userProfile);
     }
@@ -33,7 +33,7 @@ public class ProfileController : ControllerHelper
     [AllowAnonymous]
     public async Task<ActionResult<UserProfileResponse>> GetUserProfileAsync([FromRoute] string parameter)
     {
-        var userProfile = await this.ProfileProvider.GetUserProfileAsync(parameter);
+        var userProfile = await ProfileProvider.GetUserProfileAsync(parameter);
 
         return userProfile is null ? this.NotFound() : this.Ok(userProfile);
     }

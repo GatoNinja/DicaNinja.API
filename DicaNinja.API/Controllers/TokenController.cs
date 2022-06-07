@@ -15,8 +15,8 @@ public class TokenController : ControllerHelper
 {
     public TokenController(IUserProvider userProvider, ITokenService tokenService)
     {
-        this.UserProvider = userProvider;
-        this.TokenService = tokenService;
+        UserProvider = userProvider;
+        TokenService = tokenService;
     }
 
     private IUserProvider UserProvider { get; }
@@ -27,16 +27,16 @@ public class TokenController : ControllerHelper
     public async Task<ActionResult<TokenResponse>> PostTokenAsync([FromBody] LoginRequest request)
     {
         var (username, password) = request;
-        var user = await this.UserProvider.DoLoginAsync(username, password);
+        var user = await UserProvider.DoLoginAsync(username, password);
 
         if (user is null)
         {
             var messageResponse = new MessageResponse(TextConstant.WrongUserOrInvalidPassword);
 
-            return this.NotFound(messageResponse);
+            return NotFound(messageResponse);
         }
 
-        var token = await this.TokenService.GenerateTokenAsync(user);
+        var token = await TokenService.GenerateTokenAsync(user);
 
         return new CreatedResult("token", token);
     }

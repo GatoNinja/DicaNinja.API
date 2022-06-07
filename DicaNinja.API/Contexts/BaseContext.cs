@@ -58,7 +58,7 @@ public class BaseContext : DbContext
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        foreach (var item in this.ChangeTracker.Entries())
+        foreach (var item in ChangeTracker.Entries())
         {
             if (item.Entity is BaseModel model)
             {

@@ -15,8 +15,8 @@ public sealed class TokenService : ITokenService
 {
     public TokenService(IRefreshTokenProvider refreshTokenProvider, ConfigurationReader config)
     {
-        this.RefreshTokenProvider = refreshTokenProvider;
-        this.Config = config;
+        RefreshTokenProvider = refreshTokenProvider;
+        Config = config;
     }
 
     private IRefreshTokenProvider RefreshTokenProvider { get; }
@@ -29,14 +29,14 @@ public sealed class TokenService : ITokenService
         {
             new("Id", user.Id.ToString()),
             new(ClaimTypes.Name, user.Username),
-            new(ClaimTypes.Role, this.Config.Security.DefaultUserRole),
+            new(ClaimTypes.Role, Config.Security.DefaultUserRole),
             new(ClaimTypes.Email, user.Email)
         };
 
-        var accessToken = this.GenerateAccessToken(claims);
-        var refreshToken = this.RefreshTokenProvider.GenerateRefreshToken();
+        var accessToken = GenerateAccessToken(claims);
+        var refreshToken = RefreshTokenProvider.GenerateRefreshToken();
 
-        await this.RefreshTokenProvider.SaveRefreshTokenAsync(user.Id, refreshToken);
+        await RefreshTokenProvider.SaveRefreshTokenAsync(user.Id, refreshToken);
 
         return new TokenResponse(accessToken, refreshToken, user);
     }
@@ -48,7 +48,7 @@ public sealed class TokenService : ITokenService
             ValidateAudience = false,
             ValidateIssuer = false,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.Config.Security.TokenSecurity)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Config.Security.TokenSecurity)),
             ValidateLifetime = false
         };
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -66,10 +66,10 @@ public sealed class TokenService : ITokenService
 
     public string GenerateAccessToken(IEnumerable<Claim> claims)
     {
-        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.Config.Security.TokenSecurity));
+        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Config.Security.TokenSecurity));
         var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-        var tokenExpiryInMinutes = Convert.ToInt32(this.Config.Security.TokenExpiryInMinutes);
-        var tokeOptions = new JwtSecurityToken(this.Config.Info.Site, this.Config.Info.Site,
+        var tokenExpiryInMinutes = Convert.ToInt32(Config.Security.TokenExpiryInMinutes);
+        var tokeOptions = new JwtSecurityToken(Config.Info.Site, Config.Info.Site,
             claims,
             expires: DateTime.Now.AddMinutes(tokenExpiryInMinutes),
             signingCredentials: signinCredentials

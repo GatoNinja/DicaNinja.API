@@ -14,7 +14,7 @@ public class SignUpController : ControllerBase
 {
     public SignUpController(IUserProvider userProvider)
     {
-        this.UserProvider = userProvider;
+        UserProvider = userProvider;
     }
 
     private IUserProvider UserProvider { get; }
@@ -31,7 +31,7 @@ public class SignUpController : ControllerBase
 
         var person = new Person(request.Firstname, request.Lastname);
         var user = new User(request.Username, request.Password, request.Email, person);
-        var validateNewUser = this.UserProvider.ValidateNewUser(user);
+        var validateNewUser = UserProvider.ValidateNewUser(user);
 
         if (validateNewUser == EnumNewUserCheck.ExistingEmail)
         {
@@ -47,7 +47,7 @@ public class SignUpController : ControllerBase
             return new BadRequestObjectResult(messageResponse);
         }
 
-        var insertedUser = await this.UserProvider.InsertAsync(user);
+        var insertedUser = await UserProvider.InsertAsync(user);
 
         return insertedUser is null
             ? (ActionResult<Guid>)new BadRequestObjectResult(new MessageResponse(TextConstant.ProblemToSaveRecord))

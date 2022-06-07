@@ -15,8 +15,8 @@ public class Identifier : BaseModel
     }
     public Identifier(string isbn, string type)
     {
-        this.Isbn = isbn;
-        this.Type = type;
+        Isbn = isbn;
+        Type = type;
     }
 
     [Column("isbn")]

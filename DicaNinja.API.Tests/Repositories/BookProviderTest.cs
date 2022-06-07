@@ -8,7 +8,7 @@ public class CategoryProviderTest : BaseTest
 {
     public CategoryProviderTest() : base()
     {
-        this.CategoryProvider = new CategoryProvider(this.Context);
+        CategoryProvider = new CategoryProvider(Context);
     }
 
     public CategoryProvider CategoryProvider { get; }
@@ -16,8 +16,8 @@ public class CategoryProviderTest : BaseTest
     [Test]
     public async Task GetByBookTest()
     {
-        var mock = this.Books.First();
-        var categories = await this.CategoryProvider.GetByBook(mock.Id);
+        var mock = Books.First();
+        var categories = await CategoryProvider.GetByBook(mock.Id);
 
         Assert.That(categories, Is.Not.Null);
         CollectionAssert.AllItemsAreNotNull(categories);
@@ -33,13 +33,13 @@ public class CategoryProviderTest : BaseTest
     [Test]
     public async Task GetOrCreateTest()
     {
-        var mock = this.Categories.First();
-        var category = await this.CategoryProvider.GetOrCreate(mock.Name);
+        var mock = Categories.First();
+        var category = await CategoryProvider.GetOrCreate(mock.Name);
 
         Assert.That(category, Is.Not.Null);
         Assert.That(category.Name, Is.EqualTo(mock.Name));
 
-        category = await this.CategoryProvider.GetOrCreate("Categoria inexistente");
+        category = await CategoryProvider.GetOrCreate("Categoria inexistente");
 
         Assert.That(category, Is.Not.Null);
         Assert.That(category.Name, Is.EqualTo("Categoria inexistente"));

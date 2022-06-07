@@ -15,34 +15,34 @@ public class User : BaseModel
 
     public User(Guid id, string username, string email)
     {
-        this.Id = id;
-        this.Username = username;
-        this.Email = email;
+        Id = id;
+        Username = username;
+        Email = email;
     }
 
     public User(Guid id, string username, Person person)
     {
-        this.Id = id;
-        this.Username = username;
-        this.Person = person;
+        Id = id;
+        Username = username;
+        Person = person;
     }
 
     public User(string username, string password, string email, Person person)
     {
-        this.Username = username;
-        this.Password = password;
-        this.Email = email;
-        this.Person = person;
+        Username = username;
+        Password = password;
+        Email = email;
+        Person = person;
     }
 
     public User(Guid id, string username, string email, string password) : this(id, username, email)
     {
-        this.Password = password;
+        Password = password;
     }
 
     public User(Guid id, string username, string email, Person person) : this(id, username, email)
     {
-        this.Person = person;
+        Person = person;
     }
 
     [Required, MinLength(3), MaxLength(48)]

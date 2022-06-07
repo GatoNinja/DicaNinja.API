@@ -13,15 +13,15 @@ public class PasswordRecoveryProvider : IPasswordRecoveryProvider
 {
     public PasswordRecoveryProvider(BaseContext context)
     {
-        this.Context = context;
+        Context = context;
     }
 
     private BaseContext Context { get; }
 
     public async Task<PasswordRecovery?> GetByEmailAndCode(string email, string code)
     {
-        var query = from passwordRecovery in this.Context.PasswordRecoveries
-                    join user in this.Context.Users on passwordRecovery.UserId equals user.Id
+        var query = from passwordRecovery in Context.PasswordRecoveries
+                    join user in Context.Users on passwordRecovery.UserId equals user.Id
                     where user.Email == email
                           && passwordRecovery.Code == code
                           && passwordRecovery.IsActive
@@ -37,8 +37,8 @@ public class PasswordRecoveryProvider : IPasswordRecoveryProvider
         var code = Math.Ceiling(random.NextDouble() * 1000000).ToString(CultureInfo.InvariantCulture);
         passwordRecovery.Code = code.PadLeft(code.Length - 7, '0');
 
-        await this.Context.PasswordRecoveries.AddAsync(passwordRecovery);
-        await this.Context.SaveChangesAsync();
+        await Context.PasswordRecoveries.AddAsync(passwordRecovery);
+        await Context.SaveChangesAsync();
 
         return passwordRecovery;
     }
@@ -46,7 +46,7 @@ public class PasswordRecoveryProvider : IPasswordRecoveryProvider
 
     public async Task UseRecoveryCode(Guid recoverId)
     {
-        var recover = await this.Context.PasswordRecoveries.FirstOrDefaultAsync(x => x.Id == recoverId);
+        var recover = await Context.PasswordRecoveries.FirstOrDefaultAsync(x => x.Id == recoverId);
 
         if (recover is null)
         {
@@ -55,6 +55,6 @@ public class PasswordRecoveryProvider : IPasswordRecoveryProvider
 
         recover.IsActive = false;
 
-        await this.Context.SaveChangesAsync();
+        await Context.SaveChangesAsync();
     }
 }

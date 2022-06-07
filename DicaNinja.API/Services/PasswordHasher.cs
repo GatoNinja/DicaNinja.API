@@ -11,7 +11,7 @@ public sealed class PasswordHasher : IPasswordHasher
 
     public PasswordHasher(ConfigurationReader config)
     {
-        this.Iterations = Convert.ToInt32(config.Security.HashIterations);
+        Iterations = Convert.ToInt32(config.Security.HashIterations);
     }
 
     private int Iterations { get; }
@@ -20,11 +20,11 @@ public sealed class PasswordHasher : IPasswordHasher
     {
         using var algorithm = new Rfc2898DeriveBytes(
             password,
-            SaltSize, this.Iterations);
+            SaltSize, Iterations);
         var key = Convert.ToBase64String(algorithm.GetBytes(KeySize));
         var salt = Convert.ToBase64String(algorithm.Salt);
 
-        return $"{this.Iterations}.{salt}.{key}";
+        return $"{Iterations}.{salt}.{key}";
     }
 
     public bool Check(string hash, string password)

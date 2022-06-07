@@ -8,7 +8,7 @@ public class AuthorProviderTest : BaseTest
 {
     public AuthorProviderTest() : base()
     {
-        this.AuthorProvider = new AuthorProvider(this.Context);
+        AuthorProvider = new AuthorProvider(Context);
     }
 
     public AuthorProvider AuthorProvider { get; }
@@ -16,8 +16,8 @@ public class AuthorProviderTest : BaseTest
     [Test]
     public async Task GetByBookTest()
     {
-        var mock = this.Books.First();
-        var authors = await this.AuthorProvider.GetByBook(mock.Id);
+        var mock = Books.First();
+        var authors = await AuthorProvider.GetByBook(mock.Id);
 
         Assert.That(authors, Is.Not.Null);
         CollectionAssert.AllItemsAreNotNull(authors);
@@ -33,13 +33,13 @@ public class AuthorProviderTest : BaseTest
     [Test]
     public async Task GetOrCreateTest()
     {
-        var mock = this.Authors.First();
-        var author = await this.AuthorProvider.GetOrCreate(mock.Name);
+        var mock = Authors.First();
+        var author = await AuthorProvider.GetOrCreate(mock.Name);
 
         Assert.That(author, Is.Not.Null);
         Assert.That(author.Name, Is.EqualTo(mock.Name));
 
-        author = await this.AuthorProvider.GetOrCreate("Author inexistente");
+        author = await AuthorProvider.GetOrCreate("Author inexistente");
 
         Assert.That(author, Is.Not.Null);
         Assert.That(author.Name, Is.EqualTo("Author inexistente"));

@@ -10,7 +10,7 @@ public class UserProviderTest : BaseTest
 {
     public UserProviderTest() : base()
     {
-        this.UserProvider = new UserProvider(this.Context, this.PasswordHasher);
+        UserProvider = new UserProvider(Context, PasswordHasher);
     }
 
     public UserProvider UserProvider { get; }
@@ -18,8 +18,8 @@ public class UserProviderTest : BaseTest
     [Test]
     public async Task GetByEmailTest()
     {
-        var mock = this.Users.First();
-        var user = await this.UserProvider.GetByEmail(mock.Email);
+        var mock = Users.First();
+        var user = await UserProvider.GetByEmail(mock.Email);
 
         Assert.That(user, Is.Not.Null);
         Assert.Multiple(() =>
@@ -33,7 +33,7 @@ public class UserProviderTest : BaseTest
             Assert.That(user?.Password, Is.Null);
             Assert.That(user?.Person, Is.Null);
         });
-        user = await this.UserProvider.GetByEmail("test@gatoninja.com.br");
+        user = await UserProvider.GetByEmail("test@gatoninja.com.br");
 
         Assert.That(user, Is.Null);
     }
@@ -41,8 +41,8 @@ public class UserProviderTest : BaseTest
     [Test]
     public async Task GetByIdTest()
     {
-        var mock = this.Users.First();
-        var user = await this.UserProvider.GetByIdAsync(mock.Id);
+        var mock = Users.First();
+        var user = await UserProvider.GetByIdAsync(mock.Id);
 
         Assert.That(user, Is.Not.Null);
         Assert.Multiple(() =>
@@ -55,7 +55,7 @@ public class UserProviderTest : BaseTest
             Assert.That(mock.Person.LastName, Is.EqualTo(user?.Person.LastName));
         });
 
-        user = await this.UserProvider.GetByIdAsync(Guid.NewGuid());
+        user = await UserProvider.GetByIdAsync(Guid.NewGuid());
 
         Assert.That(user, Is.Null);
     }
@@ -63,8 +63,8 @@ public class UserProviderTest : BaseTest
     [Test]
     public async Task DoLoginAsyncTest()
     {
-        var mock = this.Users.First();
-        var user = await this.UserProvider.DoLoginAsync(mock.Username, "ninja");
+        var mock = Users.First();
+        var user = await UserProvider.DoLoginAsync(mock.Username, "ninja");
 
         Assert.That(user, Is.Not.Null);
         Assert.Multiple(() =>
@@ -75,7 +75,7 @@ public class UserProviderTest : BaseTest
             Assert.That(mock.Email, Is.EqualTo(user?.Email));
             Assert.That(user?.Person, Is.Null);
         });
-        user = await this.UserProvider.DoLoginAsync("test", "test");
+        user = await UserProvider.DoLoginAsync("test", "test");
 
         Assert.That(user, Is.Null);
     }
@@ -83,9 +83,9 @@ public class UserProviderTest : BaseTest
     [Test]
     public async Task InsertAsyncTest()
     {
-        var mock = this.Users.First();
+        var mock = Users.First();
         mock.Id = Guid.Empty;
-        var user = await this.UserProvider.InsertAsync(mock);
+        var user = await UserProvider.InsertAsync(mock);
 
         Assert.That(user, Is.Null);
     }
@@ -93,30 +93,30 @@ public class UserProviderTest : BaseTest
     [Test]
     public void ChangePasswordAsyncTest()
     {
-        var mock = this.Users.First();
+        var mock = Users.First();
 
         Assert.DoesNotThrowAsync(async () =>
         {
-            await this.UserProvider.ChangePassword(mock.Email, "ninjanovo");
+            await UserProvider.ChangePassword(mock.Email, "ninjanovo");
         });
     }
 
     [Test]
     public void ValidateNewUserTest()
     {
-        var mock = this.Users.First();
-        var existingUsername = this.UserProvider.ValidateNewUser(mock);
+        var mock = Users.First();
+        var existingUsername = UserProvider.ValidateNewUser(mock);
 
         Assert.That(existingUsername, Is.EqualTo(EnumNewUserCheck.ExistingUsername));
 
         mock.Username = "novousername";
-        var existingEmail = this.UserProvider.ValidateNewUser(mock);
+        var existingEmail = UserProvider.ValidateNewUser(mock);
 
         Assert.That(existingEmail, Is.EqualTo(EnumNewUserCheck.ExistingEmail));
 
         mock.Email = "novo@gatoninja.com.br";
 
-        var valid = this.UserProvider.ValidateNewUser(mock);
+        var valid = UserProvider.ValidateNewUser(mock);
 
         Assert.That(valid, Is.EqualTo(EnumNewUserCheck.Valid));
     }

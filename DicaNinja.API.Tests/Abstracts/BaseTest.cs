@@ -59,25 +59,25 @@ public abstract class BaseTest
             .AddInMemoryCollection(inMemorySettings)
             .Build();
         var configurationReader = new ConfigurationReader(configuration);
-        this.PasswordHasher = new PasswordHasher(configurationReader);
+        PasswordHasher = new PasswordHasher(configurationReader);
 
-        foreach (var user in this.Users)
+        foreach (var user in Users)
         {
-            user.Password = this.PasswordHasher.Hash(user.Password);
+            user.Password = PasswordHasher.Hash(user.Password);
         }
 
         var contextOptions = new DbContextOptionsBuilder<BaseContext>()
                 .UseInMemoryDatabase("DicaNinja")
                 .Options;
 
-        this.Context = new BaseContext(contextOptions);
+        Context = new BaseContext(contextOptions);
 
-        this.Context.Database.EnsureDeleted();
-        this.Context.Database.EnsureCreated();
+        Context.Database.EnsureDeleted();
+        Context.Database.EnsureCreated();
 
-        var firstUser = this.Users.First();
+        var firstUser = Users.First();
 
-        foreach (var book in this.Books)
+        foreach (var book in Books)
         {
             book.Authors = new();
             book.Bookmarks = new();
@@ -85,21 +85,21 @@ public abstract class BaseTest
             book.Identifiers = new();
             book.Reviews = new();
 
-            book.Authors.AddRange(this.Authors);
+            book.Authors.AddRange(Authors);
             book.Bookmarks.Add(new Bookmark
             {
                 User = firstUser
             });
-            book.Categories.AddRange(this.Categories);
-            book.Identifiers.AddRange(this.Identifiers);
-            book.Reviews.AddRange(this.Reviews);
+            book.Categories.AddRange(Categories);
+            book.Identifiers.AddRange(Identifiers);
+            book.Reviews.AddRange(Reviews);
         }
 
         firstUser.Reviews = new();
-        firstUser.Reviews.AddRange(this.Reviews);
+        firstUser.Reviews.AddRange(Reviews);
 
-        this.Context.Users.AddRange(this.Users);
-        this.Context.Books.AddRange(this.Books);
-        this.Context.SaveChanges();
+        Context.Users.AddRange(Users);
+        Context.Books.AddRange(Books);
+        Context.SaveChanges();
     }
 }
