@@ -23,7 +23,7 @@ public class ProfileProvider : IProfileProvider
 
     public async Task<UserProfileResponse?> GetUserProfileAsync(string parameter)
     {
-        var user = await UserProvider.GetByUsernameOrEmail(parameter);
+        var user = await UserProvider.GetByUsernameOrEmailAsync(parameter);
 
         return user is null ? null : await LoadProfile(user);
     }
@@ -31,11 +31,11 @@ public class ProfileProvider : IProfileProvider
     private async Task<UserProfileResponse> LoadProfile(User user)
     {
         var userId = user.Id;
-        var totalBooks = await UserProvider.GetBooksCount(userId);
-        var totalAuthors = await UserProvider.GetAuthorsCount(userId);
-        var totalCategories = await UserProvider.GetCategoriesCount(userId);
-        var totalFollowers = await UserProvider.GetFollowersCount(userId);
-        var totalFollowing = await UserProvider.GetFollowingCount(userId);
+        var totalBooks = await UserProvider.GetBooksCountAsync(userId);
+        var totalAuthors = await UserProvider.GetAuthorsCountAsync(userId);
+        var totalCategories = await UserProvider.GetCategoriesCountAsync(userId);
+        var totalFollowers = await UserProvider.GetFollowersCountAsync(userId);
+        var totalFollowing = await UserProvider.GetFollowingCountAsync(userId);
 
         return new UserProfileResponse(user.Id, user.Username, user.Email, user.Person.FirstName, user.Person.LastName, totalBooks, totalAuthors, totalCategories, totalFollowers, totalFollowing);
     }

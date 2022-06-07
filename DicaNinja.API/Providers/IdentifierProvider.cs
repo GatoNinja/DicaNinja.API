@@ -18,12 +18,12 @@ public class IdentifierProvider : IIdentifierProvider
 
     private BaseContext Context { get; }
 
-    public async Task<List<Identifier>> GetByBook(Guid bookId)
+    public async Task<List<Identifier>> GetByBookAsync(Guid bookId)
     {
         return await Context.Identifiers.Where(identifier => identifier.BookId == bookId).ToListAsync();
     }
 
-    public async Task<Identifier?> GetOrCreate(IdentifierResponse bookIdentifier)
+    public async Task<Identifier?> GetOrCreateAsync(IdentifierResponse bookIdentifier)
     {
         var identifier = await Context.Identifiers.FirstOrDefaultAsync(identifier => identifier.Isbn == bookIdentifier.Isbn && identifier.Type == bookIdentifier.Type);
 

@@ -18,7 +18,7 @@ public class PasswordRecoveryProvider : IPasswordRecoveryProvider
 
     private BaseContext Context { get; }
 
-    public async Task<PasswordRecovery?> GetByEmailAndCode(string email, string code)
+    public async Task<PasswordRecovery?> GetByEmailAndCodeAsync(string email, string code)
     {
         var query = from passwordRecovery in Context.PasswordRecoveries
                     join user in Context.Users on passwordRecovery.UserId equals user.Id
@@ -44,7 +44,7 @@ public class PasswordRecoveryProvider : IPasswordRecoveryProvider
     }
 
 
-    public async Task UseRecoveryCode(Guid recoverId)
+    public async Task UseRecoveryCodeAsync(Guid recoverId)
     {
         var recover = await Context.PasswordRecoveries.FirstOrDefaultAsync(x => x.Id == recoverId);
 

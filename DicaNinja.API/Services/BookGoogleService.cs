@@ -113,7 +113,7 @@ public class BookGoogleService
 
         foreach (var identifier in response.Identifiers)
         {
-            var bookIdentifier = await IdentifierProvider.GetOrCreate(identifier);
+            var bookIdentifier = await IdentifierProvider.GetOrCreateAsync(identifier);
 
             if (bookIdentifier is null)
             {
@@ -125,7 +125,7 @@ public class BookGoogleService
 
         foreach (var author in response.Authors)
         {
-            var authorEntity = await AuthorProvider.GetOrCreate(author);
+            var authorEntity = await AuthorProvider.GetOrCreateAsync(author);
 
             if (authorEntity is null)
             {
@@ -137,7 +137,7 @@ public class BookGoogleService
 
         foreach (var category in response.Categories)
         {
-            var categoryEntity = await CategoryProvider.GetOrCreate(category);
+            var categoryEntity = await CategoryProvider.GetOrCreateAsync(category);
 
             if (categoryEntity is null)
             {

@@ -56,8 +56,6 @@ public class User : BaseModel
     [Required, JsonIgnore]
     [Column("password")]
     public string Password { get; set; } = default!;
-
-    [JsonIgnore]
     public virtual Person Person { get; set; } = default!;
 
     [JsonIgnore]

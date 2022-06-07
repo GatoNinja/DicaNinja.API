@@ -16,17 +16,17 @@ public class CategoryProvider : ICategoryProvider
 
     private BaseContext Context { get; }
 
-    public async Task<List<Category>> GetByBook(Guid bookId)
+    public async Task<List<Category>> GetByBookAsync(Guid bookId)
     {
         return await Context.Categories.Where(category => category.Books.Any(book => book.Id == bookId)).ToListAsync();
     }
 
-    public async Task<int> GetCount()
+    public async Task<int> GetCountAsync()
     {
         return await Context.Categories.CountAsync();
     }
 
-    public async Task<Category?> GetOrCreate(string categoryName)
+    public async Task<Category?> GetOrCreateAsync(string categoryName)
     {
         var category = await Context.Categories.FirstOrDefaultAsync(c => c.Name == categoryName);
 

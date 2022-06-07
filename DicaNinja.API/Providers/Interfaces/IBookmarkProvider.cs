@@ -1,10 +1,10 @@
-﻿namespace DicaNinja.API.Providers.Interfaces;
+namespace DicaNinja.API.Providers.Interfaces;
 
 public interface IBookmarkProvider
 {
-    Task<int> GetBookmarkCount(Guid userId);
+    Task<int> GetBookmarkCountAsync(Guid userId);
 
-    Task<int?> Bookmark(Guid userId, string identifier, string type);
+    Task<int?> BookmarkAsync(Guid userId, string identifier, string type);
 
-    Task<bool> IsBookmarked(Guid userId, string identifier, string type);
+    Task<bool> IsBookmarkedAsync(Guid userId, string identifier, string type);
 }

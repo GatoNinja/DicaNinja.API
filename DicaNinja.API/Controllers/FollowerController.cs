@@ -26,8 +26,8 @@ public class FollowerController : ControllerHelper
     {
         return request.Status switch
         {
-            EnumStatusFollow.Follow => await FollowerProvider.Follow(UserId, request.FollowerId),
-            EnumStatusFollow.Unfollow => await FollowerProvider.Unfollow(UserId, request.FollowerId),
+            EnumStatusFollow.Follow => await FollowerProvider.FollowAsync(UserId, request.FollowerId),
+            EnumStatusFollow.Unfollow => await FollowerProvider.UnfollowAsync(UserId, request.FollowerId),
             _ => throw new NotImplementedException()
         };
     }

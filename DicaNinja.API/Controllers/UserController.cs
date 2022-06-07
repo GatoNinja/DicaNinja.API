@@ -28,8 +28,8 @@ public class UserController : ControllerHelper
     [HttpGet("followers")]
     public async Task<ActionResult<IEnumerable<User>>> GetFollowers([FromQuery] QueryParameters query)
     {
-        var followers = await UserProvider.GetFollowers(UserId, query.Page, query.PerPage);
-        var total = await UserProvider.GetFollowersCount(UserId);
+        var followers = await UserProvider.GetFollowersAsync(UserId, query.Page, query.PerPage);
+        var total = await UserProvider.GetFollowersCountAsync(UserId);
         var mapped = Mapper.Map<IEnumerable<UserResponse>>(followers);
         var paginated = PaginationHelper.CreatePagedResponse(mapped, query, total);
 
@@ -39,8 +39,8 @@ public class UserController : ControllerHelper
     [HttpGet("following")]
     public async Task<ActionResult<IEnumerable<User>>> GetFollowing([FromQuery] QueryParameters query)
     {
-        var following = await UserProvider.GetFollowing(UserId, query.Page, query.PerPage);
-        var total = await UserProvider.GetFollowingCount(UserId);
+        var following = await UserProvider.GetFollowingAsync(UserId, query.Page, query.PerPage);
+        var total = await UserProvider.GetFollowingCountAsync(UserId);
         var mapped = Mapper.Map<IEnumerable<UserResponse>>(following);
         var paginated = PaginationHelper.CreatePagedResponse(mapped, query, total);
 

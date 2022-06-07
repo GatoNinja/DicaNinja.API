@@ -1,4 +1,4 @@
-﻿
+
 using DicaNinja.API.Models;
 using DicaNinja.API.Response;
 
@@ -6,7 +6,7 @@ namespace DicaNinja.API.Providers.Interfaces;
 
 public interface IIdentifierProvider
 {
-    Task<Identifier?> GetOrCreate(IdentifierResponse identifier);
+    Task<Identifier?> GetOrCreateAsync(IdentifierResponse identifier);
 
-    Task<List<Identifier>> GetByBook(Guid bookId);
+    Task<List<Identifier>> GetByBookAsync(Guid bookId);
 }

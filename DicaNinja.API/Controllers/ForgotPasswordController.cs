@@ -29,7 +29,7 @@ public class ForgotPasswordController : ControllerHelper
     [HttpPost]
     public async Task<ActionResult> PostForgotPasswordAsync([FromBody] ForgotPasswordRequest request)
     {
-        var user = await UserProvider.GetByEmail(request.Email);
+        var user = await UserProvider.GetByEmailAsync(request.Email);
 
         if (user is null)
         {

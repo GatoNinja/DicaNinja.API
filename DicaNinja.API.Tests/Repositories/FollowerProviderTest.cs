@@ -21,22 +21,22 @@ public class FollowerProviderTest : BaseTest
         var firstUser = Users[0];
         var secondUser = Users[1];
 
-        var isFollowing = await FollowerProvider.IsFollowing(firstUser.Id, secondUser.Id);
+        var isFollowing = await FollowerProvider.IsFollowingAsync(firstUser.Id, secondUser.Id);
 
         Assert.That(isFollowing, Is.False);
 
-        await FollowerProvider.Follow(firstUser.Id, secondUser.Id);
+        await FollowerProvider.FollowAsync(firstUser.Id, secondUser.Id);
 
-        isFollowing = await FollowerProvider.IsFollowing(firstUser.Id, secondUser.Id);
+        isFollowing = await FollowerProvider.IsFollowingAsync(firstUser.Id, secondUser.Id);
 
         Assert.That(isFollowing, Is.True);
 
-        await UserProvider.GetFollowers(secondUser.Id);
-        await UserProvider.GetFollowing(secondUser.Id);
+        await UserProvider.GetFollowersAsync(secondUser.Id);
+        await UserProvider.GetFollowingAsync(secondUser.Id);
 
-        await FollowerProvider.Unfollow(firstUser.Id, secondUser.Id);
+        await FollowerProvider.UnfollowAsync(firstUser.Id, secondUser.Id);
 
-        isFollowing = await FollowerProvider.IsFollowing(firstUser.Id, secondUser.Id);
+        isFollowing = await FollowerProvider.IsFollowingAsync(firstUser.Id, secondUser.Id);
 
         Assert.That(isFollowing, Is.False);
     }

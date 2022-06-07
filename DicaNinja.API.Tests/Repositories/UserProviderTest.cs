@@ -19,7 +19,7 @@ public class UserProviderTest : BaseTest
     public async Task GetByEmailTest()
     {
         var mock = Users.First();
-        var user = await UserProvider.GetByEmail(mock.Email);
+        var user = await UserProvider.GetByEmailAsync(mock.Email);
 
         Assert.That(user, Is.Not.Null);
         Assert.Multiple(() =>
@@ -33,7 +33,7 @@ public class UserProviderTest : BaseTest
             Assert.That(user?.Password, Is.Null);
             Assert.That(user?.Person, Is.Null);
         });
-        user = await UserProvider.GetByEmail("test@gatoninja.com.br");
+        user = await UserProvider.GetByEmailAsync("test@gatoninja.com.br");
 
         Assert.That(user, Is.Null);
     }
@@ -97,7 +97,7 @@ public class UserProviderTest : BaseTest
 
         Assert.DoesNotThrowAsync(async () =>
         {
-            await UserProvider.ChangePassword(mock.Email, "ninjanovo");
+            await UserProvider.ChangePasswordAsync(mock.Email, "ninjanovo");
         });
     }
 

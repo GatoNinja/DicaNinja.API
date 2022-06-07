@@ -6,17 +6,17 @@ namespace DicaNinja.API.Providers.Interfaces;
 
 public interface IBookProvider
 {
-    Task<Book?> GetByIdentifier(string identifier, string type);
+    Task<Book?> GetByIdentifierAsync(string identifier, string type);
 
-    Task<List<Book>> GetBookmarks(Guid userId, int page = 1, int perPage = 10);
+    Task<List<Book>> GetBookmarksAsync(Guid userId, int page = 1, int perPage = 10);
 
-    Task PopulateWithBookmarks(IEnumerable<BookResponse> books, Guid userId);
+    Task PopulateWithBookmarksAsync(IEnumerable<BookResponse> books, Guid userId);
 
-    Task<IEnumerable<Review>> GetReviews(Guid bookId, int page = 1, int perPage = 10);
-    Task<double> AverageRating(Guid bookId);
+    Task<IEnumerable<Review>> GetReviewsAsync(Guid bookId, int page = 1, int perPage = 10);
+    Task<double> AverageRatingAsync(Guid bookId);
 
-    Task<Book?> GetById(Guid bookId);
-    Task<IEnumerable<Book>> GetBooks(int page = 1, int perPage = 10);
-    Task<int> GetCount();
-    Task<BookResponse?> GetByIsbn(string isbn, string type);
+    Task<Book?> GetByIdAsync(Guid bookId);
+    Task<IEnumerable<Book>> GetBooksAsync(int page = 1, int perPage = 10);
+    Task<int> GetCountAsync();
+    Task<BookResponse?> GetByIsbnAsync(string isbn, string type);
 }

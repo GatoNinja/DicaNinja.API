@@ -5,9 +5,9 @@ namespace DicaNinja.API.Providers.Interfaces;
 
 public interface IPasswordRecoveryProvider
 {
-    Task<PasswordRecovery?> GetByEmailAndCode(string email, string code);
+    Task<PasswordRecovery?> GetByEmailAndCodeAsync(string email, string code);
 
-    Task UseRecoveryCode(Guid recoverId);
+    Task UseRecoveryCodeAsync(Guid recoverId);
 
     Task<PasswordRecovery> InsertAsync(PasswordRecovery user);
 }

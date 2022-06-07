@@ -21,7 +21,7 @@ public class BookmarkProvider : IBookmarkProvider
     private IBookProvider BookProvider { get; }
     private BookGoogleService BookGoogleService { get; }
 
-    public async Task<int?> Bookmark(Guid userId, string identifier, string type)
+    public async Task<int?> BookmarkAsync(Guid userId, string identifier, string type)
     {
         var existingBookmark = await FilterByUser(userId, identifier, type).FirstOrDefaultAsync();
 
@@ -32,7 +32,7 @@ public class BookmarkProvider : IBookmarkProvider
         }
         else
         {
-            var book = await BookProvider.GetByIdentifier(identifier, type);
+            var book = await BookProvider.GetByIdentifierAsync(identifier, type);
 
             if (book is null)
             {
@@ -49,15 +49,15 @@ public class BookmarkProvider : IBookmarkProvider
             await Context.SaveChangesAsync();
         }
 
-        return await GetBookmarkCount(userId);
+        return await GetBookmarkCountAsync(userId);
     }
 
-    public async Task<int> GetBookmarkCount(Guid userId)
+    public async Task<int> GetBookmarkCountAsync(Guid userId)
     {
         return await Context.Bookmarks.CountAsync(bookmark => bookmark.UserId == userId);
     }
 
-    public async Task<bool> IsBookmarked(Guid userId, string identifier, string type)
+    public async Task<bool> IsBookmarkedAsync(Guid userId, string identifier, string type)
     {
         return await FilterByUser(userId, identifier, type).AnyAsync();
     }

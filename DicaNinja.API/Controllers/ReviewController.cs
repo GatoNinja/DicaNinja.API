@@ -27,6 +27,6 @@ public class ReviewController : ControllerHelper
         var (bookId, text, rating) = request;
         var review = new Review(UserId, bookId, text, rating);
 
-        return await ReviewProvider.CreateReview(review);
+        return await ReviewProvider.CreateReviewAsync(review);
     }
 }

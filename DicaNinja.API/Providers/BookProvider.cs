@@ -23,12 +23,12 @@ public class BookProvider : IBookProvider
     private IMapper Mapper { get; }
     private BookGoogleService BookGoogleService { get; }
 
-    public async Task<Book?> GetByIdentifier(string identifier, string type)
+    public async Task<Book?> GetByIdentifierAsync(string identifier, string type)
     {
         return await Context.Books.FirstOrDefaultAsync(book => book.Identifiers.Any(i => i.Type == type && i.Isbn == identifier));
     }
 
-    public async Task<List<Book>> GetBookmarks(Guid userId, int page, int perPage)
+    public async Task<List<Book>> GetBookmarksAsync(Guid userId, int page, int perPage)
     {
         var query = from book in Context.Books
                     join bookmark in Context.Bookmarks on book.Id equals bookmark.BookId
@@ -42,7 +42,7 @@ public class BookProvider : IBookProvider
             .ToListAsync();
     }
 
-    public async Task PopulateWithBookmarks(IEnumerable<BookResponse> books, Guid userId)
+    public async Task PopulateWithBookmarksAsync(IEnumerable<BookResponse> books, Guid userId)
     {
         foreach (var book in books)
         {
@@ -63,7 +63,7 @@ public class BookProvider : IBookProvider
         }
     }
 
-    public async Task<IEnumerable<Review>> GetReviews(Guid bookId, int page = 1, int perPage = 10)
+    public async Task<IEnumerable<Review>> GetReviewsAsync(Guid bookId, int page = 1, int perPage = 10)
     {
         var query = Context.Reviews.Where(review => review.BookId == bookId);
 
@@ -74,7 +74,7 @@ public class BookProvider : IBookProvider
             .ToListAsync();
     }
 
-    public async Task<double> AverageRating(Guid bookId)
+    public async Task<double> AverageRatingAsync(Guid bookId)
     {
         return await Context.Reviews
             .Where(review => review.BookId == bookId)
@@ -83,7 +83,7 @@ public class BookProvider : IBookProvider
             .AverageAsync(rating => rating);
     }
 
-    public async Task<Book?> GetById(Guid bookId)
+    public async Task<Book?> GetByIdAsync(Guid bookId)
     {
         return await Context.Books.FirstOrDefaultAsync(book => book.Id == bookId);
     }
@@ -98,7 +98,7 @@ public class BookProvider : IBookProvider
         return await query.AnyAsync();
     }
 
-    public async Task<IEnumerable<Book>> GetBooks(int page = 1, int perPage = 10)
+    public async Task<IEnumerable<Book>> GetBooksAsync(int page = 1, int perPage = 10)
     {
         return await Context.Books
             .OrderBy(book => Guid.NewGuid())
@@ -107,12 +107,12 @@ public class BookProvider : IBookProvider
             .ToListAsync();
     }
 
-    public async Task<int> GetCount()
+    public async Task<int> GetCountAsync()
     {
         return await Context.Books.CountAsync();
     }
 
-    public async Task<BookResponse?> GetByIsbn(string isbn, string type)
+    public async Task<BookResponse?> GetByIsbnAsync(string isbn, string type)
     {
         var book = await Context.Books.FirstOrDefaultAsync(book => book.Identifiers.Any(i => i.Isbn == isbn && i.Type == type));
 

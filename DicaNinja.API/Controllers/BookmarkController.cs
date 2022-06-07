@@ -25,7 +25,7 @@ public class BookmarkController : ControllerHelper
     [HttpPost]
     public async Task<ActionResult> CreateBookmark([FromBody] BookmarkRequest request)
     {
-        var count = await BookmarkProvider.Bookmark(UserId, request.Isbn, request.Type);
+        var count = await BookmarkProvider.BookmarkAsync(UserId, request.Isbn, request.Type);
 
         if (count is not null)
         {
@@ -41,6 +41,6 @@ public class BookmarkController : ControllerHelper
     [HttpGet("count")]
     public async Task<int> GetCount()
     {
-        return await BookmarkProvider.GetBookmarkCount(UserId);
+        return await BookmarkProvider.GetBookmarkCountAsync(UserId);
     }
 }

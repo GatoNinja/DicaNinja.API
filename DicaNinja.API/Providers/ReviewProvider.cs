@@ -17,7 +17,7 @@ public class ReviewProvider : IReviewProvider
 
     private BaseContext Context { get; }
 
-    public async Task<Guid> CreateReview(Review review)
+    public async Task<Guid> CreateReviewAsync(Review review)
     {
         var existingBook = await Context.Books.AnyAsync(book => book.Id == review.BookId);
 

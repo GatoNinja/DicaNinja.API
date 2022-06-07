@@ -43,7 +43,7 @@ public class BookController : ControllerHelper
     {
         var books = await Service.QueryBooks(query);
 
-        await BookProvider.PopulateWithBookmarks(books, UserId);
+        await BookProvider.PopulateWithBookmarksAsync(books, UserId);
 
         return Ok(books);
     }
@@ -51,8 +51,8 @@ public class BookController : ControllerHelper
     [HttpGet("bookmark")]
     public async Task<ActionResult<List<BookResponse>>> GetBookmarks([FromQuery] QueryParameters query)
     {
-        var books = await BookProvider.GetBookmarks(UserId, query.Page, query.PerPage);
-        var totalBookmarks = await BookmarkProvider.GetBookmarkCount(UserId);
+        var books = await BookProvider.GetBookmarksAsync(UserId, query.Page, query.PerPage);
+        var totalBookmarks = await BookmarkProvider.GetBookmarkCountAsync(UserId);
         var mapped = Mapper.Map<List<BookResponse>>(books);
         var paginated = PaginationHelper.CreatePagedResponse(mapped, query, totalBookmarks);
 
@@ -62,7 +62,7 @@ public class BookController : ControllerHelper
     [HttpGet("isbn/{isbn}/type/{type}")]
     public async Task<ActionResult<BookResponse>> GetBook([FromRoute] string isbn, [FromRoute] string type)
     {
-        var book = await BookProvider.GetByIsbn(isbn, type);
+        var book = await BookProvider.GetByIsbnAsync(isbn, type);
 
         if (book == null)
         {
@@ -70,7 +70,7 @@ public class BookController : ControllerHelper
         }
 
         var mapped = Mapper.Map<BookResponse>(book);
-        var internalRating = await BookProvider.AverageRating(book.Id);
+        var internalRating = await BookProvider.AverageRatingAsync(book.Id);
 
         mapped.InternalRating = internalRating;
 
@@ -81,7 +81,7 @@ public class BookController : ControllerHelper
     [HttpGet("{bookId:guid}/author")]
     public async Task<ActionResult<List<Author>>> GetAuthors([FromRoute] Guid bookId)
     {
-        var authors = await AuthorProvider.GetByBook(bookId);
+        var authors = await AuthorProvider.GetByBookAsync(bookId);
 
         return Ok(authors);
     }
@@ -89,7 +89,7 @@ public class BookController : ControllerHelper
     [HttpGet("{bookId:guid}/identifier")]
     public async Task<ActionResult<List<Identifier>>> GetIdentifiers([FromRoute] Guid bookId)
     {
-        var identifiers = await IdentifierProvider.GetByBook(bookId);
+        var identifiers = await IdentifierProvider.GetByBookAsync(bookId);
 
         return Ok(identifiers);
     }
@@ -97,7 +97,7 @@ public class BookController : ControllerHelper
     [HttpGet("{bookId:guid}/category")]
     public async Task<ActionResult<List<Category>>> GetCategories([FromRoute] Guid bookId)
     {
-        var categories = await CategoryProvider.GetByBook(bookId);
+        var categories = await CategoryProvider.GetByBookAsync(bookId);
 
         return Ok(categories);
     }
@@ -105,7 +105,7 @@ public class BookController : ControllerHelper
     [HttpGet("{bookId:guid}/review")]
     public async Task<ActionResult<List<Category>>> GetReviews([FromRoute] Guid bookId, [FromQuery] QueryParameters query)
     {
-        var reviews = await BookProvider.GetReviews(bookId, query.Page, query.PerPage);
+        var reviews = await BookProvider.GetReviewsAsync(bookId, query.Page, query.PerPage);
 
         return Ok(reviews);
     }

@@ -15,7 +15,8 @@ public sealed class PersonProvider : IPersonProvider
     }
 
     private BaseContext Context { get; }
-    
+
+
     public async Task<Person?> UpdatePersonAsync(Guid userId, Person person)
     {
         var personToUpdate = await Context.People.Include(person => person.User)

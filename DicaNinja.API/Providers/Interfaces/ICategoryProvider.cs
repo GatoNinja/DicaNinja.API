@@ -5,8 +5,7 @@ namespace DicaNinja.API.Providers.Interfaces;
 
 public interface ICategoryProvider
 {
-    Task<Category?> GetOrCreate(string categoryName);
-
-    Task<List<Category>> GetByBook(Guid bookId);
-    Task<int> GetCount();
+    Task<Category?> GetOrCreateAsync(string categoryName);
+    Task<List<Category>> GetByBookAsync(Guid bookId);
+    Task<int> GetCountAsync();
 }

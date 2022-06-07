@@ -34,11 +34,11 @@ public class MainController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<PagedResponse<IEnumerable<BookResponse>>>> Get([FromQuery] QueryParameters query)
     {
-        var books = await BookProvider.GetBooks();
-        var totalBooks = await BookProvider.GetCount();
-        var totalAuthors = await AuthorProvider.GetCount();
-        var totalCategories = await CategoriProvider.GetCount();
-        var totalUsers = await UserProvider.GetCount();
+        var books = await BookProvider.GetBooksAsync();
+        var totalBooks = await BookProvider.GetCountAsync();
+        var totalAuthors = await AuthorProvider.GetCountAsync();
+        var totalCategories = await CategoriProvider.GetCountAsync();
+        var totalUsers = await UserProvider.GetCountAsync();
         var mapped = Mapper.Map<IEnumerable<BookResponse>>(books);
         var paginated = PaginationHelper.CreatePagedResponse(mapped, query, totalBooks);
         var response = new MainResponse(paginated, totalBooks, totalAuthors, totalCategories, totalUsers);

@@ -16,7 +16,7 @@ public class AuthorProvider : IAuthorProvider
 
     private BaseContext Context { get; }
 
-    public async Task<List<Author>> GetByBook(Guid bookId)
+    public async Task<List<Author>> GetByBookAsync(Guid bookId)
     {
         return await Context.Authors
             .Where(author => author.Books.Any(book => book.Id == bookId))
@@ -24,12 +24,12 @@ public class AuthorProvider : IAuthorProvider
             .ToListAsync();
     }
 
-    public async Task<int> GetCount()
+    public async Task<int> GetCountAsync()
     {
         return await Context.Authors.CountAsync();
     }
 
-    public async Task<Author?> GetOrCreate(string authorName)
+    public async Task<Author?> GetOrCreateAsync(string authorName)
     {
         var author = await Context.Authors.FirstOrDefaultAsync(a => a.Name == authorName);
 
