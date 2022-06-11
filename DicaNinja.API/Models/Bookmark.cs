@@ -14,6 +14,11 @@ public class Bookmark : BaseModel
 
     }
 
+    public Bookmark(User user)
+    {
+        User = user;
+    }
+
     public Bookmark(Guid userId, Guid bookId)
     {
         UserId = userId;
@@ -28,7 +33,7 @@ public class Bookmark : BaseModel
     [Required]
     public Guid BookId { get; set; }
 
-    public virtual Book Book { get; set; } = default!;
+    public virtual Book Book { get; private set; } = default!;
 
-    public virtual User User { get; set; } = default!;
+    public virtual User User { get; private set; } = default!;
 }

@@ -27,6 +27,6 @@ public class Follower : BaseModel
     [Column("follower_id")]
     public Guid FollowedId { get; set; }
 
-    public virtual User User { get; set; } = default!;
-    public virtual User FollowedUser { get; set; } = default!;
+    public virtual User User { get; private set; } = default!;
+    public virtual User FollowedUser { get; private set; } = default!;
 }

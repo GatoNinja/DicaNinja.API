@@ -5,7 +5,7 @@ using DicaNinja.API.Tests.Abstracts;
 
 namespace DicaNinja.API.Tests.Repositories;
 
-public class IdentifierProviderTest : BaseTest
+public class IdentifierProviderTest : BaseProviderTest
 {
     public IdentifierProviderTest() : base()
     {
@@ -60,9 +60,9 @@ public class IdentifierProviderTest : BaseTest
         Assert.That(identifier, Is.Not.Null);
         Assert.Multiple(() =>
         {
-            Assert.That(identifier.Id, Is.Not.Empty);
-            Assert.That(identifier.Isbn, Is.EqualTo(newMock.Isbn));
-            Assert.That(identifier.Type, Is.EqualTo(newMock.Type));
+            Assert.That(identifier?.Id, Is.Not.Empty);
+            Assert.That(identifier?.Isbn, Is.EqualTo(newMock.Isbn));
+            Assert.That(identifier?.Type, Is.EqualTo(newMock.Type));
         });
     }
 }

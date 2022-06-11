@@ -21,10 +21,10 @@ public class Category : BaseModel
 
     [Column("name")]
     [Required]
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; private set; } = string.Empty;
 
     [Column("book_id")]
     public Guid BookId { get; set; }
 
-    public virtual IEnumerable<Book> Books { get; set; } = default!;
+    public virtual IEnumerable<Book> Books { get; private set; } = default!;
 }

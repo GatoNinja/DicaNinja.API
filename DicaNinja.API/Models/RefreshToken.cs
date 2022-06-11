@@ -35,7 +35,7 @@ public sealed class RefreshToken : BaseModel
 
     [Required, MaxLength(255), MinLength(32)]
     [Column("value")]
-    public string Value { get; set; } = default!;
+    public string Value { get; private set; } = default!;
 
     [Required]
     [Column("refresh_token_expiry_time")]

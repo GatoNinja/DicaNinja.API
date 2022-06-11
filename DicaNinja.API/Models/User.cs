@@ -47,26 +47,31 @@ public class User : BaseModel
 
     [Required, MinLength(3), MaxLength(48)]
     [Column("username")]
-    public string Username { get; set; } = default!;
+    public string Username { get; private set; } = default!;
 
     [Required, EmailAddress]
     [Column("email")]
-    public string Email { get; set; } = default!;
+    public string Email { get; private set; } = default!;
 
     [Required, JsonIgnore]
     [Column("password")]
-    public string Password { get; set; } = default!;
-    public virtual Person Person { get; set; } = default!;
+    public string Password { get; private set; } = default!;
+    public virtual Person Person { get; private set; } = default!;
 
     [JsonIgnore]
-    public virtual List<RefreshToken> RefreshTokens { get; set; } = default!;
+    public virtual List<RefreshToken> RefreshTokens { get; private set; } = new();
 
     [JsonIgnore]
-    public virtual List<Bookmark> Bookmarks { get; set; } = default!;
+    public virtual List<Bookmark> Bookmarks { get; private set; } = new();
 
-    public virtual List<Review> Reviews { get; set; } = default!;
+    public virtual List<Review> Reviews { get; private set; } = new();
 
-    public virtual List<Follower> Following { get; set; } = default!;
+    public virtual List<Follower> Following { get; private set; } = new();
 
-    public virtual List<Follower> Followers { get; set; } = default!;
+    public virtual List<Follower> Followers { get; private set; } = new();
+
+    public void SetPassword(string password)
+    {
+        Password = password;
+    }
 }

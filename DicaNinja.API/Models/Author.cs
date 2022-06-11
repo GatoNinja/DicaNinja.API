@@ -21,7 +21,7 @@ public class Author : BaseModel
 
     [Column("name")]
     [Required]
-    public string Name { get; set; } = default!;
+    public string Name { get; private set; } = default!;
 
-    public virtual IEnumerable<Book> Books { get; set; } = default!;
+    public virtual IEnumerable<Book> Books { get; private set; } = default!;
 }

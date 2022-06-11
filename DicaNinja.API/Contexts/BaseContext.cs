@@ -12,27 +12,27 @@ public class BaseContext : DbContext
     {
     }
 
-    public DbSet<Follower> Followers { get; set; } = default!;
+    public DbSet<Follower> Followers { get; private set; } = default!;
 
-    public DbSet<Bookmark> Bookmarks { get; set; } = default!;
+    public DbSet<Bookmark> Bookmarks { get; private set; } = default!;
 
-    public DbSet<User> Users { get; set; } = default!;
+    public DbSet<User> Users { get; private set; } = default!;
 
-    public DbSet<Person> People { get; set; } = default!;
+    public DbSet<Person> People { get; private set; } = default!;
 
-    public DbSet<PasswordRecovery> PasswordRecoveries { get; set; } = default!;
+    public DbSet<PasswordRecovery> PasswordRecoveries { get; private set; } = default!;
 
-    public DbSet<RefreshToken> RefreshTokens { get; set; } = default!;
+    public DbSet<RefreshToken> RefreshTokens { get; private set; } = default!;
 
-    public DbSet<Book> Books { get; set; } = default!;
+    public DbSet<Book> Books { get; private set; } = default!;
 
-    public DbSet<Author> Authors { get; set; } = default!;
+    public DbSet<Author> Authors { get; private set; } = default!;
 
-    public DbSet<Category> Categories { get; set; } = default!;
+    public DbSet<Category> Categories { get; private set; } = default!;
 
-    public DbSet<Identifier> Identifiers { get; set; } = default!;
+    public DbSet<Identifier> Identifiers { get; private set; } = default!;
 
-    public DbSet<Review> Reviews { get; set; } = default!;
+    public DbSet<Review> Reviews { get; private set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

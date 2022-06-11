@@ -5,12 +5,11 @@ using DicaNinja.API.Models;
 using DicaNinja.API.Services;
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 
 namespace DicaNinja.API.Tests.Abstracts;
 
-public abstract class BaseTest
+public abstract class BaseProviderTest
 {
     protected BaseContext Context { get; }
 
@@ -18,7 +17,7 @@ public abstract class BaseTest
 
     protected List<User> Users = new()
     {
-        new User("gato", "ninja", "ninja@gatoninja.com.br", new Person("Gato", "Ninja")) { Reviews = new()},
+        new User("gato", "ninja", "ninja@gatoninja.com.br", new Person("Gato", "Ninja")) ,
         new User("guest", "guest", "guest@gatoninja.com.br", new Person("Guest", "User"))
     };
 
@@ -36,20 +35,16 @@ public abstract class BaseTest
 
     protected List<Identifier> Identifiers = new()
     {
-        new Identifier{ Type = "ISBN_13", Isbn = "123434534566"},
-        new Identifier { Type = "ISBN_10", Isbn = "123434224"}
+        new Identifier("9788576055487", "ISBN-13"),
+        new Identifier("9776055487", "ISBN-10")
     };
 
     protected List<Review> Reviews = new()
     {
-        new Review()
-        {
-            Rating = 4,
-            Text = "Meu review lindo",
-        }
+        new Review("Mew review lindo", 4)
     };
 
-    protected BaseTest()
+    protected BaseProviderTest()
     {
         var inMemorySettings = new Dictionary<string, string> {
                                 {"HashIterations", "10000"}
@@ -63,7 +58,7 @@ public abstract class BaseTest
 
         foreach (var user in Users)
         {
-            user.Password = PasswordHasher.Hash(user.Password);
+            user.SetPassword(PasswordHasher.Hash(user.Password));
         }
 
         var contextOptions = new DbContextOptionsBuilder<BaseContext>()
@@ -79,23 +74,13 @@ public abstract class BaseTest
 
         foreach (var book in Books)
         {
-            book.Authors = new();
-            book.Bookmarks = new();
-            book.Categories = new();
-            book.Identifiers = new();
-            book.Reviews = new();
-
             book.Authors.AddRange(Authors);
-            book.Bookmarks.Add(new Bookmark
-            {
-                User = firstUser
-            });
+            book.Bookmarks.Add(new Bookmark(firstUser));
             book.Categories.AddRange(Categories);
             book.Identifiers.AddRange(Identifiers);
             book.Reviews.AddRange(Reviews);
         }
 
-        firstUser.Reviews = new();
         firstUser.Reviews.AddRange(Reviews);
 
         Context.Users.AddRange(Users);

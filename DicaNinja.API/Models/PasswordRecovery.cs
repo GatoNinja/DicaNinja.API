@@ -29,7 +29,7 @@ public class PasswordRecovery : BaseModel
 
     [Required, MinLength(1), MaxLength(7)]
     [Column("code")]
-    public string Code { get; set; } = default!;
+    public string Code { get; private set; } = default!;
 
     [Required]
     [Column("user_id")]
@@ -37,7 +37,7 @@ public class PasswordRecovery : BaseModel
 
     [JsonIgnore]
     [Column("user_id")]
-    public User User { get; set; } = default!;
+    public User User { get; private set; } = default!;
 
     [Required]
     [Column("expire_date")]

@@ -30,7 +30,7 @@ public class Book : BaseModel
 
     [Column("title")]
     [Required]
-    public string Title { get; set; } = string.Empty;
+    public string Title { get; private set; } = string.Empty;
 
     [Column("subtitle")]
     public string? Subtitle { get; set; }
@@ -56,13 +56,13 @@ public class Book : BaseModel
     [Column("average_ratting")]
     public double? AverageRating { get; set; }
 
-    public virtual List<Identifier> Identifiers { get; set; } = default!;
+    public virtual List<Identifier> Identifiers { get; private set; } = new();
 
-    public virtual List<Author> Authors { get; set; } = default!;
+    public virtual List<Author> Authors { get; private set; } = new();
 
-    public virtual List<Category> Categories { get; set; } = default!;
+    public virtual List<Category> Categories { get; private set; } = new();
 
-    public virtual List<Bookmark> Bookmarks { get; set; } = default!;
+    public virtual List<Bookmark> Bookmarks { get; private set; } = new();
 
-    public virtual List<Review> Reviews { get; set; } = default!;
+    public virtual List<Review> Reviews { get; private set; } = new();
 }

@@ -1,12 +1,11 @@
 
 using DicaNinja.API.Enums;
-using DicaNinja.API.Models;
 using DicaNinja.API.Providers;
 using DicaNinja.API.Tests.Abstracts;
 
 namespace DicaNinja.API.Tests.Repositories;
 
-public class UserProviderTest : BaseTest
+public class UserProviderTest : BaseProviderTest
 {
     public UserProviderTest() : base()
     {

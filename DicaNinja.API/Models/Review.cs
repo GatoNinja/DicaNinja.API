@@ -14,6 +14,13 @@ public class Review : BaseModel
     {
 
     }
+
+    public Review(string text, int rating)
+    {
+        Text = text;
+        Rating = rating;
+    }
+
     public Review(Guid userId, Guid bookId, string text, int rating)
     {
         UserId = userId;
@@ -24,7 +31,7 @@ public class Review : BaseModel
 
     [Column("text")]
     [MaxLength(2048)]
-    public string Text { get; set; } = default!;
+    public string Text { get; private set; } = default!;
 
     [Column("rating")]
     [Range(1, 5)]

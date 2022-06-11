@@ -4,7 +4,7 @@ using DicaNinja.API.Tests.Abstracts;
 
 namespace DicaNinja.API.Tests.Repositories;
 
-public class CategoryProviderTest : BaseTest
+public class CategoryProviderTest : BaseProviderTest
 {
     public CategoryProviderTest() : base()
     {
@@ -37,11 +37,11 @@ public class CategoryProviderTest : BaseTest
         var category = await CategoryProvider.GetOrCreateAsync(mock.Name);
 
         Assert.That(category, Is.Not.Null);
-        Assert.That(category.Name, Is.EqualTo(mock.Name));
+        Assert.That(category?.Name, Is.EqualTo(mock.Name));
 
         category = await CategoryProvider.GetOrCreateAsync("Categoria inexistente");
 
         Assert.That(category, Is.Not.Null);
-        Assert.That(category.Name, Is.EqualTo("Categoria inexistente"));
+        Assert.That(category?.Name, Is.EqualTo("Categoria inexistente"));
     }
 }

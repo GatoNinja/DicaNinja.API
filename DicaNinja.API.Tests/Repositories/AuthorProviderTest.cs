@@ -4,7 +4,7 @@ using DicaNinja.API.Tests.Abstracts;
 
 namespace DicaNinja.API.Tests.Repositories;
 
-public class AuthorProviderTest : BaseTest
+public class AuthorProviderTest : BaseProviderTest
 {
     public AuthorProviderTest() : base()
     {
@@ -37,11 +37,11 @@ public class AuthorProviderTest : BaseTest
         var author = await AuthorProvider.GetOrCreateAsync(mock.Name);
 
         Assert.That(author, Is.Not.Null);
-        Assert.That(author.Name, Is.EqualTo(mock.Name));
+        Assert.That(author?.Name, Is.EqualTo(mock.Name));
 
         author = await AuthorProvider.GetOrCreateAsync("Author inexistente");
 
         Assert.That(author, Is.Not.Null);
-        Assert.That(author.Name, Is.EqualTo("Author inexistente"));
+        Assert.That(author?.Name, Is.EqualTo("Author inexistente"));
     }
 }

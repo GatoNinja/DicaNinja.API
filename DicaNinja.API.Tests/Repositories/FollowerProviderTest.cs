@@ -4,7 +4,7 @@ using DicaNinja.API.Tests.Abstracts;
 
 namespace DicaNinja.API.Tests.Repositories;
 
-public class FollowerProviderTest : BaseTest
+public class FollowerProviderTest : BaseProviderTest
 {
     public FollowerProviderTest() : base()
     {

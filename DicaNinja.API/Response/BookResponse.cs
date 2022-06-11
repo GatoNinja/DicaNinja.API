@@ -2,20 +2,20 @@
 
 public class BookResponse
 {
-    public Guid Id { get; set; } = Guid.Empty;
-    public string Title { get; set; } = string.Empty;
-    public string Subtitle { get; set; } = string.Empty;
-    public string Language { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
+    public Guid Id { get; private set; } = Guid.Empty;
+    public string Title { get; private set; } = string.Empty;
+    public string Subtitle { get; private set; } = string.Empty;
+    public string Language { get; private set; } = string.Empty;
+    public string Description { get; private set; } = string.Empty;
     public int PageCount { get; set; }
-    public string Publisher { get; set; } = string.Empty;
-    public string PublicationDate { get; set; } = string.Empty;
-    public string Image { get; set; } = string.Empty;
+    public string Publisher { get; private set; } = string.Empty;
+    public string PublicationDate { get; private set; } = string.Empty;
+    public string Image { get; private set; } = string.Empty;
     public double AverageRating { get; set; }
-    public IEnumerable<string> Categories { get; set; } = default!;
-    public IEnumerable<string> Authors { get; set; } = default!;
-    public List<IdentifierResponse> Identifiers { get; set; } = default!;
-    public bool IsBookmarked { get; set; } = false;
+    public IEnumerable<string> Categories { get; private set; } = default!;
+    public IEnumerable<string> Authors { get; private set; } = default!;
+    public List<IdentifierResponse> Identifiers { get; private set; } = default!;
+    public bool IsBookmarked { get; private set; } = false;
     public double InternalRating { get; set; }
 
     public BookResponse()

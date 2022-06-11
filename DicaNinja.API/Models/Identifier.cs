@@ -21,14 +21,14 @@ public class Identifier : BaseModel
 
     [Column("isbn")]
     [Required]
-    public string Isbn { get; set; } = string.Empty;
-    
+    public string Isbn { get; private set; } = string.Empty;
+
     [Column("type")]
     [Required]
-    public string Type { get; set; } = string.Empty;
+    public string Type { get; private set; } = string.Empty;
 
     [Column("book_id")]
     public Guid BookId { get; set; }
 
-    public virtual Book Book { get; set; } = default!;
+    public virtual Book Book { get; private set; } = default!;
 }

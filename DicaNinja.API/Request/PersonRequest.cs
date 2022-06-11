@@ -9,13 +9,13 @@ public class PersonRequest
 
     public Guid PersonId { get; set; }
 
-    public string FirstName { get; set; }
+    public string FirstName { get; private set; } = default!;
 
-    public string LastName { get; set; }
+    public string LastName { get; private set; } = default!;
 
-    public string Username { get; set; }
+    public string Username { get; private set; } = default!;
 
-    public string Image { get; set; }
+    public string Image { get; private set; } = default!;
 
     public string? Description { get; set; }
 }
