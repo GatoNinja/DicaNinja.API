@@ -11,14 +11,9 @@ public class ControllerHelper : ControllerBase
     {
         get
         {
-            var claim = User.Claims.FirstOrDefault(claimToSearch => claimToSearch.Type == "Id");
+            var claim = User.Claims.FirstOrDefault(claimToSearch => string.Compare(claimToSearch.Type, "Id", StringComparison.Ordinal) == 0);
 
-            if (claim is null)
-            {
-                throw new BadHttpRequestException(TextConstant.ForbiddenUser);
-            }
-
-            return Guid.Parse(claim.Value);
+            return claim is not null ? Guid.Parse(claim.Value) : throw new BadHttpRequestException(TextConstant.ForbiddenUser);
         }
     }
 }

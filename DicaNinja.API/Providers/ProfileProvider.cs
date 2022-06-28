@@ -14,28 +14,28 @@ public class ProfileProvider : IProfileProvider
 
     private IUserProvider UserProvider { get; }
 
-    public async Task<UserProfileResponse?> GetUserProfileAsync(Guid userId)
+    public async Task<UserProfileResponse?> GetUserProfileAsync(Guid userId, CancellationToken cancellationToken)
     {
-        var user = await UserProvider.GetByIdAsync(userId);
+        var user = await UserProvider.GetByIdAsync(userId, cancellationToken);
 
-        return user is null ? null : await LoadProfile(user);
+        return user is null ? null : await LoadProfile(user, cancellationToken);
     }
 
-    public async Task<UserProfileResponse?> GetUserProfileAsync(string parameter)
+    public async Task<UserProfileResponse?> GetUserProfileAsync(string parameter, CancellationToken cancellationToken)
     {
-        var user = await UserProvider.GetByUsernameOrEmailAsync(parameter);
+        var user = await UserProvider.GetByUsernameOrEmailAsync(parameter, cancellationToken);
 
-        return user is null ? null : await LoadProfile(user);
+        return user is null ? null : await LoadProfile(user, cancellationToken);
     }
 
-    private async Task<UserProfileResponse> LoadProfile(User user)
+    private async Task<UserProfileResponse> LoadProfile(User user, CancellationToken cancellationToken)
     {
         var userId = user.Id;
-        var totalBooks = await UserProvider.GetBooksCountAsync(userId);
-        var totalAuthors = await UserProvider.GetAuthorsCountAsync(userId);
-        var totalCategories = await UserProvider.GetCategoriesCountAsync(userId);
-        var totalFollowers = await UserProvider.GetFollowersCountAsync(userId);
-        var totalFollowing = await UserProvider.GetFollowingCountAsync(userId);
+        var totalBooks = await UserProvider.GetBooksCountAsync(userId, cancellationToken);
+        var totalAuthors = await UserProvider.GetAuthorsCountAsync(userId, cancellationToken);
+        var totalCategories = await UserProvider.GetCategoriesCountAsync(userId, cancellationToken);
+        var totalFollowers = await UserProvider.GetFollowersCountAsync(userId, cancellationToken);
+        var totalFollowing = await UserProvider.GetFollowingCountAsync(userId, cancellationToken);
 
         return new UserProfileResponse(user.Id, user.Username, user.Email, user.Person.FirstName, user.Person.LastName, totalBooks, totalAuthors, totalCategories, totalFollowers, totalFollowing);
     }

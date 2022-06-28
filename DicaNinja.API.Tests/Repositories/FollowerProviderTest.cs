@@ -18,25 +18,26 @@ public class FollowerProviderTest : BaseProviderTest
     [Test]
     public async Task IsFollowingTest()
     {
+        var cancellationToken = new CancellationToken();
         var firstUser = Users[0];
         var secondUser = Users[1];
 
-        var isFollowing = await FollowerProvider.IsFollowingAsync(firstUser.Id, secondUser.Id);
+        var isFollowing = await FollowerProvider.IsFollowingAsync(firstUser.Id, secondUser.Id, cancellationToken);
 
         Assert.That(isFollowing, Is.False);
 
-        await FollowerProvider.FollowAsync(firstUser.Id, secondUser.Id);
+        await FollowerProvider.FollowAsync(firstUser.Id, secondUser.Id, cancellationToken);
 
-        isFollowing = await FollowerProvider.IsFollowingAsync(firstUser.Id, secondUser.Id);
+        isFollowing = await FollowerProvider.IsFollowingAsync(firstUser.Id, secondUser.Id, cancellationToken);
 
         Assert.That(isFollowing, Is.True);
 
-        await UserProvider.GetFollowersAsync(secondUser.Id);
-        await UserProvider.GetFollowingAsync(secondUser.Id);
+        await UserProvider.GetFollowersAsync(secondUser.Id, cancellationToken);
+        await UserProvider.GetFollowingAsync(secondUser.Id, cancellationToken);
 
-        await FollowerProvider.UnfollowAsync(firstUser.Id, secondUser.Id);
+        await FollowerProvider.UnFollowAsync(firstUser.Id, secondUser.Id, cancellationToken);
 
-        isFollowing = await FollowerProvider.IsFollowingAsync(firstUser.Id, secondUser.Id);
+        isFollowing = await FollowerProvider.IsFollowingAsync(firstUser.Id, secondUser.Id, cancellationToken);
 
         Assert.That(isFollowing, Is.False);
     }

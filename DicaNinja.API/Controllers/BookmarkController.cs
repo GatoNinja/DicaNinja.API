@@ -1,6 +1,7 @@
-using DicaNinja.API.Helpers;
 
 using DicaNinja.API.Abstracts;
+
+using DicaNinja.API.Helpers;
 
 using DicaNinja.API.Providers.Interfaces;
 using DicaNinja.API.Request;
@@ -23,9 +24,9 @@ public class BookmarkController : ControllerHelper
     private IBookmarkProvider BookmarkProvider { get; }
 
     [HttpPost]
-    public async Task<ActionResult> CreateBookmark([FromBody] BookmarkRequest request)
+    public async Task<ActionResult> CreateBookmarkAsync([FromBody] BookmarkRequest request, CancellationToken cancellationToken)
     {
-        var count = await BookmarkProvider.BookmarkAsync(UserId, request.Isbn, request.Type);
+        var count = await BookmarkProvider.BookmarkAsync(UserId, request.Isbn, request.Type, cancellationToken);
 
         if (count is not null)
         {
@@ -39,8 +40,8 @@ public class BookmarkController : ControllerHelper
     }
 
     [HttpGet("count")]
-    public async Task<int> GetCount()
+    public async Task<int> GetCountAsync(CancellationToken cancellationToken)
     {
-        return await BookmarkProvider.GetBookmarkCountAsync(UserId);
+        return await BookmarkProvider.GetBookmarkCountAsync(UserId, cancellationToken);
     }
 }

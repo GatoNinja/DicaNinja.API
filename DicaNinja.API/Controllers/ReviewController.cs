@@ -1,6 +1,7 @@
-using DicaNinja.API.Models;
 
 using DicaNinja.API.Abstracts;
+
+using DicaNinja.API.Models;
 using DicaNinja.API.Providers.Interfaces;
 using DicaNinja.API.Request;
 
@@ -22,11 +23,11 @@ public class ReviewController : ControllerHelper
     private IReviewProvider ReviewProvider { get; }
 
     [HttpPost]
-    public async Task<Guid> CreateReview([FromBody] ReviewRequest request)
+    public async Task<Guid> CreateReview([FromBody] ReviewRequest request, CancellationToken cancellationToken)
     {
         var (bookId, text, rating) = request;
         var review = new Review(UserId, bookId, text, rating);
 
-        return await ReviewProvider.CreateReviewAsync(review);
+        return await ReviewProvider.CreateReviewAsync(review, cancellationToken);
     }
 }

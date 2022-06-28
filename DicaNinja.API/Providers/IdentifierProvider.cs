@@ -18,14 +18,14 @@ public class IdentifierProvider : IIdentifierProvider
 
     private BaseContext Context { get; }
 
-    public async Task<List<Identifier>> GetByBookAsync(Guid bookId)
+    public async Task<List<Identifier>> GetByBookAsync(Guid bookId, CancellationToken cancellationToken)
     {
-        return await Context.Identifiers.Where(identifier => identifier.BookId == bookId).ToListAsync();
+        return await Context.Identifiers.Where(identifier => identifier.BookId == bookId).ToListAsync(cancellationToken);
     }
 
-    public async Task<Identifier?> GetOrCreateAsync(IdentifierResponse bookIdentifier)
+    public async Task<Identifier?> GetOrCreateAsync(IdentifierResponse bookIdentifier, CancellationToken cancellationToken)
     {
-        var identifier = await Context.Identifiers.FirstOrDefaultAsync(identifier => identifier.Isbn == bookIdentifier.Isbn && identifier.Type == bookIdentifier.Type);
+        var identifier = await Context.Identifiers.FirstOrDefaultAsync(identifier => identifier.Isbn == bookIdentifier.Isbn && identifier.Type == bookIdentifier.Type, cancellationToken);
 
         if (identifier is not null)
         {
@@ -34,7 +34,8 @@ public class IdentifierProvider : IIdentifierProvider
 
         identifier = new Identifier(bookIdentifier.Isbn, bookIdentifier.Type);
 
-        Context.Identifiers.Add(identifier);
+        await Context.Identifiers.AddAsync(identifier, cancellationToken);
+        await Context.SaveChangesAsync(cancellationToken);
 
         return identifier;
     }

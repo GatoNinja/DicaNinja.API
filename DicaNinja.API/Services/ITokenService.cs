@@ -1,14 +1,16 @@
 
-using System.Security.Claims;
 
 using DicaNinja.API.Models;
+
 using DicaNinja.API.Response;
+
+using System.Security.Claims;
 
 namespace DicaNinja.API.Services;
 
 public interface ITokenService
 {
-    Task<TokenResponse> GenerateTokenAsync(User user);
+    Task<TokenResponse> GenerateTokenAsync(User user, CancellationToken cancellationToken);
 
     ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
 

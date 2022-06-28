@@ -1,8 +1,10 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 
 using DicaNinja.API.Abstracts;
+
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+using System.Text.Json.Serialization;
 
 namespace DicaNinja.API.Models;
 
@@ -47,15 +49,15 @@ public class User : BaseModel
 
     [Required, MinLength(3), MaxLength(48)]
     [Column("username")]
-    public string Username { get; private set; } = default!;
+    public string Username { get; set; } = default!;
 
     [Required, EmailAddress]
     [Column("email")]
-    public string Email { get; private set; } = default!;
+    public string Email { get; set; } = default!;
 
     [Required, JsonIgnore]
     [Column("password")]
-    public string Password { get; private set; } = default!;
+    public string Password { get; set; } = default!;
     public virtual Person Person { get; private set; } = default!;
 
     [JsonIgnore]

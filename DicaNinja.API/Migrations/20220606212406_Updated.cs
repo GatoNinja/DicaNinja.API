@@ -1,5 +1,6 @@
-using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+
+using System;
 
 #nullable disable
 
@@ -9,7 +10,7 @@ namespace DicaNinja.API.Migrations
     {
         protected override void Up(MigrationBuilder builder)
         {
-            var tables = new[] { "users", "reviews", "refresh_tokens", "people", "password_recoveries", "identifiers", "followers", "categories" , "books", "bookmarks", "authors" };
+            var tables = new[] { "users", "reviews", "refresh_tokens", "people", "password_recoveries", "identifiers", "followers", "categories", "books", "bookmarks", "authors" };
             builder.Sql(@"
                 UPDATE users
                 SET updated = now()

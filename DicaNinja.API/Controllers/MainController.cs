@@ -6,7 +6,6 @@ using DicaNinja.API.Providers.Interfaces;
 using DicaNinja.API.Response;
 
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DicaNinja.API.Controllers;
@@ -32,17 +31,17 @@ public class MainController : ControllerBase
     private IUserProvider UserProvider { get; }
 
     [HttpGet]
-    public async Task<ActionResult<PagedResponse<IEnumerable<BookResponse>>>> Get([FromQuery] QueryParameters query)
+    public async Task<ActionResult<PagedResponse<IEnumerable<BookResponse>>>> Get([FromQuery] QueryParameters query, CancellationToken cancellationToken)
     {
-        var books = await BookProvider.GetBooksAsync();
-        var totalBooks = await BookProvider.GetCountAsync();
-        var totalAuthors = await AuthorProvider.GetCountAsync();
-        var totalCategories = await CategoriProvider.GetCountAsync();
-        var totalUsers = await UserProvider.GetCountAsync();
+        var books = await BookProvider.GetBooksAsync(cancellationToken);
+        var totalBooks = await BookProvider.GetCountAsync(cancellationToken);
+        var totalAuthors = await AuthorProvider.GetCountAsync(cancellationToken);
+        var totalCategories = await CategoriProvider.GetCountAsync(cancellationToken);
+        var totalUsers = await UserProvider.GetCountAsync(cancellationToken);
         var mapped = Mapper.Map<IEnumerable<BookResponse>>(books);
         var paginated = PaginationHelper.CreatePagedResponse(mapped, query, totalBooks);
         var response = new MainResponse(paginated, totalBooks, totalAuthors, totalCategories, totalUsers);
-        
+
         return Ok(response);
     }
 }

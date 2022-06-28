@@ -17,10 +17,10 @@ public sealed class PersonProvider : IPersonProvider
     private BaseContext Context { get; }
 
 
-    public async Task<Person?> UpdatePersonAsync(Guid userId, Person person)
+    public async Task<Person?> UpdatePersonAsync(Guid userId, Person person, CancellationToken cancellationToken)
     {
         var personToUpdate = await Context.People.Include(person => person.User)
-            .FirstOrDefaultAsync(p => p.UserId == userId);
+            .FirstOrDefaultAsync(p => p.UserId == userId, cancellationToken);
 
         if (personToUpdate == null)
         {
@@ -32,7 +32,7 @@ public sealed class PersonProvider : IPersonProvider
         personToUpdate.Image = person.Image ?? personToUpdate.Image;
         personToUpdate.Description = person.Description ?? personToUpdate.Description;
 
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(cancellationToken);
 
         return personToUpdate;
     }

@@ -24,7 +24,7 @@ public class RefreshTokenController : ControllerHelper
     private ITokenService TokenService { get; }
 
     [HttpPost]
-    public async Task<ActionResult<RefreshTokenResponse>> RefreshAsync([FromBody] RefreshTokenRequest request)
+    public async Task<ActionResult<RefreshTokenResponse>> RefreshAsync([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken)
     {
         if (User.Identity is null)
         {
@@ -42,7 +42,7 @@ public class RefreshTokenController : ControllerHelper
             return new NotFoundObjectResult(messageResponse);
         }
 
-        var refreshToken = await RefreshTokenProvider.GetRefreshTokenAsync(username, request.RefreshToken);
+        var refreshToken = await RefreshTokenProvider.GetRefreshTokenAsync(username, request.RefreshToken, cancellationToken);
 
         if (refreshToken is null)
         {
@@ -58,19 +58,19 @@ public class RefreshTokenController : ControllerHelper
             return new BadRequestObjectResult(messageResponse);
         }
 
-        var refreshTokenResponse = await CreateRefreshTokenResponse(UserId, refreshToken.Value);
+        var refreshTokenResponse = await CreateRefreshTokenResponse(UserId, refreshToken.Value, cancellationToken);
 
         return new OkObjectResult(refreshTokenResponse);
     }
 
-    private async Task<RefreshTokenResponse> CreateRefreshTokenResponse(Guid userId, string value)
+    private async Task<RefreshTokenResponse> CreateRefreshTokenResponse(Guid userId, string value, CancellationToken cancellationToken)
     {
-        await RefreshTokenProvider.InvalidateAsync(value);
+        await RefreshTokenProvider.InvalidateAsync(value, cancellationToken);
 
         var newAccessToken = TokenService.GenerateAccessToken(User.Claims);
         var newRefreshToken = RefreshTokenProvider.GenerateRefreshToken();
 
-        await RefreshTokenProvider.SaveRefreshTokenAsync(userId, newRefreshToken);
+        await RefreshTokenProvider.SaveRefreshTokenAsync(userId, newRefreshToken, cancellationToken);
 
         return new RefreshTokenResponse(newAccessToken, newRefreshToken);
     }

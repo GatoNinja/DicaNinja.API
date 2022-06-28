@@ -1,23 +1,26 @@
 using AutoMapper;
 
+using DicaNinja.API.Contexts;
+
+using DicaNinja.API.Models;
+using DicaNinja.API.Providers;
+using DicaNinja.API.Providers.Interfaces;
+using DicaNinja.API.Request;
+
+using DicaNinja.API.Response;
+using DicaNinja.API.Services;
+using DicaNinja.API.Validations;
+
 using Google.Apis.Books.v1.Data;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 using System.Text;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.HttpLogging;
-using DicaNinja.API.Providers.Interfaces;
-using DicaNinja.API.Providers;
-using DicaNinja.API.Models;
-using DicaNinja.API.Services;
-using DicaNinja.API.Request;
-using DicaNinja.API.Response;
-using DicaNinja.API.Contexts;
-using DicaNinja.API.Validations;
 
 namespace DicaNinja.API.Startup;
 
@@ -93,7 +96,7 @@ public static class WebApplicationBuilderExtensions
                 .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.Username))
                 .ForMember(dest => dest.PersonId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-                .ReverseMap();            
+                .ReverseMap();
 
         });
 

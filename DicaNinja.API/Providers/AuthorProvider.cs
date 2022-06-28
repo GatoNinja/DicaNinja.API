@@ -16,22 +16,22 @@ public class AuthorProvider : IAuthorProvider
 
     private BaseContext Context { get; }
 
-    public async Task<List<Author>> GetByBookAsync(Guid bookId)
+    public async Task<List<Author>> GetByBookAsync(Guid bookId, CancellationToken cancellationToken)
     {
         return await Context.Authors
             .Where(author => author.Books.Any(book => book.Id == bookId))
             .OrderBy(author => author.Name)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<int> GetCountAsync()
+    public async Task<int> GetCountAsync(CancellationToken cancellationToken)
     {
-        return await Context.Authors.CountAsync();
+        return await Context.Authors.CountAsync(cancellationToken);
     }
 
-    public async Task<Author?> GetOrCreateAsync(string authorName)
+    public async Task<Author?> GetOrCreateAsync(string authorName, CancellationToken cancellationToken)
     {
-        var author = await Context.Authors.FirstOrDefaultAsync(a => a.Name == authorName);
+        var author = await Context.Authors.FirstOrDefaultAsync(a => a.Name == authorName, cancellationToken);
 
         if (author is not null)
         {
@@ -40,7 +40,8 @@ public class AuthorProvider : IAuthorProvider
 
         author = new Author(authorName);
 
-        Context.Authors.Add(author);
+        await Context.Authors.AddAsync(author, cancellationToken);
+        await Context.SaveChangesAsync(cancellationToken);
 
         return author;
     }

@@ -36,10 +36,10 @@ public class BookGoogleService
     private ICategoryProvider CategoryProvider { get; }
     private BaseContext Context { get; }
 
-    public async Task<IEnumerable<BookResponse>> QueryBooks(string query)
+    public async Task<IEnumerable<BookResponse>> QueryBooksAsync(string query, CancellationToken cancellationToken)
     {
         var request = Service.Volumes.List(query);
-        var response = await request.ExecuteAsync();
+        var response = await request.ExecuteAsync(cancellationToken);
         var books = Mapper.Map<List<BookResponse>>(response.Items);
 
         foreach (var book in books)
@@ -51,8 +51,6 @@ public class BookGoogleService
                 continue;
             }
 
-            book.Identifiers = new List<IdentifierResponse>();
-
             foreach (var identifier in identifiers)
             {
                 book.Identifiers.Add(new IdentifierResponse(identifier.Identifier, identifier.Type));
@@ -62,24 +60,24 @@ public class BookGoogleService
         return books;
     }
 
-    public async Task<Book?> CreateBookFromGoogle(string identifier)
+    public async Task<Book?> CreateBookFromGoogleAsync(string identifier, CancellationToken cancellationToken)
     {
-        var bookResponse = await GetFromIdentifier(identifier);
+        var bookResponse = await GetFromIdentifierAsync(identifier, cancellationToken);
 
         if (bookResponse is null)
         {
             return null;
         }
 
-        var book = await CreateFromResponse(bookResponse);
+        var book = await CreateFromResponse(bookResponse, cancellationToken);
 
         return book;
     }
 
-    public async Task<BookResponse?> GetFromIdentifier(string identifier)
+    public async Task<BookResponse?> GetFromIdentifierAsync(string identifier, CancellationToken cancellationToken)
     {
         var request = Service.Volumes.List(identifier);
-        var response = await request.ExecuteAsync();
+        var response = await request.ExecuteAsync(cancellationToken);
 
         if (response is null)
         {
@@ -93,7 +91,6 @@ public class BookGoogleService
 
         var item = response.Items.First();
         var bookResponse = Mapper.Map<BookResponse>(item);
-        bookResponse.Identifiers = new List<IdentifierResponse>();
 
         foreach (var id in item.VolumeInfo.IndustryIdentifiers)
         {
@@ -103,7 +100,7 @@ public class BookGoogleService
         return bookResponse;
     }
 
-    public async Task<Book?> CreateFromResponse(BookResponse response)
+    public async Task<Book?> CreateFromResponse(BookResponse response, CancellationToken cancellationToken)
     {
         var book = Mapper.Map<Book>(response);
 
@@ -113,7 +110,7 @@ public class BookGoogleService
 
         foreach (var identifier in response.Identifiers)
         {
-            var bookIdentifier = await IdentifierProvider.GetOrCreateAsync(identifier);
+            var bookIdentifier = await IdentifierProvider.GetOrCreateAsync(identifier, cancellationToken);
 
             if (bookIdentifier is null)
             {
@@ -125,7 +122,7 @@ public class BookGoogleService
 
         foreach (var author in response.Authors)
         {
-            var authorEntity = await AuthorProvider.GetOrCreateAsync(author);
+            var authorEntity = await AuthorProvider.GetOrCreateAsync(author, cancellationToken);
 
             if (authorEntity is null)
             {
@@ -137,7 +134,7 @@ public class BookGoogleService
 
         foreach (var category in response.Categories)
         {
-            var categoryEntity = await CategoryProvider.GetOrCreateAsync(category);
+            var categoryEntity = await CategoryProvider.GetOrCreateAsync(category, cancellationToken);
 
             if (categoryEntity is null)
             {
@@ -149,7 +146,7 @@ public class BookGoogleService
 
         Context.Books.Add(book);
 
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(cancellationToken);
 
         return book;
     }

@@ -5,9 +5,9 @@ namespace DicaNinja.API.Providers.Interfaces;
 
 public interface IAuthorProvider
 {
-    Task<Author?> GetOrCreateAsync(string authorName);
+    Task<Author?> GetOrCreateAsync(string authorName, CancellationToken cancellationToken);
 
-    Task<List<Author>> GetByBookAsync(Guid bookId);
+    Task<List<Author>> GetByBookAsync(Guid bookId, CancellationToken cancellationToken);
 
-    Task<int> GetCountAsync();
+    Task<int> GetCountAsync(CancellationToken cancellationToken);
 }

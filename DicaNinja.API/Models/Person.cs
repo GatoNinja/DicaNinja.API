@@ -23,11 +23,11 @@ public class Person : BaseModel
 
     [Required, MinLength(2), MaxLength(48)]
     [Column("first_name")]
-    public string FirstName { get; private set; } = default!;
+    public string FirstName { get; set; } = default!;
 
     [Required, MinLength(2), MaxLength(48)]
     [Column("last_name")]
-    public string LastName { get; private set; } = default!;
+    public string LastName { get; set; } = default!;
 
     [Column("user_id")]
     public Guid? UserId { get; set; }

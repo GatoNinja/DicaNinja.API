@@ -5,7 +5,6 @@ using DicaNinja.API.Models;
 using DicaNinja.API.Providers.Interfaces;
 using DicaNinja.API.Request;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DicaNinja.API.Controllers;
@@ -26,20 +25,20 @@ public class PersonController : ControllerHelper
     private IUserProvider UserProvider { get; }
 
     [HttpPut]
-    public async Task<IActionResult> UpdateUser([FromBody] PersonRequest request)
+    public async Task<IActionResult> UpdateUser([FromBody] PersonRequest request, CancellationToken cancellationToken)
     {
         var person = Mapper.Map<Person>(request);
-        var updatedPerson = await PersonProvider.UpdatePersonAsync(UserId, person);
-        
-        return updatedPerson is null ? this.NotFound() : this.Ok(this.Mapper.Map<PersonResponse>(updatedPerson));
+        var updatedPerson = await PersonProvider.UpdatePersonAsync(UserId, person, cancellationToken);
+
+        return updatedPerson is null ? NotFound() : Ok(Mapper.Map<DicaNinja.API.Response.PersonResponse>(updatedPerson));
     }
 
     [HttpGet]
-    public async Task<IActionResult> Search([FromQuery] string query)
+    public async Task<IActionResult> Search([FromQuery] string query, CancellationToken cancellationToken)
     {
-        var people = await UserProvider.SearchAsync(UserId, query);
-        
+        var people = await UserProvider.SearchAsync(UserId, query, cancellationToken);
+
         return Ok(people);
-     
+
     }
 }

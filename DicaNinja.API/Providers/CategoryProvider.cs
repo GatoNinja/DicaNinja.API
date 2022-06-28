@@ -16,19 +16,19 @@ public class CategoryProvider : ICategoryProvider
 
     private BaseContext Context { get; }
 
-    public async Task<List<Category>> GetByBookAsync(Guid bookId)
+    public async Task<List<Category>> GetByBookAsync(Guid bookId, CancellationToken cancellationToken)
     {
-        return await Context.Categories.Where(category => category.Books.Any(book => book.Id == bookId)).ToListAsync();
+        return await Context.Categories.Where(category => category.Books.Any(book => book.Id == bookId)).ToListAsync(cancellationToken);
     }
 
-    public async Task<int> GetCountAsync()
+    public async Task<int> GetCountAsync(CancellationToken cancellationToken)
     {
-        return await Context.Categories.CountAsync();
+        return await Context.Categories.CountAsync(cancellationToken);
     }
 
-    public async Task<Category?> GetOrCreateAsync(string categoryName)
+    public async Task<Category?> GetOrCreateAsync(string categoryName, CancellationToken cancellationToken)
     {
-        var category = await Context.Categories.FirstOrDefaultAsync(c => c.Name == categoryName);
+        var category = await Context.Categories.FirstOrDefaultAsync(c => c.Name == categoryName, cancellationToken);
 
         if (category is not null)
         {
@@ -37,7 +37,8 @@ public class CategoryProvider : ICategoryProvider
 
         category = new Category(categoryName);
 
-        Context.Categories.Add(category);
+        await Context.Categories.AddAsync(category, cancellationToken);
+        await Context.SaveChangesAsync(cancellationToken);
 
         return category;
     }

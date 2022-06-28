@@ -1,13 +1,16 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 using DicaNinja.API.Models;
 using DicaNinja.API.Providers.Interfaces;
 using DicaNinja.API.Response;
+
 using DicaNinja.API.Startup;
 
 using Microsoft.IdentityModel.Tokens;
+
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+
+using System.Text;
 
 namespace DicaNinja.API.Services;
 
@@ -23,7 +26,7 @@ public sealed class TokenService : ITokenService
 
     private ConfigurationReader Config { get; }
 
-    public async Task<TokenResponse> GenerateTokenAsync(User user)
+    public async Task<TokenResponse> GenerateTokenAsync(User user, CancellationToken cancellationToken)
     {
         var claims = new List<Claim>
         {
@@ -36,7 +39,7 @@ public sealed class TokenService : ITokenService
         var accessToken = GenerateAccessToken(claims);
         var refreshToken = RefreshTokenProvider.GenerateRefreshToken();
 
-        await RefreshTokenProvider.SaveRefreshTokenAsync(user.Id, refreshToken);
+        await RefreshTokenProvider.SaveRefreshTokenAsync(user.Id, refreshToken, cancellationToken);
 
         return new TokenResponse(accessToken, refreshToken, user);
     }

@@ -26,10 +26,10 @@ public class UserController : ControllerHelper
     private IMapper Mapper { get; }
 
     [HttpGet("followers")]
-    public async Task<ActionResult<IEnumerable<User>>> GetFollowers([FromQuery] QueryParameters query)
+    public async Task<ActionResult<IEnumerable<User>>> GetFollowers([FromQuery] QueryParameters query, CancellationToken cancellationToken)
     {
-        var followers = await UserProvider.GetFollowersAsync(UserId, query.Page, query.PerPage);
-        var total = await UserProvider.GetFollowersCountAsync(UserId);
+        var followers = await UserProvider.GetFollowersAsync(UserId, cancellationToken, query.Page, query.PerPage);
+        var total = await UserProvider.GetFollowersCountAsync(UserId, cancellationToken);
         var mapped = Mapper.Map<IEnumerable<UserResponse>>(followers);
         var paginated = PaginationHelper.CreatePagedResponse(mapped, query, total);
 
@@ -37,10 +37,10 @@ public class UserController : ControllerHelper
     }
 
     [HttpGet("following")]
-    public async Task<ActionResult<IEnumerable<User>>> GetFollowing([FromQuery] QueryParameters query)
+    public async Task<ActionResult<IEnumerable<User>>> GetFollowing([FromQuery] QueryParameters query, CancellationToken cancellationToken)
     {
-        var following = await UserProvider.GetFollowingAsync(UserId, query.Page, query.PerPage);
-        var total = await UserProvider.GetFollowingCountAsync(UserId);
+        var following = await UserProvider.GetFollowingAsync(UserId, cancellationToken, query.Page, query.PerPage);
+        var total = await UserProvider.GetFollowingCountAsync(UserId, cancellationToken);
         var mapped = Mapper.Map<IEnumerable<UserResponse>>(following);
         var paginated = PaginationHelper.CreatePagedResponse(mapped, query, total);
 

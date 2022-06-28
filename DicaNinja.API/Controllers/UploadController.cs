@@ -8,7 +8,7 @@ namespace DicaNinja.API.Controllers;
 
 [Route("[controller]")]
 [Authorize]
-public class UploadController: ControllerHelper
+public class UploadController : ControllerHelper
 {
 
     public UploadController(IWebHostEnvironment environment)
@@ -36,7 +36,7 @@ public class UploadController: ControllerHelper
                 using var filestream = System.IO.File.Create(Path.Combine(fullPath, newName));
                 await file.CopyToAsync(filestream);
                 filestream.Flush();
-                
+
                 return $"\\imagens\\{UserId}\\{newName}";
             }
             catch (Exception ex)

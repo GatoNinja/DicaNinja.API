@@ -29,7 +29,7 @@ public class PasswordRecovery : BaseModel
 
     [Required, MinLength(1), MaxLength(7)]
     [Column("code")]
-    public string Code { get; private set; } = default!;
+    public string Code { get; set; } = default!;
 
     [Required]
     [Column("user_id")]

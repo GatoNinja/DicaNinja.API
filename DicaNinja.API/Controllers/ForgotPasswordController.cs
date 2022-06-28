@@ -1,7 +1,8 @@
-using DicaNinja.API.Models;
 
 using DicaNinja.API.Abstracts;
+
 using DicaNinja.API.Helpers;
+using DicaNinja.API.Models;
 using DicaNinja.API.Providers.Interfaces;
 using DicaNinja.API.Request;
 using DicaNinja.API.Services;
@@ -27,9 +28,9 @@ public class ForgotPasswordController : ControllerHelper
     private IUserProvider UserProvider { get; }
 
     [HttpPost]
-    public async Task<ActionResult> PostForgotPasswordAsync([FromBody] ForgotPasswordRequest request)
+    public async Task<ActionResult> PostForgotPasswordAsync([FromBody] ForgotPasswordRequest request, CancellationToken cancellationToken)
     {
-        var user = await UserProvider.GetByEmailAsync(request.Email);
+        var user = await UserProvider.GetByEmailAsync(request.Email, cancellationToken);
 
         if (user is null)
         {
@@ -39,7 +40,7 @@ public class ForgotPasswordController : ControllerHelper
         }
 
         var passwordRecovery = new PasswordRecovery(user);
-        var inserted = await PasswordRecoveryProvider.InsertAsync(passwordRecovery);
+        var inserted = await PasswordRecoveryProvider.InsertAsync(passwordRecovery, cancellationToken);
         var code = inserted.Code;
         var bodyMessage = @$"Seu código de recuperação para o login é {code}";
         SmtpService.SendEmail("ygor@ygorlazaro.com", "Recupere sua senha", bodyMessage);

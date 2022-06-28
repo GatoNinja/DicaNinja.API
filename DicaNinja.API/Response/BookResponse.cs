@@ -1,4 +1,4 @@
-﻿namespace DicaNinja.API.Response;
+namespace DicaNinja.API.Response;
 
 public class BookResponse
 {
@@ -14,8 +14,8 @@ public class BookResponse
     public double AverageRating { get; set; }
     public IEnumerable<string> Categories { get; private set; } = default!;
     public IEnumerable<string> Authors { get; private set; } = default!;
-    public List<IdentifierResponse> Identifiers { get; private set; } = default!;
-    public bool IsBookmarked { get; private set; } = false;
+    public List<IdentifierResponse> Identifiers { get; private set; } = new();
+    public bool IsBookMarked { get; set; } = false;
     public double InternalRating { get; set; }
 
     public BookResponse()

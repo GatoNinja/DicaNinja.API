@@ -1,7 +1,8 @@
-using DicaNinja.API.Models;
 
 using DicaNinja.API.Enums;
+
 using DicaNinja.API.Helpers;
+using DicaNinja.API.Models;
 using DicaNinja.API.Providers.Interfaces;
 using DicaNinja.API.Request;
 
@@ -31,7 +32,8 @@ public class SignUpController : ControllerBase
 
         var person = new Person(request.Firstname, request.Lastname);
         var user = new User(request.Username, request.Password, request.Email, person);
-        var validateNewUser = UserProvider.ValidateNewUser(user);
+        var cancellationToken = new CancellationToken();
+        var validateNewUser = await UserProvider.ValidateNewUserAsync(user, cancellationToken);
 
         if (validateNewUser == EnumNewUserCheck.ExistingEmail)
         {
@@ -47,7 +49,7 @@ public class SignUpController : ControllerBase
             return new BadRequestObjectResult(messageResponse);
         }
 
-        var insertedUser = await UserProvider.InsertAsync(user);
+        var insertedUser = await UserProvider.InsertAsync(user, cancellationToken);
 
         return insertedUser is null
             ? (ActionResult<Guid>)new BadRequestObjectResult(new MessageResponse(TextConstant.ProblemToSaveRecord))

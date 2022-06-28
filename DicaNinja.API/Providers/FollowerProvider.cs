@@ -1,6 +1,7 @@
-using DicaNinja.API.Models;
 
 using DicaNinja.API.Contexts;
+
+using DicaNinja.API.Models;
 using DicaNinja.API.Providers.Interfaces;
 
 using Microsoft.EntityFrameworkCore;
@@ -16,9 +17,9 @@ public class FollowerProvider : IFollowerProvider
 
     private BaseContext Context { get; }
 
-    public async Task<bool> FollowAsync(Guid userId, Guid followedId)
+    public async Task<bool> FollowAsync(Guid userId, Guid followedId, CancellationToken cancellationToken)
     {
-        var existingFollowing = await Context.Followers.AnyAsync(f => f.UserId == userId && f.FollowedId == followedId);
+        var existingFollowing = await Context.Followers.AnyAsync(f => f.UserId == userId && f.FollowedId == followedId, cancellationToken);
 
         if (existingFollowing)
         {
@@ -27,30 +28,30 @@ public class FollowerProvider : IFollowerProvider
 
         var follower = new Follower(userId, followedId);
 
-        Context.Followers.Add(follower);
-        await Context.SaveChangesAsync();
+        await Context.Followers.AddAsync(follower, cancellationToken);
+        await Context.SaveChangesAsync(cancellationToken);
 
         return true;
     }
 
-    public async Task<bool> IsFollowingAsync(Guid userId, Guid followerId)
+    public async Task<bool> IsFollowingAsync(Guid userId, Guid followerId, CancellationToken cancellationToken)
     {
-        return await Context.Followers.AnyAsync(f => f.UserId == userId && f.FollowedId == followerId);
+        return await Context.Followers.AnyAsync(f => f.UserId == userId && f.FollowedId == followerId, cancellationToken);
     }
 
-    public async Task<bool> UnfollowAsync(Guid userId, Guid followerId)
+    public async Task<bool> UnFollowAsync(Guid userId, Guid followerId, CancellationToken cancellationToken)
     {
-        var existingFollowing = await Context.Followers.AnyAsync(f => f.UserId == userId && f.FollowedId == followerId);
+        var existingFollowing = await Context.Followers.AnyAsync(f => f.UserId == userId && f.FollowedId == followerId, cancellationToken);
 
         if (!existingFollowing)
         {
             return false;
         }
 
-        var follower = await Context.Followers.FirstAsync(f => f.UserId == userId && f.FollowedId == followerId);
+        var follower = await Context.Followers.FirstAsync(f => f.UserId == userId && f.FollowedId == followerId, cancellationToken);
 
         Context.Followers.Remove(follower);
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(cancellationToken);
 
         return true;
     }
