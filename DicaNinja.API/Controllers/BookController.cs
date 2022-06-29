@@ -56,6 +56,11 @@ public class BookController : ControllerHelper
         var mapped = Mapper.Map<List<BookResponse>>(books);
         var paginated = PaginationHelper.CreatePagedResponse(mapped, query, totalBookmarks);
 
+        foreach (var book in paginated.Data)
+        {
+            book.IsBookMarked = true;
+        }
+
         return Ok(paginated);
     }
 

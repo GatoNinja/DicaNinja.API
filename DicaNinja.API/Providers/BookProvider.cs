@@ -35,11 +35,13 @@ public class BookProvider : IBookProvider
                     where bookmark.UserId == userId
                     select book;
 
-        return await query
+        var books = await query
             .OrderBy(book => book.Title)
             .Skip((page - 1) * perPage)
             .Take(perPage)
             .ToListAsync(cancellationToken);
+
+        return books;
     }
 
     public async Task PopulateWithBookmarksAsync(IEnumerable<BookResponse> books, Guid userId, CancellationToken cancellationToken)
