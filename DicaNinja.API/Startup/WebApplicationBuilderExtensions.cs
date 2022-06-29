@@ -138,8 +138,6 @@ public static class WebApplicationBuilderExtensions
             {
                 options.JsonSerializerOptions.AllowTrailingCommas = false;
                 options.JsonSerializerOptions.MaxDepth = 0;
-                options.JsonSerializerOptions.IgnoreReadOnlyFields = true;
-                options.JsonSerializerOptions.IgnoreReadOnlyProperties = true;
                 options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             });
     }
