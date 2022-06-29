@@ -25,7 +25,8 @@ public class IdentifierProvider : IIdentifierProvider
 
     public async Task<Identifier?> GetOrCreateAsync(IdentifierResponse bookIdentifier, CancellationToken cancellationToken)
     {
-        var identifier = await Context.Identifiers.FirstOrDefaultAsync(identifier => identifier.Isbn == bookIdentifier.Isbn && identifier.Type == bookIdentifier.Type, cancellationToken);
+        var identifier = await Context.Identifiers
+            .FirstOrDefaultAsync(identifier => identifier.Isbn == bookIdentifier.Isbn && identifier.Type == bookIdentifier.Type, cancellationToken);
 
         if (identifier is not null)
         {

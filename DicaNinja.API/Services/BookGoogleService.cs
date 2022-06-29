@@ -104,45 +104,45 @@ public class BookGoogleService
     {
         var book = Mapper.Map<Book>(response);
 
-        book.Identifiers.RemoveAll(identifier => identifier.Id == Guid.Empty);
-        book.Authors.RemoveAll(identifier => identifier.Id == Guid.Empty);
-        book.Categories.RemoveAll(identifier => identifier.Id == Guid.Empty);
+        //book.Identifiers.RemoveAll(identifier => identifier.Id == Guid.Empty);
+        //book.Authors.RemoveAll(identifier => identifier.Id == Guid.Empty);
+        //book.Categories.RemoveAll(identifier => identifier.Id == Guid.Empty);
 
-        foreach (var identifier in response.Identifiers)
-        {
-            var bookIdentifier = await IdentifierProvider.GetOrCreateAsync(identifier, cancellationToken);
+        //foreach (var identifier in response.Identifiers)
+        //{
+        //    var bookIdentifier = await IdentifierProvider.GetOrCreateAsync(identifier, cancellationToken);
 
-            if (bookIdentifier is null)
-            {
-                continue;
-            }
+        //    if (bookIdentifier is null)
+        //    {
+        //        continue;
+        //    }
 
-            book.Identifiers.Add(bookIdentifier);
-        }
+        //    book.Identifiers.Add(bookIdentifier);
+        //}
 
-        foreach (var author in response.Authors)
-        {
-            var authorEntity = await AuthorProvider.GetOrCreateAsync(author, cancellationToken);
+        //foreach (var author in response.Authors)
+        //{
+        //    var authorEntity = await AuthorProvider.GetOrCreateAsync(author, cancellationToken);
 
-            if (authorEntity is null)
-            {
-                continue;
-            }
+        //    if (authorEntity is null)
+        //    {
+        //        continue;
+        //    }
 
-            book.Authors.Add(authorEntity);
-        }
+        //    book.Authors.Add(authorEntity);
+        //}
 
-        foreach (var category in response.Categories)
-        {
-            var categoryEntity = await CategoryProvider.GetOrCreateAsync(category, cancellationToken);
+        //foreach (var category in response.Categories)
+        //{
+        //    var categoryEntity = await CategoryProvider.GetOrCreateAsync(category, cancellationToken);
 
-            if (categoryEntity is null)
-            {
-                continue;
-            }
+        //    if (categoryEntity is null)
+        //    {
+        //        continue;
+        //    }
 
-            book.Categories.Add(categoryEntity);
-        }
+        //    book.Categories.Add(categoryEntity);
+        //}
 
         Context.Books.Add(book);
 
