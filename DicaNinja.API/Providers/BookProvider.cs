@@ -39,6 +39,7 @@ public class BookProvider : IBookProvider
             .OrderBy(book => book.Title)
             .Skip((page - 1) * perPage)
             .Take(perPage)
+            .Include(book => book.Identifiers)
             .ToListAsync(cancellationToken);
 
         return books;
