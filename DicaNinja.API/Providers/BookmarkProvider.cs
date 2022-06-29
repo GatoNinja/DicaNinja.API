@@ -21,7 +21,7 @@ public class BookmarkProvider : IBookmarkProvider
     private IBookProvider BookProvider { get; }
     private BookGoogleService BookGoogleService { get; }
 
-    public async Task<int?> BookmarkAsync(Guid userId, string identifier, string type, CancellationToken cancellationToken)
+    public async Task<bool?> BookmarkAsync(Guid userId, string identifier, string type, CancellationToken cancellationToken)
     {
         var existingBookmark = await FilterByUser(userId, identifier, type).FirstOrDefaultAsync(cancellationToken);
 
@@ -29,6 +29,8 @@ public class BookmarkProvider : IBookmarkProvider
         {
             Context.Remove(existingBookmark);
             await Context.SaveChangesAsync(cancellationToken);
+
+            return false;
         }
         else
         {
@@ -47,9 +49,9 @@ public class BookmarkProvider : IBookmarkProvider
             var bookmark = new Bookmark(userId, book.Id);
             Context.Add(bookmark);
             await Context.SaveChangesAsync(cancellationToken);
-        }
 
-        return await GetBookmarkCountAsync(userId, cancellationToken);
+            return true;
+        }
     }
 
     public async Task<int> GetBookmarkCountAsync(Guid userId, CancellationToken cancellationToken)
