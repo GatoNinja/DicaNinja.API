@@ -39,9 +39,9 @@ public class BookController : ControllerHelper
     private IBookmarkProvider BookmarkProvider { get; }
 
     [HttpGet]
-    public async Task<ActionResult<List<BookResponse>>> GetAsync([FromQuery] string query, CancellationToken cancellationToken)
+    public async Task<ActionResult<List<BookResponse>>> GetAsync([FromQuery] string query, [FromQuery] QueryParameters pagination, CancellationToken cancellationToken)
     {
-        var books = await Service.QueryBooksAsync(query, cancellationToken);
+        var books = await Service.QueryBooksAsync(query, cancellationToken, pagination.Page, pagination.PerPage);
 
         await BookProvider.PopulateWithBookmarksAsync(books, UserId, cancellationToken);
 

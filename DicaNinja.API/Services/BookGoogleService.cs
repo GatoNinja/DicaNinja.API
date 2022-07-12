@@ -1,3 +1,5 @@
+using System.Text;
+
 using AutoMapper;
 
 using DicaNinja.API.Contexts;
@@ -8,6 +10,8 @@ using DicaNinja.API.Startup;
 
 using Google.Apis.Books.v1;
 using Google.Apis.Services;
+
+using static Google.Apis.Books.v1.VolumesResource.ListRequest;
 
 namespace DicaNinja.API.Services;
 
@@ -30,9 +34,15 @@ public class BookGoogleService
     private BooksService Service { get; }
     private BaseContext Context { get; }
 
-    public async Task<IEnumerable<BookResponse>> QueryBooksAsync(string query, CancellationToken cancellationToken)
+    public async Task<IEnumerable<BookResponse>> QueryBooksAsync(string query, CancellationToken cancellationToken, int page = 1, int perPage = 10)
     {
         var request = Service.Volumes.List(query);
+
+        request.MaxResults = perPage;
+        request.StartIndex = (page - 1) * perPage;
+        request.LangRestrict = "pt";
+        request.PrintType = PrintTypeEnum.BOOKS;
+
         var response = await request.ExecuteAsync(cancellationToken);
         var books = Mapper.Map<List<BookResponse>>(response.Items);
 
