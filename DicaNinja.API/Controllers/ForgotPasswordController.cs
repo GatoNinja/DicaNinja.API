@@ -14,14 +14,14 @@ namespace DicaNinja.API.Controllers;
 [Route("[controller]")]
 public class ForgotPasswordController : ControllerHelper
 {
-    public ForgotPasswordController(ISmtpService smtpService, IPasswordRecoveryProvider passwordRecoveryProvider, IUserProvider userProvider)
+    public ForgotPasswordController(SmtpService smtpService, IPasswordRecoveryProvider passwordRecoveryProvider, IUserProvider userProvider)
     {
         SmtpService = smtpService;
         PasswordRecoveryProvider = passwordRecoveryProvider;
         UserProvider = userProvider;
     }
 
-    private ISmtpService SmtpService { get; }
+    private SmtpService SmtpService { get; }
 
     private IPasswordRecoveryProvider PasswordRecoveryProvider { get; }
 

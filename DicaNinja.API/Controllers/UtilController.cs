@@ -2,6 +2,7 @@
 using DicaNinja.API.Abstracts;
 
 using DicaNinja.API.Helpers;
+using DicaNinja.API.Services;
 using DicaNinja.API.Startup;
 
 using Microsoft.AspNetCore.Authorization;
@@ -15,9 +16,12 @@ public class UtilController : ControllerHelper
 {
     private ConfigurationReader Config { get; }
 
-    public UtilController(ConfigurationReader config)
+    private SmtpService SmtpService { get; }
+
+    public UtilController(ConfigurationReader config, SmtpService smtpService)
     {
         Config = config;
+        SmtpService = smtpService;
     }
 
     [HttpGet("version")]
@@ -36,4 +40,11 @@ public class UtilController : ControllerHelper
 
         return Ok(message);
     }
+
+    [HttpGet("email_test")]
+    public void EmailTest()
+    {
+        SmtpService.SendEmail("ygor@ygorlazaro.com", "", "");
+    }
+    
 }

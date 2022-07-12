@@ -118,7 +118,6 @@ public static class WebApplicationBuilderExtensions
         services.AddTransient<ITokenService, TokenService>();
         services.AddTransient<IRefreshTokenProvider, RefreshTokenProvider>();
         services.AddTransient<IPasswordRecoveryProvider, PasswordRecoveryProvider>();
-        services.AddTransient<ISmtpService, SmtpService>();
         services.AddTransient<IBookmarkProvider, BookmarkProvider>();
         services.AddTransient<IBookProvider, BookProvider>();
         services.AddTransient<IFollowerProvider, FollowerProvider>();
@@ -129,6 +128,7 @@ public static class WebApplicationBuilderExtensions
         services.AddTransient<IProfileProvider, ProfileProvider>();
         services.AddTransient<ICacheService, CacheService>();
         services.AddTransient<BookGoogleService>();
+        services.AddTransient<SmtpService>();
     }
 
     private static void AddController(IServiceCollection services)
