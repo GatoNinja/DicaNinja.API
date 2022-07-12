@@ -28,9 +28,9 @@ public sealed class RefreshToken : BaseModel
     public RefreshToken(string refreshTokenValue, Guid userId, bool isActive)
     {
         Value = refreshTokenValue;
-        IsActive = isActive;
         UserId = userId;
         IsActive = isActive;
+        RefreshTokenExpiryTime = DateTimeOffset.Now.AddDays(1);
     }
 
     [Required, MaxLength(255), MinLength(32)]
