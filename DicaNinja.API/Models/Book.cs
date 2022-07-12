@@ -56,6 +56,9 @@ public class Book : BaseModel
     [Column("average_ratting")]
     public double? AverageRating { get; set; }
 
+    [Column("preview_link")]
+    public string? PreviewLink { get; set; }
+
     public virtual List<Identifier> Identifiers { get; private set; } = new();
 
     public virtual List<Author> Authors { get; private set; } = new();

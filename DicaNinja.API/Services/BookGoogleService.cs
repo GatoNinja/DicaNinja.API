@@ -13,7 +13,7 @@ namespace DicaNinja.API.Services;
 
 public class BookGoogleService
 {
-    public BookGoogleService(ConfigurationReader config, IMapper mapper, IIdentifierProvider identifierProvider, IAuthorProvider authorProvider, ICategoryProvider categoryProvider, BaseContext context)
+    public BookGoogleService(ConfigurationReader config, IMapper mapper, BaseContext context)
     {
         var service = new BooksService(new BaseClientService.Initializer()
         {
@@ -23,17 +23,11 @@ public class BookGoogleService
 
         Service = service;
         Mapper = mapper;
-        IdentifierProvider = identifierProvider;
-        AuthorProvider = authorProvider;
-        CategoryProvider = categoryProvider;
         Context = context;
     }
 
     private IMapper Mapper { get; }
     private BooksService Service { get; }
-    private IIdentifierProvider IdentifierProvider { get; }
-    private IAuthorProvider AuthorProvider { get; }
-    private ICategoryProvider CategoryProvider { get; }
     private BaseContext Context { get; }
 
     public async Task<IEnumerable<BookResponse>> QueryBooksAsync(string query, CancellationToken cancellationToken)
@@ -103,46 +97,6 @@ public class BookGoogleService
     public async Task<Book?> CreateFromResponse(BookResponse response, CancellationToken cancellationToken)
     {
         var book = Mapper.Map<Book>(response);
-
-        //book.Identifiers.RemoveAll(identifier => identifier.Id == Guid.Empty);
-        //book.Authors.RemoveAll(identifier => identifier.Id == Guid.Empty);
-        //book.Categories.RemoveAll(identifier => identifier.Id == Guid.Empty);
-
-        //foreach (var identifier in response.Identifiers)
-        //{
-        //    var bookIdentifier = await IdentifierProvider.GetOrCreateAsync(identifier, cancellationToken);
-
-        //    if (bookIdentifier is null)
-        //    {
-        //        continue;
-        //    }
-
-        //    book.Identifiers.Add(bookIdentifier);
-        //}
-
-        //foreach (var author in response.Authors)
-        //{
-        //    var authorEntity = await AuthorProvider.GetOrCreateAsync(author, cancellationToken);
-
-        //    if (authorEntity is null)
-        //    {
-        //        continue;
-        //    }
-
-        //    book.Authors.Add(authorEntity);
-        //}
-
-        //foreach (var category in response.Categories)
-        //{
-        //    var categoryEntity = await CategoryProvider.GetOrCreateAsync(category, cancellationToken);
-
-        //    if (categoryEntity is null)
-        //    {
-        //        continue;
-        //    }
-
-        //    book.Categories.Add(categoryEntity);
-        //}
 
         Context.Books.Add(book);
 

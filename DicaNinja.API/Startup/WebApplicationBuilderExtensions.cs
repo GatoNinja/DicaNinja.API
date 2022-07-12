@@ -66,6 +66,7 @@ public static class WebApplicationBuilderExtensions
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.VolumeInfo.Description))
                 .ForMember(dest => dest.Publisher, opt => opt.MapFrom(src => src.VolumeInfo.Publisher))
                 .ForMember(dest => dest.Authors, opt => opt.MapFrom(src => src.VolumeInfo.Authors))
+                .ForMember(dest => dest.PreviewLink, opt => opt.MapFrom(src => src.VolumeInfo.PreviewLink))
                 .ForMember(dest => dest.Id, opt => opt.Ignore());
 
             config.CreateMap<IdentifierResponse, Identifier>()

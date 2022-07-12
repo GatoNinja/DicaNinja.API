@@ -18,6 +18,8 @@ public class BookResponse
     public bool IsBookMarked { get; set; } = false;
     public double InternalRating { get; set; }
 
+    public string PreviewLink { get; set; } = string.Empty;
+
     public BookResponse()
     {
 
