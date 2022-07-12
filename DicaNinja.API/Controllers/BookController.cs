@@ -1,7 +1,7 @@
 using AutoMapper;
 
 using DicaNinja.API.Abstracts;
-
+using DicaNinja.API.Cache;
 using DicaNinja.API.Helpers;
 using DicaNinja.API.Models;
 using DicaNinja.API.Providers.Interfaces;
@@ -19,7 +19,7 @@ namespace DicaNinja.API.Controllers;
 public class BookController : ControllerHelper
 {
 
-    public BookController(BookGoogleService service, IBookProvider bookProvider, IMapper mapper, IAuthorProvider authorProvider, ICategoryProvider categoryProvider, IIdentifierProvider identifierProvider, IBookmarkProvider bookmarkProvider)
+    public BookController(BookGoogleService service, IBookProvider bookProvider, IMapper mapper, IAuthorProvider authorProvider, ICategoryProvider categoryProvider, IIdentifierProvider identifierProvider, IBookmarkProvider bookmarkProvider, ICacheService cacheService)
     {
         Service = service;
         BookProvider = bookProvider;
@@ -28,6 +28,7 @@ public class BookController : ControllerHelper
         CategoryProvider = categoryProvider;
         IdentifierProvider = identifierProvider;
         BookmarkProvider = bookmarkProvider;
+        CacheService = cacheService;
     }
 
     private BookGoogleService Service { get; }
@@ -37,20 +38,32 @@ public class BookController : ControllerHelper
     private ICategoryProvider CategoryProvider { get; }
     private IIdentifierProvider IdentifierProvider { get; }
     private IBookmarkProvider BookmarkProvider { get; }
+    private ICacheService CacheService { get; }
 
     [HttpGet]
     public async Task<ActionResult<List<BookResponse>>> GetAsync([FromQuery] string query, [FromQuery] QueryParameters pagination, CancellationToken cancellationToken)
     {
+        var cacheKey = $"googlebook_{query}-{pagination.Page}-{pagination.PerPage}";
+
+        var cache = CacheService.GetData<List<BookResponse>>(cacheKey);
+
+        if (cache is not null)
+        {
+            return Ok(cache);
+        }
+
         var books = await Service.QueryBooksAsync(query, cancellationToken, pagination.Page, pagination.PerPage);
 
         await BookProvider.PopulateWithBookmarksAsync(books, UserId, cancellationToken);
+
+        CacheService.SetData(cacheKey, books, DateTimeOffset.Now.AddMinutes(5));
 
         return Ok(books);
     }
 
     [HttpGet("bookmark")]
     public async Task<ActionResult<List<BookResponse>>> GetBookmarksAsync([FromQuery] QueryParameters query, CancellationToken cancellationToken)
-    {
+    {        
         var books = await BookProvider.GetBookmarksAsync(UserId, cancellationToken, query.Page, query.PerPage);
         var totalBookmarks = await BookmarkProvider.GetBookmarkCountAsync(UserId, cancellationToken);
         var mapped = Mapper.Map<List<BookResponse>>(books);

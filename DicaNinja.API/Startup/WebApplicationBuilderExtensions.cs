@@ -1,5 +1,6 @@
 using AutoMapper;
 
+using DicaNinja.API.Cache;
 using DicaNinja.API.Contexts;
 
 using DicaNinja.API.Models;
@@ -126,6 +127,7 @@ public static class WebApplicationBuilderExtensions
         services.AddTransient<ICategoryProvider, CategoryProvider>();
         services.AddTransient<IReviewProvider, ReviewProvider>();
         services.AddTransient<IProfileProvider, ProfileProvider>();
+        services.AddTransient<ICacheService, CacheService>();
         services.AddTransient<BookGoogleService>();
     }
 
