@@ -2,13 +2,21 @@ namespace DicaNinja.API.Helpers;
 
 public record QueryParameters
 {
-    public QueryParameters()
+    private int _perPage = 10;
+
+    public int Page { get; set; } = 1;
+
+    public int PerPage
     {
-        Page = Page < 1 ? 1 : Page;
-        PerPage = PerPage > 10 ? 10 : PerPage;
+        get => _perPage; set => _perPage = value > 10 ? 10 : value;
+    }
+}
+
+public record QueryParametersWithFilter : QueryParameters
+{
+    public QueryParametersWithFilter()
+    {
     }
 
-    public int Page { get; } = 1;
-
-    public int PerPage { get; } = 10;
+    public string Query { get; set; } = string.Empty;
 }

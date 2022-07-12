@@ -41,9 +41,9 @@ public class BookController : ControllerHelper
     private ICacheService CacheService { get; }
 
     [HttpGet]
-    public async Task<ActionResult<List<BookResponse>>> GetAsync([FromQuery] string query, [FromQuery] QueryParameters pagination, CancellationToken cancellationToken)
+    public async Task<ActionResult<List<BookResponse>>> GetAsync([FromQuery] QueryParametersWithFilter queryString, CancellationToken cancellationToken)
     {
-        var cacheKey = $"googlebook_{query}-{pagination.Page}-{pagination.PerPage}";
+        var cacheKey = $"googlebook_{queryString.Query}-{queryString.Page}-{queryString.PerPage}";
 
         var cache = CacheService.GetData<List<BookResponse>>(cacheKey);
 
@@ -52,7 +52,7 @@ public class BookController : ControllerHelper
             return Ok(cache);
         }
 
-        var books = await Service.QueryBooksAsync(query, cancellationToken, pagination.Page, pagination.PerPage);
+        var books = await Service.QueryBooksAsync(queryString.Query, cancellationToken, queryString.Page, queryString.PerPage);
 
         await BookProvider.PopulateWithBookmarksAsync(books, UserId, cancellationToken);
 
