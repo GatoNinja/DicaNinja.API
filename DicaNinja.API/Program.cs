@@ -18,6 +18,8 @@ app.UseSwaggerUI(config =>
 
 app.UseDeveloperExceptionPage();
 
+app.UseMiddleware<RequestLoggingMiddleware>();
+
 app.UseCors(config =>
 {
     config.AllowAnyHeader();
