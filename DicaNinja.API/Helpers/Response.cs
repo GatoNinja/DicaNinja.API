@@ -1,3 +1,11 @@
 namespace DicaNinja.API.Helpers;
 
-public record Response<T>(T Data);
+public class Response<T>
+{
+    public T Data { get; }
+
+    public Response(T data)
+    {
+        Data = data;
+    }
+}

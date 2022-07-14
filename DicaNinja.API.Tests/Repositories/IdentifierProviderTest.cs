@@ -43,20 +43,12 @@ public class IdentifierProviderTest : BaseProviderTest
     {
         var cancellationToken = new CancellationToken();
         var mock = Identifiers.First();
-        var identifier = await IdentifierProvider.GetOrCreateAsync(new IdentifierResponse
-        {
-            Isbn = mock.Isbn,
-            Type = mock.Type
-        }, cancellationToken);
+        var identifier = await IdentifierProvider.GetOrCreateAsync(new IdentifierResponse(mock.Isbn, mock.Type), cancellationToken);
 
         Assert.That(identifier, Is.Not.Null);
         Assert.That(identifier, Is.EqualTo(mock));
 
-        var newMock = new IdentifierResponse
-        {
-            Isbn = "21341213123",
-            Type = "ISBN-13"
-        };
+        var newMock = new IdentifierResponse("21341213123", "ISBN_13");
         identifier = await IdentifierProvider.GetOrCreateAsync(newMock, cancellationToken);
 
         Assert.That(identifier, Is.Not.Null);

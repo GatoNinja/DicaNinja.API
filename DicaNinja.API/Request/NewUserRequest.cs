@@ -3,16 +3,33 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DicaNinja.API.Request;
 
-public record NewUserRequest(
+public class NewUserRequest
+{
     [Required, MinLength(3), MaxLength(48)]
-    string Username,
+    public string Username { get; set; }
+
     [Required, MinLength(4), MaxLength(48)]
-    string Password,
+    public string Password { get; set; }
+
     [Required, MinLength(4), MaxLength(48)]
-    string ConfirmPassword,
+    public string ConfirmPassword { get; set; }
+
     [Required, EmailAddress(ErrorMessage = "O endereço de e-mail é inválido")]
-    string Email,
+    public string Email { get; set; }
+
     [Required, MinLength(2), MaxLength(48)]
-    string Firstname,
+    public string Firstname { get; set; }
+
     [Required, MinLength(2), MaxLength(48)]
-    string Lastname);
+    public string Lastname { get; set; }
+
+    public NewUserRequest(string username, string password, string confirmPassword, string email, string firstname, string lastname)
+    {
+        Username = username;
+        Password = password;
+        ConfirmPassword = confirmPassword;
+        Email = email;
+        Firstname = firstname;
+        Lastname = lastname;
+    }
+}

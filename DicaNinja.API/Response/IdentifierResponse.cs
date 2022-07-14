@@ -1,9 +1,13 @@
 namespace DicaNinja.API.Response;
 
-public record IdentifierResponse(string Isbn, string Type)
+public class IdentifierResponse
 {
-    public IdentifierResponse() : this(string.Empty, string.Empty)
+    public IdentifierResponse(string isbn, string type)
     {
-
+        Isbn = isbn;
+        Type = type;
     }
+
+    public string Isbn { get; set; }
+    public string Type { get; set; }
 }

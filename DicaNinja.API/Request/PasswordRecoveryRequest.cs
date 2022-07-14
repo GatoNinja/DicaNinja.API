@@ -3,11 +3,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DicaNinja.API.Request;
 
-public record PasswordRecoveryRequest(
+public class PasswordRecoveryRequest
+{
     [Required,MinLength(4),MaxLength(7)]
-    string Code,
+    public string Code { get; set; }
     [Required, EmailAddress]
-    string Email,
+    public string Email { get; set; }
     [Required,MinLength(4),MaxLength(48)]
-    string NewPassword
-);
+    public string NewPassword { get; set; }
+
+    public PasswordRecoveryRequest(string code, string email, string newPassword)
+    {
+        Code = code;
+        Email = email;
+        NewPassword = newPassword;
+    }
+}

@@ -26,8 +26,7 @@ public class TokenController : ControllerHelper
     [HttpPost, ProducesResponseType(StatusCodes.Status201Created), ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<TokenResponse>> PostTokenAsync([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
-        var (username, password) = request;
-        var user = await UserProvider.DoLoginAsync(username, password, cancellationToken);
+        var user = await UserProvider.DoLoginAsync(request.Username, request.Password, cancellationToken);
 
         if (user is null)
         {

@@ -43,7 +43,7 @@ public class BookController : ControllerHelper
     [HttpGet]
     public async Task<ActionResult<List<BookResponse>>> GetAsync([FromQuery] QueryParametersWithFilter queryString, CancellationToken cancellationToken)
     {
-        var cacheKey = $"googlebook_{queryString.Query}-{queryString.Page}-{queryString.PerPage}";
+        var cacheKey = $"googlebook_{queryString.Filter}-{queryString.Page}-{queryString.PerPage}";
 
         var cache = CacheService.GetData<List<BookResponse>>(cacheKey);
 
@@ -52,7 +52,7 @@ public class BookController : ControllerHelper
             return Ok(cache);
         }
 
-        var books = await Service.QueryBooksAsync(queryString.Query, cancellationToken, queryString.Page, queryString.PerPage);
+        var books = await Service.QueryBooksAsync(queryString.Filter, cancellationToken, queryString.Page, queryString.PerPage);
 
         await BookProvider.PopulateWithBookmarksAsync(books, UserId, cancellationToken);
 
@@ -63,7 +63,7 @@ public class BookController : ControllerHelper
 
     [HttpGet("bookmark")]
     public async Task<ActionResult<List<BookResponse>>> GetBookmarksAsync([FromQuery] QueryParameters query, CancellationToken cancellationToken)
-    {        
+    {
         var books = await BookProvider.GetBookmarksAsync(UserId, cancellationToken, query.Page, query.PerPage);
         var totalBookmarks = await BookmarkProvider.GetBookmarkCountAsync(UserId, cancellationToken);
         var mapped = Mapper.Map<List<BookResponse>>(books);

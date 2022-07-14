@@ -1,6 +1,6 @@
 namespace DicaNinja.API.Helpers;
 
-public class QueryParameters
+public class QueryParametersWithFilter
 {
     private int _perPage = 10;
 
@@ -10,4 +10,6 @@ public class QueryParameters
     {
         get => _perPage; set => _perPage = value > 10 ? 10 : value;
     }
+
+    public string Filter { get; set; } = string.Empty;
 }

@@ -3,4 +3,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DicaNinja.API.Request;
 
-public record RefreshTokenRequest([Required] string RefreshToken);
+public class RefreshTokenRequest
+{
+    [Required]
+    public string RefreshToken { get; set; }
+
+    public RefreshTokenRequest(string refreshToken)
+    {
+        RefreshToken = refreshToken;
+    }
+}
