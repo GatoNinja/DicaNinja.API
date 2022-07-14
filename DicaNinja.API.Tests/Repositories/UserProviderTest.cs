@@ -31,7 +31,6 @@ public class UserProviderTest : BaseProviderTest
         Assert.Multiple(() =>
         {
             Assert.That(user?.Password, Is.Null);
-            Assert.That(user?.Person, Is.Null);
         });
         user = await UserProvider.GetByEmailAsync("test@gatoninja.com.br", cancellationToken);
 
@@ -52,8 +51,8 @@ public class UserProviderTest : BaseProviderTest
             Assert.That(user?.Password, Is.Null);
             Assert.That(mock.Username, Is.EqualTo(user?.Username));
             Assert.That(mock.Email, Is.EqualTo(user?.Email));
-            Assert.That(mock.Person.FirstName, Is.EqualTo(user?.Person.FirstName));
-            Assert.That(mock.Person.LastName, Is.EqualTo(user?.Person.LastName));
+            Assert.That(mock.FirstName, Is.EqualTo(user?.FirstName));
+            Assert.That(mock.LastName, Is.EqualTo(user?.LastName));
         });
 
         user = await UserProvider.GetByIdAsync(Guid.NewGuid(), cancellationToken);
@@ -75,7 +74,6 @@ public class UserProviderTest : BaseProviderTest
             Assert.That(user?.Password, Is.Null);
             Assert.That(mock.Username, Is.EqualTo(user?.Username));
             Assert.That(mock.Email, Is.EqualTo(user?.Email));
-            Assert.That(user?.Person, Is.Null);
         });
         user = await UserProvider.DoLoginAsync("test", "test", cancellationToken);
 

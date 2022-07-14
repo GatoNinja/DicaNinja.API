@@ -17,8 +17,8 @@ public abstract class BaseProviderTest
 
     protected List<User> Users = new()
     {
-        new User("gato", "ninja", "ninja@gatoninja.com.br", new Person("Gato", "Ninja")) ,
-        new User("guest", "guest", "guest@gatoninja.com.br", new Person("Guest", "User"))
+        new User("gato", "Gato", "Ninja", "ninja@gatoninja.com.br", "ninja" ) ,
+        new User("guest", "Guest", "User", "guest@gatoninja.com.br", "guest")
     };
 
     protected List<Author> Authors = new() { new Author("Douglas Adams") };
