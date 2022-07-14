@@ -2,24 +2,30 @@ namespace DicaNinja.API.Response;
 
 public class UserResponse
 {
-    public Guid Id { get; set; }
-    public string Username { get; set; }
+    public Guid UserId { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
+    public string Username { get; set; }
+    public string Image { get; set; }
+    public string? Description { get; set; }
 
     public UserResponse()
     {
-        Id = Guid.Empty;
-        Username = string.Empty;
+        UserId = Guid.Empty;
         FirstName = string.Empty;
         LastName = string.Empty;
+        Username = string.Empty;
+        Image = string.Empty;
+        Description = string.Empty;
     }
 
-    public UserResponse(Guid id, string username, string firstName, string lastName)
+    public UserResponse(Guid userId, string firstName, string lastName, string username, string image, string? description)
     {
-        Id = id;
-        Username = username;
+        UserId = userId;
         FirstName = firstName;
         LastName = lastName;
+        Username = username;
+        Image = image;
+        Description = description;
     }
 }

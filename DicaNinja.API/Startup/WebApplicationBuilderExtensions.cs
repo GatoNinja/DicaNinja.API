@@ -6,7 +6,6 @@ using DicaNinja.API.Contexts;
 using DicaNinja.API.Models;
 using DicaNinja.API.Providers;
 using DicaNinja.API.Providers.Interfaces;
-using DicaNinja.API.Request;
 
 using DicaNinja.API.Response;
 using DicaNinja.API.Services;
@@ -75,31 +74,6 @@ public static class WebApplicationBuilderExtensions
 
             config.CreateMap<BookResponse, Book>()
                 .ReverseMap();
-
-            config.CreateMap<User, UserResponse>()
-                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.Person.FirstName))
-                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.Person.LastName));
-
-            config.CreateMap<Person, PersonRequest>()
-                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.User.Id))
-                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
-                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
-                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image))
-                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.Username))
-                .ForMember(dest => dest.PersonId, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-                .ReverseMap();
-
-            config.CreateMap<Person, PersonResponse>()
-                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.User.Id))
-                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
-                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))
-                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.Image))
-                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.Username))
-                .ForMember(dest => dest.PersonId, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
-                .ReverseMap();
-
         });
 
         var mapper = config.CreateMapper();
@@ -114,7 +88,6 @@ public static class WebApplicationBuilderExtensions
         services.AddSingleton<ConfigurationReader>();
         services.AddTransient<IPasswordHasher, PasswordHasher>();
         services.AddTransient<IUserProvider, UserProvider>();
-        services.AddTransient<IPersonProvider, PersonProvider>();
         services.AddTransient<ITokenService, TokenService>();
         services.AddTransient<IRefreshTokenProvider, RefreshTokenProvider>();
         services.AddTransient<IPasswordRecoveryProvider, PasswordRecoveryProvider>();

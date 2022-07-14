@@ -18,8 +18,6 @@ public class BaseContext : DbContext
 
     public DbSet<User> Users { get; private set; } = default!;
 
-    public DbSet<Person> People { get; private set; } = default!;
-
     public DbSet<PasswordRecovery> PasswordRecoveries { get; private set; } = default!;
 
     public DbSet<RefreshToken> RefreshTokens { get; private set; } = default!;

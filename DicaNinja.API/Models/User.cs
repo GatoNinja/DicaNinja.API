@@ -22,29 +22,28 @@ public class User : BaseModel
         Email = email;
     }
 
-    public User(Guid id, string username, Person person)
-    {
-        Id = id;
-        Username = username;
-        Person = person;
-    }
-
-    public User(string username, string password, string email, Person person)
-    {
-        Username = username;
-        Password = password;
-        Email = email;
-        Person = person;
-    }
-
     public User(Guid id, string username, string email, string password) : this(id, username, email)
     {
         Password = password;
     }
 
-    public User(Guid id, string username, string email, Person person) : this(id, username, email)
+    public User(string username, string firstname, string lastname, string email, string password)
     {
-        Person = person;
+        Username = username;
+        FirstName = firstname;
+        LastName = lastname;
+        Email = email;
+        Password = password;
+    }
+
+    public User(Guid id, string username, string email, string firstName, string lastName, string? image)
+    {
+        Id = id;
+        Username = username;
+        Email = email;
+        FirstName = firstName;
+        LastName = lastName;
+        Image = image;
     }
 
     [Required, MinLength(3), MaxLength(48)]
@@ -58,7 +57,22 @@ public class User : BaseModel
     [Required, JsonIgnore]
     [Column("password")]
     public string Password { get; set; } = default!;
-    public virtual Person Person { get; private set; } = default!;
+
+    [Required, MinLength(2), MaxLength(48)]
+    [Column("first_name")]
+    public string FirstName { get; set; } = default!;
+
+    [Required, MinLength(2), MaxLength(48)]
+    [Column("last_name")]
+    public string LastName { get; set; } = default!;
+
+    [Column("image")]
+    public string? Image { get; set; }
+
+    [Column("description")]
+    [MaxLength(200)]
+    [MinLength(5)]
+    public string? Description { get; set; }
 
     [JsonIgnore]
     public virtual List<RefreshToken> RefreshTokens { get; private set; } = new();

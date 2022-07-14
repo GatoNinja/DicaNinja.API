@@ -3,11 +3,9 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 namespace DicaNinja.API.Request;
 
 [ValidateNever]
-public class PersonRequest
+public class UserRequest
 {
     public Guid UserId { get; set; }
-
-    public Guid PersonId { get; set; }
 
     public string FirstName { get; private set; } = default!;
 

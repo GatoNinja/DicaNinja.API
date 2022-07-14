@@ -37,7 +37,7 @@ public class ProfileProvider : IProfileProvider
         var totalFollowers = await UserProvider.GetFollowersCountAsync(userId, cancellationToken);
         var totalFollowing = await UserProvider.GetFollowingCountAsync(userId, cancellationToken);
 
-        return new UserProfileResponse(user.Id, user.Username, user.Email, user.Person.FirstName, user.Person.LastName, totalBooks, totalAuthors, totalCategories, totalFollowers, totalFollowing);
+        return new UserProfileResponse(user.Id, user.Username, user.Email, user.FirstName, user.LastName, totalBooks, totalAuthors, totalCategories, totalFollowers, totalFollowing);
     }
 
 }

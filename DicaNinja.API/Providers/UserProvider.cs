@@ -23,9 +23,8 @@ public sealed class UserProvider : IUserProvider
     public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var query = from user in Context.Users
-                    join person in Context.People on user.Id equals person.UserId
                     where user.Id == id
-                    select new User(user.Id, user.Username, user.Email, person);
+                    select new User(user.Id, user.Username, user.Email, user.FirstName, user.LastName, user.Image);
 
         return await query.FirstOrDefaultAsync(cancellationToken);
     }
@@ -61,8 +60,6 @@ public sealed class UserProvider : IUserProvider
 
         user.Password = PasswordHasher.Hash(user.Password);
 
-        user.Person.Id = Guid.Empty;
-        user.Person.UserId = Guid.Empty;
         user.Id = Guid.Empty;
 
         Context.Users.Add(user);
@@ -90,7 +87,7 @@ public sealed class UserProvider : IUserProvider
         await Context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<EnumNewUserCheck> ValidateNewUserAsync(User user , CancellationToken cancellationToken)
+    public async Task<EnumNewUserCheck> ValidateNewUserAsync(User user, CancellationToken cancellationToken)
     {
         var hasUsername = await Context.Users.AnyAsync(item => item.Username == user.Username, cancellationToken);
         var hasEmail = await Context.Users.AnyAsync(item => item.Email == user.Email, cancellationToken);
@@ -107,10 +104,9 @@ public sealed class UserProvider : IUserProvider
     {
         var query = from follower in Context.Followers
                     join user in Context.Users on follower.FollowedId equals user.Id
-                    join person in Context.People on user.Id equals person.UserId
-                    orderby person.FirstName, person.LastName
+                    orderby user.FirstName, user.LastName
                     where follower.FollowedId == userId
-                    select new User(user.Id, user.Username, person);
+                    select new User(user.Id, user.Username, user.Email, user.FirstName, user.LastName, user.Image);
 
         return await query.Skip((page - 1) * pageSize)
             .Take(pageSize)
@@ -121,10 +117,9 @@ public sealed class UserProvider : IUserProvider
     {
         var query = from follower in Context.Followers
                     join user in Context.Users on follower.FollowedId equals user.Id
-                    join person in Context.People on user.Id equals person.UserId
-                    orderby person.FirstName, person.LastName
+                    orderby user.FirstName, user.LastName
                     where follower.UserId == userId
-                    select new User(user.Id, user.Username, person);
+                    select new User(user.Id, user.Username, user.Email, user.FirstName, user.LastName, user.Image);
 
         return await query.Skip((page - 1) * pageSize)
             .Take(pageSize)
@@ -161,9 +156,8 @@ public sealed class UserProvider : IUserProvider
         _ = Guid.TryParse(parameter, out var id);
 
         var query = from user in Context.Users
-                    join person in Context.People on user.Id equals person.UserId
                     where user.Email == parameter || user.Username == parameter || user.Id == id
-                    select new User(user.Id, user.Username, user.Email, person);
+                    select new User(user.Id, user.Username, user.Email, user.FirstName, user.LastName, user.Image);
 
         return await query.FirstOrDefaultAsync(cancellationToken);
     }
@@ -180,34 +174,40 @@ public sealed class UserProvider : IUserProvider
         if (searchTerm.Contains('@'))
         {
             var query = from user in Context.Users
-                        join person in Context.People on user.Id equals person.UserId
                         where user.Email == searchTerm
-                        select new User(user.Id, user.Username, person);
+                        select new User(user.Id, user.Username, user.Email, user.FirstName, user.LastName, user.Image);
 
             return await query.ToListAsync(cancellationToken);
         }
 
         var exactQuery = from user in Context.Users
-                         join person in Context.People on user.Id equals person.UserId
                          where user.Username.ToLower().Contains(searchTerm)
                              || user.Email.ToLower().Contains(searchTerm)
-                             || person.FirstName.ToLower().Contains(searchTerm)
-                             || person.LastName.ToLower().Contains(searchTerm)
-                             || string.Concat(person.FirstName, " ", person.LastName).ToLower().Contains(searchTerm)
-                         select new User(user.Id, user.Username, person);
-
-        //var items = searchTerm.Split(' ').AsEnumerable();
-
-        //var partQuery = from user in Context.Users
-        //            join person in Context.People on user.Id equals person.UserId
-        //                //where searchTerm.Any(item => user.Username.ToLower().Contains(item))
-        //                //    || searchTerm.Any(item => user.Email.ToLower().Contains(item))
-        //                //    || searchTerm.Any(item => person.FirstName.ToLower().Contains(item))
-        //                //    || searchTerm.Any(item => person.LastName.ToLower().Contains(item))
-        //            select new User(user.Id, user.Username, person);
-
-        //var combinedQuery = exactQuery.Union(partQuery);
+                             || user.FirstName.ToLower().Contains(searchTerm)
+                             || user.LastName.ToLower().Contains(searchTerm)
+                             || string.Concat(user.FirstName, " ", user.LastName).ToLower().Contains(searchTerm)
+                         select new User(user.Id, user.Username, user.Email, user.FirstName, user.LastName, user.Image);
 
         return await exactQuery.Take(20).ToListAsync(cancellationToken);
+    }
+
+    public async Task<User?> UpdateUserAsync(Guid userId, User user, CancellationToken cancellationToken)
+    {
+        var userToUpdate = await Context.Users
+                                 .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+
+        if (userToUpdate == null)
+        {
+            return null;
+        }
+
+        userToUpdate.FirstName = user.FirstName ?? userToUpdate.FirstName;
+        userToUpdate.LastName = user.LastName ?? userToUpdate.LastName;
+        userToUpdate.Image = user.Image ?? userToUpdate.Image;
+        userToUpdate.Description = user.Description ?? userToUpdate.Description;
+
+        await Context.SaveChangesAsync(cancellationToken);
+
+        return userToUpdate;
     }
 }

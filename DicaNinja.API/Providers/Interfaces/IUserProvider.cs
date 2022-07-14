@@ -22,5 +22,6 @@ public interface IUserProvider
     Task<User?> GetByUsernameOrEmailAsync(string parameter, CancellationToken cancellationToken);
     Task<int> GetCountAsync(CancellationToken cancellationToken);
     Task<IEnumerable<User>> SearchAsync(Guid userId, string searchTerm, CancellationToken cancellationToken);
+    Task<User?> UpdateUserAsync(Guid userId, User user, CancellationToken cancellationToken);
 
 }

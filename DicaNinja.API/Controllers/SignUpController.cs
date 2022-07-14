@@ -30,8 +30,7 @@ public class SignUpController : ControllerBase
             return new BadRequestObjectResult(messageResponse);
         }
 
-        var person = new Person(request.Firstname, request.Lastname);
-        var user = new User(request.Username, request.Password, request.Email, person);
+        var user = new User(request.Username, request.Firstname, request.Lastname, request.Email, request.Password);
         var cancellationToken = new CancellationToken();
         var validateNewUser = await UserProvider.ValidateNewUserAsync(user, cancellationToken);
 
