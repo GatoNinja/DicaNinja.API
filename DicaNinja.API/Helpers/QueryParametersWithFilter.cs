@@ -12,5 +12,5 @@ public class QueryParametersWithFilter
         set => _perPage = value > 10 ? 10 : value;
     }
 
-    public string Filter { get; set; } = string.Empty;
+    public string Query { get; set; } = string.Empty;
 }

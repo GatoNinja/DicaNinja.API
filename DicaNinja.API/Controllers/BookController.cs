@@ -52,7 +52,7 @@ public class BookController : ControllerHelper
             throw new ArgumentNullException(nameof(queryString));
         }
 
-        var cacheKey = $"googlebook_{queryString.Filter}-{queryString.Page}-{queryString.PerPage}";
+        var cacheKey = $"googlebook_{queryString.Query}-{queryString.Page}-{queryString.PerPage}";
 
         var cache = CacheService.GetData<List<BookResponse>>(cacheKey);
 
@@ -65,9 +65,9 @@ public class BookController : ControllerHelper
 
         try
         {
-            books = await Service.QueryBooksAsync(queryString.Filter, cancellationToken, queryString.Page, queryString.PerPage).ConfigureAwait(false);
+            books = await Service.QueryBooksAsync(queryString.Query, cancellationToken, queryString.Page, queryString.PerPage).ConfigureAwait(false);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao chamar a API do Google Books");
         }
