@@ -9,7 +9,7 @@ public interface IRefreshTokenProvider
 
     Task<RefreshToken?> GetRefreshTokenAsync(string username, string value, CancellationToken cancellationToken);
 
-    Task SaveRefreshTokenAsync(Guid userId, string refreshToken, CancellationToken cancellationToken);
+    Task SaveRefreshTokenAsync(Guid userId, string refreshTokenValue, CancellationToken cancellationToken);
 
     Task InvalidateAsync(string value, CancellationToken cancellationToken);
 }

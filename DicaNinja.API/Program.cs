@@ -1,35 +1,42 @@
-
 using DicaNinja.API.Startup;
 
-var builder = WebApplication.CreateBuilder(args);
+namespace DicaNinja.API;
 
-builder.ConfigureServices();
-
-var app = builder.Build();
-app.UseHttpLogging();
-
-app.UseSwagger();
-app.UseSwaggerUI(config =>
+public sealed class Program
 {
-    config.EnablePersistAuthorization();
-    config.EnableValidator();
-    config.EnableFilter();
-});
+    public static void Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
 
-app.UseDeveloperExceptionPage();
+        builder.ConfigureServices();
 
-app.UseMiddleware<RequestLoggingMiddleware>();
+        var app = builder.Build();
+        app.UseHttpLogging();
 
-app.UseCors(config =>
-{
-    config.AllowAnyHeader();
-    config.AllowAnyMethod();
-    config.AllowAnyOrigin();
-});
+        app.UseSwagger();
+        app.UseSwaggerUI(config =>
+        {
+            config.EnablePersistAuthorization();
+            config.EnableValidator();
+            config.EnableFilter();
+        });
 
-app.UseAuthentication();
-app.UseAuthorization();
+        app.UseDeveloperExceptionPage();
 
-app.MapControllers();
+        app.UseMiddleware<RequestLoggingMiddleware>();
 
-app.Run();
+        app.UseCors(config =>
+        {
+            config.AllowAnyHeader();
+            config.AllowAnyMethod();
+            config.AllowAnyOrigin();
+        });
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.MapControllers();
+
+        app.Run();
+    }
+}

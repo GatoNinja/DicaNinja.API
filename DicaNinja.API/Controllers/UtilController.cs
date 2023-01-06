@@ -1,4 +1,6 @@
 
+using System.Globalization;
+
 using DicaNinja.API.Abstracts;
 
 using DicaNinja.API.Helpers;
@@ -35,7 +37,7 @@ public class UtilController : ControllerHelper
     [HttpGet("unixtime")]
     public ActionResult GetUnixTime()
     {
-        var unixTime = DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
+        var unixTime = DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString(CultureInfo.InvariantCulture);
         var message = new MessageResponse(unixTime);
 
         return Ok(message);

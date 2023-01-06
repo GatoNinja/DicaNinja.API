@@ -7,13 +7,10 @@ namespace DicaNinja.API.Abstracts;
 
 public class ControllerHelper : ControllerBase
 {
-    protected Guid UserId
+    protected Guid GetUserId()
     {
-        get
-        {
-            var claim = User.Claims.FirstOrDefault(claimToSearch => string.Compare(claimToSearch.Type, "Id", StringComparison.Ordinal) == 0);
+        var claim = User.Claims.FirstOrDefault(claimToSearch => string.Equals(claimToSearch.Type, "Id", StringComparison.Ordinal));
 
-            return claim is not null ? Guid.Parse(claim.Value) : throw new BadHttpRequestException(TextConstant.ForbiddenUser);
-        }
+        return claim is null ? throw new BadHttpRequestException(TextConstant.ForbiddenUser) : Guid.Parse(claim.Value);
     }
 }

@@ -8,6 +8,7 @@ using DicaNinja.API.Request;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace DicaNinja.API.Controllers;
 
@@ -24,9 +25,17 @@ public class BookmarkController : ControllerHelper
     private IBookmarkProvider BookmarkProvider { get; }
 
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(MessageResponse), StatusCodes.Status400BadRequest)]
+    [ProducesDefaultResponseType]
     public async Task<ActionResult> CreateBookmarkAsync([FromBody] BookmarkRequest request, CancellationToken cancellationToken)
     {
-        var count = await BookmarkProvider.BookmarkAsync(UserId, request.Isbn, request.Type, cancellationToken);
+        if (request is null)
+        {
+            throw new ArgumentNullException(nameof(request));
+        }
+
+        var count = await BookmarkProvider.BookmarkAsync(GetUserId(), request.Isbn, request.Type, cancellationToken).ConfigureAwait(false);
 
         if (count is not null)
         {
@@ -42,6 +51,6 @@ public class BookmarkController : ControllerHelper
     [HttpGet("count")]
     public async Task<int> GetCountAsync(CancellationToken cancellationToken)
     {
-        return await BookmarkProvider.GetBookmarkCountAsync(UserId, cancellationToken);
+        return await BookmarkProvider.GetBookmarkCountAsync(GetUserId(), cancellationToken).ConfigureAwait(false);
     }
 }

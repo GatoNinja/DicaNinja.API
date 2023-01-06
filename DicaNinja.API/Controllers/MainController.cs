@@ -33,15 +33,26 @@ public class MainController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<PagedResponse<IEnumerable<BookResponse>>>> Get([FromQuery] QueryParameters query, CancellationToken cancellationToken)
     {
-        var books = await BookProvider.GetBooksAsync(cancellationToken);
-        var totalBooks = await BookProvider.GetCountAsync(cancellationToken);
-        var totalAuthors = await AuthorProvider.GetCountAsync(cancellationToken);
-        var totalCategories = await CategoriProvider.GetCountAsync(cancellationToken);
-        var totalUsers = await UserProvider.GetCountAsync(cancellationToken);
+        var booksTask = BookProvider.GetBooksAsync(cancellationToken);
+        var totalBooksTask = BookProvider.GetCountAsync(cancellationToken);
+        var totalAuthorsTask = AuthorProvider.GetCountAsync(cancellationToken);
+        var totalCategoriesTask = CategoriProvider.GetCountAsync(cancellationToken);
+        var totalUsersTask = UserProvider.GetCountAsync(cancellationToken);
+
+        await Task.WhenAll(booksTask, totalBooksTask, totalAuthorsTask, totalCategoriesTask, totalUsersTask).ConfigureAwait(false);
+
+        var books = await booksTask.ConfigureAwait(false);
+        var totalBooks = await totalBooksTask.ConfigureAwait(false);
+        var totalAuthors = await totalAuthorsTask.ConfigureAwait(false);
+        var totalCategories = await totalCategoriesTask.ConfigureAwait(false);
+        var totalUsers = await totalUsersTask.ConfigureAwait(false);
+
         var mapped = Mapper.Map<IEnumerable<BookResponse>>(books);
         var paginated = PaginationHelper.CreatePagedResponse(mapped, query, totalBooks);
         var response = new MainResponse(paginated, totalBooks, totalAuthors, totalCategories, totalUsers);
 
         return Ok(response);
     }
+
+
 }

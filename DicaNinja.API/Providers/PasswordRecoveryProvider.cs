@@ -29,17 +29,23 @@ public class PasswordRecoveryProvider : IPasswordRecoveryProvider
                           && passwordRecovery.ExpireDate >= DateTimeOffset.Now
                     select passwordRecovery;
 
-        return await query.FirstOrDefaultAsync(cancellationToken);
+        return await query.FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
     }
+
+    private static readonly Random Random = new Random();
 
     public async Task<PasswordRecovery> InsertAsync(PasswordRecovery passwordRecovery, CancellationToken cancellationToken)
     {
-        var random = new Random((int)DateTimeOffset.Now.Ticks);
-        var code = Math.Ceiling(random.NextDouble() * 1000000).ToString(CultureInfo.InvariantCulture);
+        if (passwordRecovery is null)
+        {
+            throw new ArgumentNullException(nameof(passwordRecovery));
+        }
+
+        var code = Math.Ceiling(Random.NextDouble() * 1000000).ToString(CultureInfo.InvariantCulture);
         passwordRecovery.Code = code.PadLeft(code.Length - 7, '0');
 
-        await Context.PasswordRecoveries.AddAsync(passwordRecovery, cancellationToken);
-        await Context.SaveChangesAsync(cancellationToken);
+        await Context.PasswordRecoveries.AddAsync(passwordRecovery, cancellationToken).ConfigureAwait(false);
+        await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         return passwordRecovery;
     }
@@ -47,7 +53,7 @@ public class PasswordRecoveryProvider : IPasswordRecoveryProvider
 
     public async Task UseRecoveryCodeAsync(Guid recoverId, CancellationToken cancellationToken)
     {
-        var recover = await Context.PasswordRecoveries.FirstOrDefaultAsync(x => x.Id == recoverId, cancellationToken);
+        var recover = await Context.PasswordRecoveries.FirstOrDefaultAsync(x => x.Id == recoverId, cancellationToken).ConfigureAwait(false);
 
         if (recover is null)
         {
@@ -56,6 +62,6 @@ public class PasswordRecoveryProvider : IPasswordRecoveryProvider
 
         recover.IsActive = false;
 
-        await Context.SaveChangesAsync(cancellationToken);
+        await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 }

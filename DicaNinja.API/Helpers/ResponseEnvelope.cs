@@ -1,10 +1,10 @@
 namespace DicaNinja.API.Helpers;
 
-public class Response<T>
+public class ResponseEnvelope<T>
 {
     public T Data { get; }
 
-    public Response(T data)
+    public ResponseEnvelope(T data)
     {
         Data = data;
     }

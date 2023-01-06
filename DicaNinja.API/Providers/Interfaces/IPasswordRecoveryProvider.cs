@@ -9,5 +9,5 @@ public interface IPasswordRecoveryProvider
 
     Task UseRecoveryCodeAsync(Guid recoverId, CancellationToken cancellationToken);
 
-    Task<PasswordRecovery> InsertAsync(PasswordRecovery user, CancellationToken cancellationToken);
+    Task<PasswordRecovery> InsertAsync(PasswordRecovery passwordRecovery, CancellationToken cancellationToken);
 }

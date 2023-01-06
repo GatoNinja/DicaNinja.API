@@ -25,10 +25,10 @@ public class BookProvider : IBookProvider
 
     public async Task<Book?> GetByIdentifierAsync(string identifier, string type, CancellationToken cancellationToken)
     {
-        return await Context.Books.FirstOrDefaultAsync(book => book.Identifiers.Any(i => i.Type == type && i.Isbn == identifier), cancellationToken);
+        return await Context.Books.FirstOrDefaultAsync(book => book.Identifiers.Any(i => i.Type == type && i.Isbn == identifier), cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<List<Book>> GetBookmarksAsync(Guid userId, CancellationToken cancellationToken, int page, int perPage)
+    public async Task<IEnumerable<Book>> GetBookmarksAsync(Guid userId, CancellationToken cancellationToken, int page, int perPage)
     {
         var query = from book in Context.Books
                     join bookmark in Context.Bookmarks on book.Id equals bookmark.BookId
@@ -40,13 +40,18 @@ public class BookProvider : IBookProvider
             .Skip((page - 1) * perPage)
             .Take(perPage)
             .Include(book => book.Identifiers)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
 
         return books;
     }
 
     public async Task PopulateWithBookmarksAsync(IEnumerable<BookResponse> books, Guid userId, CancellationToken cancellationToken)
     {
+        if (books is null)
+        {
+            return;
+        }
+
         foreach (var book in books)
         {
             if (book?.Identifiers is null)
@@ -56,7 +61,7 @@ public class BookProvider : IBookProvider
 
             foreach (var identifier in book.Identifiers)
             {
-                book.IsBookMarked = await IsBookmark(userId, identifier.Isbn, identifier.Type, cancellationToken);
+                book.IsBookMarked = await IsBookmark(userId, identifier.Isbn, identifier.Type, cancellationToken).ConfigureAwait(false);
 
                 if (book.IsBookMarked)
                 {
@@ -74,7 +79,7 @@ public class BookProvider : IBookProvider
             .OrderByDescending(review => review.Created)
             .Skip((page - 1) * perPage)
             .Take(perPage)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<double> AverageRatingAsync(Guid bookId, CancellationToken cancellationToken)
@@ -83,12 +88,12 @@ public class BookProvider : IBookProvider
             .Where(review => review.BookId == bookId)
             .Select(review => review.Rating)
             .DefaultIfEmpty()
-            .AverageAsync(rating => rating, cancellationToken);
+            .AverageAsync(rating => rating, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<Book?> GetByIdAsync(Guid bookId, CancellationToken cancellationToken)
     {
-        return await Context.Books.FirstOrDefaultAsync(book => book.Id == bookId, cancellationToken);
+        return await Context.Books.FirstOrDefaultAsync(book => book.Id == bookId, cancellationToken).ConfigureAwait(false);
     }
 
     private async Task<bool> IsBookmark(Guid userId, string identifier, string type, CancellationToken cancellationToken)
@@ -98,7 +103,7 @@ public class BookProvider : IBookProvider
                     where bookmark.UserId == userId && book.Identifiers.Any(i => i.Isbn == identifier && i.Type == type)
                     select bookmark;
 
-        return await query.AnyAsync(cancellationToken);
+        return await query.AnyAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<IEnumerable<Book>> GetBooksAsync(CancellationToken cancellationToken, int page = 1, int perPage = 10)
@@ -108,28 +113,28 @@ public class BookProvider : IBookProvider
             .Skip((page - 1) * perPage)
             .Take(perPage)
             .Include(book => book.Identifiers)
-            .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<int> GetCountAsync(CancellationToken cancellationToken)
     {
-        return await Context.Books.CountAsync(cancellationToken);
+        return await Context.Books.CountAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<BookResponse?> GetByIsbnAsync(string isbn, string type, CancellationToken cancellationToken)
     {
-        var book = await Context.Books.FirstOrDefaultAsync(book => book.Identifiers.Any(i => i.Isbn == isbn && i.Type == type), cancellationToken);
+        var book = await Context.Books.FirstOrDefaultAsync(book => book.Identifiers.Any(i => i.Isbn == isbn && i.Type == type), cancellationToken).ConfigureAwait(false);
 
         if (book is null)
         {
-            var bookGoogle = await BookGoogleService.GetFromIdentifierAsync(isbn, cancellationToken);
+            var bookGoogle = await BookGoogleService.GetFromIdentifierAsync(isbn, cancellationToken).ConfigureAwait(false);
 
             if (bookGoogle is null)
             {
                 return null;
             }
 
-            var newBook = await BookGoogleService.CreateFromResponse(bookGoogle, cancellationToken);
+            var newBook = await BookGoogleService.CreateFromResponse(bookGoogle, cancellationToken).ConfigureAwait(false);
 
             return Mapper.Map<BookResponse>(newBook);
         }

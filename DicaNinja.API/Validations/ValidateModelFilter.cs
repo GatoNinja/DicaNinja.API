@@ -7,9 +7,10 @@ public class ValidateModelFilter : ActionFilterAttribute
 {
     public override void OnActionExecuting(ActionExecutingContext context)
     {
-        if (!context.ModelState.IsValid)
+        if (context is null || context.ModelState.IsValid)
         {
-            context.Result = new BadRequestObjectResult(context.ModelState);
+            return;
         }
+        context.Result = new BadRequestObjectResult(context.ModelState);
     }
 }

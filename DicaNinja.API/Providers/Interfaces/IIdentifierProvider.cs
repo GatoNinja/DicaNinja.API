@@ -6,7 +6,7 @@ namespace DicaNinja.API.Providers.Interfaces;
 
 public interface IIdentifierProvider
 {
-    Task<Identifier?> GetOrCreateAsync(IdentifierResponse identifier, CancellationToken cancellationToken);
+    Task<Identifier?> GetOrCreateAsync(IdentifierResponse bookIdentifier, CancellationToken cancellationToken);
 
-    Task<List<Identifier>> GetByBookAsync(Guid bookId, CancellationToken cancellationToken);
+    Task<IEnumerable<Identifier>> GetByBookAsync(Guid bookId, CancellationToken cancellationToken);
 }

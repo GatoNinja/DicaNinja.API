@@ -1,6 +1,6 @@
 namespace DicaNinja.API.Helpers;
 
-public sealed class PagedResponse<T> : Response<T>
+public sealed class PagedResponse<T> : ResponseEnvelope<T>
 {
     public int Page { get; }
     public int PerPage { get; }

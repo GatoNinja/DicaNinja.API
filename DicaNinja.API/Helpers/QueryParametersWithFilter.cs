@@ -8,7 +8,8 @@ public class QueryParametersWithFilter
 
     public int PerPage
     {
-        get => _perPage; set => _perPage = value > 10 ? 10 : value;
+        get => _perPage;
+        set => _perPage = value > 10 ? 10 : value;
     }
 
     public string Filter { get; set; } = string.Empty;

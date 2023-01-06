@@ -1,5 +1,6 @@
 using DicaNinja.API.Startup;
 
+using System.Globalization;
 using System.Security.Cryptography;
 
 namespace DicaNinja.API.Services;
@@ -11,6 +12,11 @@ public sealed class PasswordHasher : IPasswordHasher
 
     public PasswordHasher(ConfigurationReader config)
     {
+        if (config is null)
+        {
+            throw new ArgumentNullException(nameof(config));
+        }
+
         Iterations = Convert.ToInt32(config.Security.HashIterations);
     }
 
@@ -29,6 +35,11 @@ public sealed class PasswordHasher : IPasswordHasher
 
     public bool Check(string hash, string password)
     {
+        if (hash is null)
+        {
+            throw new ArgumentNullException(nameof(hash));
+        }
+
         var parts = hash.Split('.');
 
         if (parts.Length != 3)
@@ -37,7 +48,7 @@ public sealed class PasswordHasher : IPasswordHasher
                                       "Should be formatted as `{iterations}.{salt}.{hash}`");
         }
 
-        var iterations = Convert.ToInt32(parts[0]);
+        var iterations = Convert.ToInt32(parts[0], CultureInfo.InvariantCulture);
         var salt = Convert.FromBase64String(parts[1]);
         var key = Convert.FromBase64String(parts[2]);
 

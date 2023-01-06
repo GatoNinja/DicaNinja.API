@@ -25,8 +25,13 @@ public class ReviewController : ControllerHelper
     [HttpPost]
     public async Task<Guid> CreateReview([FromBody] ReviewRequest request, CancellationToken cancellationToken)
     {
-        var review = new Review(UserId, request.BookId, request.Text, request.Rating);
+        if (request is null)
+        {
+            throw new ArgumentNullException(nameof(request));
+        }
 
-        return await ReviewProvider.CreateReviewAsync(review, cancellationToken);
+        var review = new Review(GetUserId(), request.BookId, request.Text, request.Rating);
+
+        return await ReviewProvider.CreateReviewAsync(review, cancellationToken).ConfigureAwait(false);
     }
 }

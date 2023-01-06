@@ -23,22 +23,22 @@ public class BookmarkProvider : IBookmarkProvider
 
     public async Task<bool?> BookmarkAsync(Guid userId, string identifier, string type, CancellationToken cancellationToken)
     {
-        var existingBookmark = await FilterByUser(userId, identifier, type).FirstOrDefaultAsync(cancellationToken);
+        var existingBookmark = await FilterByUser(userId, identifier, type).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
 
         if (existingBookmark is not null)
         {
             Context.Remove(existingBookmark);
-            await Context.SaveChangesAsync(cancellationToken);
+            await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
             return false;
         }
         else
         {
-            var book = await BookProvider.GetByIdentifierAsync(identifier, type, cancellationToken);
+            var book = await BookProvider.GetByIdentifierAsync(identifier, type, cancellationToken).ConfigureAwait(false);
 
             if (book is null)
             {
-                book = await BookGoogleService.CreateBookFromGoogleAsync(identifier, cancellationToken);
+                book = await BookGoogleService.CreateBookFromGoogleAsync(identifier, cancellationToken).ConfigureAwait(false);
 
                 if (book is null)
                 {
@@ -48,7 +48,7 @@ public class BookmarkProvider : IBookmarkProvider
 
             var bookmark = new Bookmark(userId, book.Id);
             Context.Add(bookmark);
-            await Context.SaveChangesAsync(cancellationToken);
+            await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
             return true;
         }
@@ -56,12 +56,12 @@ public class BookmarkProvider : IBookmarkProvider
 
     public async Task<int> GetBookmarkCountAsync(Guid userId, CancellationToken cancellationToken)
     {
-        return await Context.Bookmarks.CountAsync(bookmark => bookmark.UserId == userId, cancellationToken);
+        return await Context.Bookmarks.CountAsync(bookmark => bookmark.UserId == userId, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<bool> IsBookMarkedAsync(Guid userId, string identifier, string type, CancellationToken cancellationToken)
     {
-        return await FilterByUser(userId, identifier, type).AnyAsync(cancellationToken);
+        return await FilterByUser(userId, identifier, type).AnyAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private IQueryable<Bookmark> FilterByUser(Guid userId, string identifier, string type)

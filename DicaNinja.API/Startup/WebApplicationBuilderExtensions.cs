@@ -28,6 +28,11 @@ public static class WebApplicationBuilderExtensions
 {
     public static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder builder)
     {
+        if (builder is null)
+        {
+            throw new ArgumentNullException(nameof(builder));
+        }
+
         var config = new ConfigurationReader(builder.Configuration);
         var services = builder.Services;
 
@@ -55,21 +60,24 @@ public static class WebApplicationBuilderExtensions
         var config = new MapperConfiguration(config =>
         {
             config.CreateMap<Volume, BookResponse>()
-                .ForMember(dest => dest.PageCount, opt => opt.MapFrom(src => src.VolumeInfo.PageCount ?? 0))
-                .ForMember(dest => dest.PublicationDate, opt => opt.MapFrom(src => src.VolumeInfo.PublishedDate ?? string.Empty))
-                .ForMember(dest => dest.Image, opt => opt.MapFrom(src => GetImage(src)))
-                .ForMember(dest => dest.AverageRating, opt => opt.MapFrom(src => src.VolumeInfo.AverageRating ?? 0))
-                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.VolumeInfo.Title))
-                .ForMember(dest => dest.Subtitle, opt => opt.MapFrom(src => src.VolumeInfo.Subtitle))
-                .ForMember(dest => dest.Language, opt => opt.MapFrom(src => src.VolumeInfo.Language))
-                .ForMember(dest => dest.Categories, opt => opt.MapFrom(src => src.VolumeInfo.Categories))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.VolumeInfo.Description))
-                .ForMember(dest => dest.Publisher, opt => opt.MapFrom(src => src.VolumeInfo.Publisher))
-                .ForMember(dest => dest.Authors, opt => opt.MapFrom(src => src.VolumeInfo.Authors))
-                .ForMember(dest => dest.PreviewLink, opt => opt.MapFrom(src => src.VolumeInfo.PreviewLink))
-                .ForMember(dest => dest.Id, opt => opt.Ignore());
+                    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
+                    .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.VolumeInfo.Title))
+                    .ForMember(dest => dest.Subtitle, opt => opt.MapFrom(src => src.VolumeInfo.Subtitle))
+                    .ForMember(dest => dest.Language, opt => opt.MapFrom(src => src.VolumeInfo.Language))
+                    .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.VolumeInfo.Description))
+                    .ForMember(dest => dest.PageCount, opt => opt.MapFrom(src => src.VolumeInfo.PageCount))
+                    .ForMember(dest => dest.Publisher, opt => opt.MapFrom(src => src.VolumeInfo.Publisher))
+                    .ForMember(dest => dest.PublicationDate, opt => opt.MapFrom(src => src.VolumeInfo.PublishedDate))
+                    .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.VolumeInfo.ImageLinks.Thumbnail ?? src.VolumeInfo.ImageLinks.SmallThumbnail))
+                    .ForMember(dest => dest.AverageRating, opt => opt.MapFrom(src => src.VolumeInfo.AverageRating))
+                    .ForMember(dest => dest.Categories, opt => opt.MapFrom(src => src.VolumeInfo.Categories))
+                    .ForMember(dest => dest.Authors, opt => opt.MapFrom(src => src.VolumeInfo.Authors))
+                    .ForMember(dest => dest.Identifiers, opt => opt.MapFrom(src => src.VolumeInfo.IndustryIdentifiers.Select(i => new IdentifierResponse(i.Identifier, i.Type))))
+                    .ForMember(dest => dest.IsBookMarked, opt => opt.Ignore())
+                    .ForMember(dest => dest.InternalRating, opt => opt.Ignore())
+                    .ForMember(dest => dest.PreviewLink, opt => opt.MapFrom(src => src.VolumeInfo.PreviewLink));
 
-            config.CreateMap<IdentifierResponse, Identifier>()
+        config.CreateMap<IdentifierResponse, Identifier>()
                 .ReverseMap();
 
             config.CreateMap<BookResponse, Book>()
@@ -185,24 +193,22 @@ public static class WebApplicationBuilderExtensions
             });
     }
 
-    private static void ConfigureDatabase(IServiceCollection services, string connectionString)
+    private static void ConfigureDatabase(IServiceCollection services, string? connectionString)
     {
-        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        if (connectionString == null)
+        {
+            throw new ArgumentNullException(nameof(connectionString));
+        }
+
+        //AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
         services.AddDbContext<BaseContext>(options =>
         {
-            options.UseNpgsql(connectionString)
-                .UseSnakeCaseNamingConvention();
+            options.UseSqlite("Data Source=dicaninja.sqlite");
+            //.UseNpgsql(connectionString)
+            //    .UseSnakeCaseNamingConvention();
 
             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
     }
-
-    private static string GetImage(Volume src)
-    {
-        return src.VolumeInfo.ImageLinks?.Thumbnail is null
-            ? src.VolumeInfo.ImageLinks?.Thumbnail ?? string.Empty
-            : src.VolumeInfo.ImageLinks?.SmallThumbnail ?? string.Empty;
-    }
-
 }

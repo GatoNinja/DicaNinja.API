@@ -6,11 +6,6 @@ namespace DicaNinja.API.Abstracts;
 
 public abstract class BaseModel
 {
-    public BaseModel()
-    {
-        Created = DateTimeOffset.Now;
-    }
-
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Key]
     [Column("id")]
@@ -18,7 +13,7 @@ public abstract class BaseModel
 
     [JsonIgnore, Required]
     [Column("created")]
-    public DateTimeOffset Created { get; set; }
+    public DateTimeOffset Created { get; set; } = DateTimeOffset.Now;
 
     [JsonIgnore]
     [Column("updated")]

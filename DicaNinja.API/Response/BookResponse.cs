@@ -15,7 +15,7 @@ public class BookResponse
     public IEnumerable<string> Categories { get; private set; } = default!;
     public IEnumerable<string> Authors { get; private set; } = default!;
     public List<IdentifierResponse> Identifiers { get; private set; } = new();
-    public bool IsBookMarked { get; set; } = false;
+    public bool IsBookMarked { get; set; }
     public double InternalRating { get; set; }
 
     public string PreviewLink { get; set; } = string.Empty;

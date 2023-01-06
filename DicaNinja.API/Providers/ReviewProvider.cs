@@ -19,29 +19,34 @@ public class ReviewProvider : IReviewProvider
 
     public async Task<Guid> CreateReviewAsync(Review review, CancellationToken cancellationToken)
     {
-        var existingBook = await Context.Books.AnyAsync(book => book.Id == review.BookId, cancellationToken);
+        if (review is null)
+        {
+            throw new ArgumentNullException(nameof(review));
+        }
+
+        var existingBook = await Context.Books.AnyAsync(book => book.Id == review.BookId, cancellationToken).ConfigureAwait(false);
 
         if (!existingBook)
         {
-            throw new Exception("O livro informado não foi encontrado");
+            throw new KeyNotFoundException("O livro informado não foi encontrado");
         }
 
-        var existingUser = await Context.Users.AnyAsync(user => user.Id == review.UserId, cancellationToken);
+        var existingUser = await Context.Users.AnyAsync(user => user.Id == review.UserId, cancellationToken).ConfigureAwait(false);
 
         if (!existingUser)
         {
-            throw new Exception("O usuário informado não foi encontrado");
+            throw new KeyNotFoundException("O usuário informado não foi encontrado");
         }
 
-        var existingReview = await Context.Reviews.AnyAsync(r => r.UserId == review.UserId && r.BookId == review.BookId, cancellationToken);
+        var existingReview = await Context.Reviews.AnyAsync(r => r.UserId == review.UserId && r.BookId == review.BookId, cancellationToken).ConfigureAwait(false);
 
         if (existingReview)
         {
-            throw new Exception("Você já avaliou este livro");
+            throw new KeyNotFoundException("Você já avaliou este livro");
         }
 
-        await Context.Reviews.AddAsync(review, cancellationToken);
-        await Context.SaveChangesAsync(cancellationToken);
+        await Context.Reviews.AddAsync(review, cancellationToken).ConfigureAwait(false);
+        await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         return review.Id;
     }

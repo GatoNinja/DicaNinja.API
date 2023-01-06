@@ -11,6 +11,7 @@ public class CacheService : ICacheService
         try
         {
             var item = (T)_memoryCache.Get(key);
+
             return item;
         }
         catch (Exception)

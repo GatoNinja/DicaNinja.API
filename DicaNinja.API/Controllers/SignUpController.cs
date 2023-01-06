@@ -21,8 +21,13 @@ public class SignUpController : ControllerBase
     private IUserProvider UserProvider { get; }
 
     [HttpPost]
-    public async Task<ActionResult<Guid>> PostNewUserAsync([FromBody] NewUserRequest request)
+    public async Task<ActionResult<Guid>> PostNewUserAsync([FromBody] NewUserRequest request, CancellationToken cancellationToken)
     {
+        if (request is null)
+        {
+            throw new ArgumentNullException(nameof(request));
+        }
+
         if (request.Password != request.ConfirmPassword)
         {
             var messageResponse = new MessageResponse(TextConstant.PasswordDoesntMatch);
@@ -31,8 +36,7 @@ public class SignUpController : ControllerBase
         }
 
         var user = new User(request.Username, request.Firstname, request.Lastname, request.Email, request.Password);
-        var cancellationToken = new CancellationToken();
-        var validateNewUser = await UserProvider.ValidateNewUserAsync(user, cancellationToken);
+        var validateNewUser = await UserProvider.ValidateNewUserAsync(user, cancellationToken).ConfigureAwait(false);
 
         if (validateNewUser == EnumNewUserCheck.ExistingEmail)
         {
@@ -48,7 +52,7 @@ public class SignUpController : ControllerBase
             return new BadRequestObjectResult(messageResponse);
         }
 
-        var insertedUser = await UserProvider.InsertAsync(user, cancellationToken);
+        var insertedUser = await UserProvider.InsertAsync(user, cancellationToken).ConfigureAwait(false);
 
         return insertedUser is null
             ? (ActionResult<Guid>)new BadRequestObjectResult(new MessageResponse(TextConstant.ProblemToSaveRecord))

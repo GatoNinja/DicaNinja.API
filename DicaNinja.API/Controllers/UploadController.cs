@@ -21,11 +21,11 @@ public class UploadController : ControllerHelper
     [HttpPost]
     public async Task<string> UploadFile(IFormFile file)
     {
-        if (file.Length > 0)
+        if (file is not null && file.Length > 0)
         {
             try
             {
-                var fullPath = Path.Combine(Environment.ContentRootPath, "images", UserId.ToString());
+                var fullPath = Path.Combine(Environment.ContentRootPath, "images", GetUserId().ToString());
                 var extension = Path.GetExtension(file.FileName);
                 var newName = $"{Guid.NewGuid()}{extension}";
 
@@ -33,20 +33,22 @@ public class UploadController : ControllerHelper
                 {
                     Directory.CreateDirectory(fullPath);
                 }
-                using var filestream = System.IO.File.Create(Path.Combine(fullPath, newName));
-                await file.CopyToAsync(filestream);
-                filestream.Flush();
 
-                return $"\\imagens\\{UserId}\\{newName}";
+                using (var filestream = System.IO.File.Create(Path.Combine(fullPath, newName)))
+                {
+                    await file.CopyToAsync(filestream).ConfigureAwait(false);
+                    await filestream.FlushAsync().ConfigureAwait(false);
+                }
+
+                return $"\\imagens\\{GetUserId()}\\{newName}";
             }
-            catch (Exception ex)
+            catch (FileLoadException ex)
             {
                 return ex.ToString();
             }
         }
-        else
-        {
-            return "Ocorreu uma falha no envio do arquivo...";
-        }
+
+        return "Ocorreu uma falha no envio do arquivo...";
     }
+
 }

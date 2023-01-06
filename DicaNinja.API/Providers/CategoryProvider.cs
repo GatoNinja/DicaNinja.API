@@ -16,19 +16,19 @@ public class CategoryProvider : ICategoryProvider
 
     private BaseContext Context { get; }
 
-    public async Task<List<Category>> GetByBookAsync(Guid bookId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Category>> GetByBookAsync(Guid bookId, CancellationToken cancellationToken)
     {
-        return await Context.Categories.Where(category => category.Books.Any(book => book.Id == bookId)).ToListAsync(cancellationToken);
+        return await Context.Categories.Where(category => category.Books.Any(book => book.Id == bookId)).ToListAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<int> GetCountAsync(CancellationToken cancellationToken)
     {
-        return await Context.Categories.CountAsync(cancellationToken);
+        return await Context.Categories.CountAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<Category?> GetOrCreateAsync(string categoryName, CancellationToken cancellationToken)
     {
-        var category = await Context.Categories.FirstOrDefaultAsync(c => c.Name == categoryName, cancellationToken);
+        var category = await Context.Categories.FirstOrDefaultAsync(c => c.Name == categoryName, cancellationToken).ConfigureAwait(false);
 
         if (category is not null)
         {
@@ -37,8 +37,8 @@ public class CategoryProvider : ICategoryProvider
 
         category = new Category(categoryName);
 
-        await Context.Categories.AddAsync(category, cancellationToken);
-        await Context.SaveChangesAsync(cancellationToken);
+        await Context.Categories.AddAsync(category, cancellationToken).ConfigureAwait(false);
+        await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         return category;
     }

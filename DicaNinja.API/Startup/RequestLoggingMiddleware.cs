@@ -13,14 +13,19 @@ public class RequestLoggingMiddleware
 
     public async Task Invoke(HttpContext context)
     {
+        if (context is null)
+        {
+            throw new ArgumentNullException(nameof(context));
+        }
+
         try
         {
-            await _next(context);
+            await _next(context).ConfigureAwait(false);
         }
         finally
         {
             _logger.LogInformation(
-                "Request {method} {url} {params} => {statusCode}",
+                "Request {Method} {Url} {Params} => {StatusCode}",
                 context.Request?.Method,
                 context.Request?.Path.Value,
                 context.Request?.QueryString,

@@ -28,6 +28,11 @@ public sealed class TokenService : ITokenService
 
     public async Task<TokenResponse> GenerateTokenAsync(User user, CancellationToken cancellationToken)
     {
+        if (user is null)
+        {
+            throw new ArgumentNullException(nameof(user));
+        }
+
         var claims = new List<Claim>
         {
             new("Id", user.Id.ToString()),
@@ -39,7 +44,7 @@ public sealed class TokenService : ITokenService
         var accessToken = GenerateAccessToken(claims);
         var refreshToken = RefreshTokenProvider.GenerateRefreshToken();
 
-        await RefreshTokenProvider.SaveRefreshTokenAsync(user.Id, refreshToken, cancellationToken);
+        await RefreshTokenProvider.SaveRefreshTokenAsync(user.Id, refreshToken, cancellationToken).ConfigureAwait(false);
 
         return new TokenResponse(accessToken, refreshToken, user);
     }
@@ -48,11 +53,8 @@ public sealed class TokenService : ITokenService
     {
         var tokenValidationParameters = new TokenValidationParameters
         {
-            ValidateAudience = false,
-            ValidateIssuer = false,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Config.Security.TokenSecurity)),
-            ValidateLifetime = false
         };
         var tokenHandler = new JwtSecurityTokenHandler();
         var principal =
@@ -61,7 +63,7 @@ public sealed class TokenService : ITokenService
         return securityToken switch
         {
             JwtSecurityToken jwtSecurityToken when jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
-                StringComparison.InvariantCultureIgnoreCase) => principal,
+                StringComparison.OrdinalIgnoreCase) => principal,
             _ => throw new SecurityTokenException("Invalid token")
         };
 

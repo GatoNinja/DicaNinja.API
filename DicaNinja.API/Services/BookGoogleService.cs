@@ -1,10 +1,7 @@
-using System.Text;
-
 using AutoMapper;
 
 using DicaNinja.API.Contexts;
 using DicaNinja.API.Models;
-using DicaNinja.API.Providers.Interfaces;
 using DicaNinja.API.Response;
 using DicaNinja.API.Startup;
 
@@ -19,6 +16,11 @@ public class BookGoogleService
 {
     public BookGoogleService(ConfigurationReader config, IMapper mapper, BaseContext context)
     {
+        if (config is null)
+        {
+            throw new ArgumentNullException(nameof(config));
+        }
+
         var service = new BooksService(new BaseClientService.Initializer()
         {
             ApiKey = config.Google.ApiKey,
@@ -34,7 +36,7 @@ public class BookGoogleService
     private BooksService Service { get; }
     private BaseContext Context { get; }
 
-    public async Task<IEnumerable<BookResponse>> QueryBooksAsync(string query, CancellationToken cancellationToken, int page = 1, int perPage = 10)
+    public async Task<List<BookResponse>> QueryBooksAsync(string query, CancellationToken cancellationToken, int page = 1, int perPage = 10)
     {
         var request = Service.Volumes.List(query);
 
@@ -43,7 +45,7 @@ public class BookGoogleService
         request.LangRestrict = "pt";
         request.PrintType = PrintTypeEnum.BOOKS;
 
-        var response = await request.ExecuteAsync(cancellationToken);
+        var response = await request.ExecuteAsync(cancellationToken).ConfigureAwait(false);
         var books = Mapper.Map<List<BookResponse>>(response.Items);
 
         foreach (var book in books)
@@ -66,14 +68,14 @@ public class BookGoogleService
 
     public async Task<Book?> CreateBookFromGoogleAsync(string identifier, CancellationToken cancellationToken)
     {
-        var bookResponse = await GetFromIdentifierAsync(identifier, cancellationToken);
+        var bookResponse = await GetFromIdentifierAsync(identifier, cancellationToken).ConfigureAwait(false);
 
         if (bookResponse is null)
         {
             return null;
         }
 
-        var book = await CreateFromResponse(bookResponse, cancellationToken);
+        var book = await CreateFromResponse(bookResponse, cancellationToken).ConfigureAwait(false);
 
         return book;
     }
@@ -81,7 +83,7 @@ public class BookGoogleService
     public async Task<BookResponse?> GetFromIdentifierAsync(string identifier, CancellationToken cancellationToken)
     {
         var request = Service.Volumes.List(identifier);
-        var response = await request.ExecuteAsync(cancellationToken);
+        var response = await request.ExecuteAsync(cancellationToken).ConfigureAwait(false);
 
         if (response is null)
         {
@@ -110,7 +112,7 @@ public class BookGoogleService
 
         Context.Books.Add(book);
 
-        await Context.SaveChangesAsync(cancellationToken);
+        await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         return book;
     }

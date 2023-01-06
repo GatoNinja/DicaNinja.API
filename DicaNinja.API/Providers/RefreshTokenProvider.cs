@@ -43,28 +43,28 @@ public sealed class RefreshTokenProvider : IRefreshTokenProvider
                     select new RefreshToken(refreshToken.Id, refreshToken.Value, refreshToken.RefreshTokenExpiryTime,
                         selectedUser);
 
-        return await query.FirstOrDefaultAsync(cancellationToken);
+        return await query.FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task SaveRefreshTokenAsync(Guid userId, string refreshTokenValue, CancellationToken cancellationToken)
     {
-        var user = await UserProvider.GetByIdAsync(userId, cancellationToken);
+        var user = await UserProvider.GetByIdAsync(userId, cancellationToken).ConfigureAwait(false);
 
         if (user is null)
         {
-            throw new NullReferenceException("Usuário não encontrado");
+            throw new KeyNotFoundException("Usuário não encontrado");
         }
 
         var refreshToken = new RefreshToken(refreshTokenValue, userId, true);
 
         Context.RefreshTokens.Add(refreshToken);
-        await Context.SaveChangesAsync(cancellationToken);
+        await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task InvalidateAsync(string value, CancellationToken cancellationToken)
     {
         var refreshTokenFound =
-            await Context.RefreshTokens.FirstOrDefaultAsync(refreshToken => refreshToken.Value == value, cancellationToken);
+            await Context.RefreshTokens.FirstOrDefaultAsync(refreshToken => refreshToken.Value == value, cancellationToken).ConfigureAwait(false);
 
         if (refreshTokenFound is null)
         {
@@ -74,6 +74,6 @@ public sealed class RefreshTokenProvider : IRefreshTokenProvider
         refreshTokenFound.IsActive = false;
 
         Context.Entry(refreshTokenFound).State = EntityState.Modified;
-        await Context.SaveChangesAsync(cancellationToken);
+        await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 }

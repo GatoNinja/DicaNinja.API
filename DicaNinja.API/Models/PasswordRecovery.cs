@@ -19,6 +19,11 @@ public class PasswordRecovery : BaseModel
 
     public PasswordRecovery(User user) : this()
     {
+        if (user is null)
+        {
+            throw new ArgumentNullException(nameof(user));
+        }
+
         User = user;
         UserId = user.Id;
     }

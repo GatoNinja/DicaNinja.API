@@ -32,18 +32,23 @@ public class BaseContext : DbContext
 
     public DbSet<Review> Reviews { get; private set; } = default!;
 
-    protected override void OnModelCreating(ModelBuilder builder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        builder.Entity<Follower>()
+        if (modelBuilder is null)
+        {
+            throw new ArgumentNullException(nameof(modelBuilder), "ModelBuilder couldn't be created");
+        }
+
+        modelBuilder.Entity<Follower>()
             .HasIndex(f => new { f.UserId, f.FollowedId })
             .IsUnique();
 
-        builder.Entity<User>()
+        modelBuilder.Entity<User>()
             .HasMany(u => u.Following)
             .WithOne(f => f.FollowedUser)
             .HasForeignKey(f => f.UserId);
 
-        builder.Entity<User>()
+        modelBuilder.Entity<User>()
             .HasMany(u => u.Followers)
             .WithOne(f => f.User)
             .HasForeignKey(f => f.FollowedId);

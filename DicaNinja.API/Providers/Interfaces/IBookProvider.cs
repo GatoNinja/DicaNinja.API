@@ -8,7 +8,7 @@ public interface IBookProvider
 {
     Task<Book?> GetByIdentifierAsync(string identifier, string type, CancellationToken cancellationToken);
 
-    Task<List<Book>> GetBookmarksAsync(Guid userId, CancellationToken cancellationToken, int page = 1, int perPage = 10);
+    Task<IEnumerable<Book>> GetBookmarksAsync(Guid userId, CancellationToken cancellationToken, int page = 1, int perPage = 10);
 
     Task PopulateWithBookmarksAsync(IEnumerable<BookResponse> books, Guid userId, CancellationToken cancellationToken);
 

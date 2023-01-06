@@ -7,7 +7,7 @@ public class SmtpService
 {
     public RestResponse SendEmail(string to, string subject, string body)
     {
-        var client = new RestClient()
+        using var client = new RestClient()
         {
             Authenticator = new HttpBasicAuthenticator("api",
                 "6e2e57a23e28b9da38ef0ff8326b4e74-27a562f9-bcfc585c")
