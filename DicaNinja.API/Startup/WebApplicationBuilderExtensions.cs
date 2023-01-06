@@ -200,13 +200,12 @@ public static class WebApplicationBuilderExtensions
             throw new ArgumentNullException(nameof(connectionString));
         }
 
-        //AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
         services.AddDbContext<BaseContext>(options =>
         {
-            options.UseSqlite("Data Source=dicaninja.sqlite");
-            //.UseNpgsql(connectionString)
-            //    .UseSnakeCaseNamingConvention();
+            options.UseNpgsql(connectionString)
+                .UseSnakeCaseNamingConvention();
 
             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });

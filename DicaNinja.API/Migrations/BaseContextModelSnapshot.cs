@@ -4,6 +4,7 @@ using DicaNinja.API.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -15,431 +16,462 @@ namespace DicaNinja.API.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "7.0.1");
+            modelBuilder
+                .HasAnnotation("ProductVersion", "7.0.1")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("AuthorBook", b =>
                 {
                     b.Property<Guid>("AuthorsId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid")
+                        .HasColumnName("authors_id");
 
                     b.Property<Guid>("BooksId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid")
+                        .HasColumnName("books_id");
 
-                    b.HasKey("AuthorsId", "BooksId");
+                    b.HasKey("AuthorsId", "BooksId")
+                        .HasName("pk_author_book");
 
-                    b.HasIndex("BooksId");
+                    b.HasIndex("BooksId")
+                        .HasDatabaseName("ix_author_book_books_id");
 
-                    b.ToTable("AuthorBook");
+                    b.ToTable("author_book", (string)null);
                 });
 
             modelBuilder.Entity("BookCategory", b =>
                 {
                     b.Property<Guid>("BooksId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid")
+                        .HasColumnName("books_id");
 
                     b.Property<Guid>("CategoriesId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid")
+                        .HasColumnName("categories_id");
 
-                    b.HasKey("BooksId", "CategoriesId");
+                    b.HasKey("BooksId", "CategoriesId")
+                        .HasName("pk_book_category");
 
-                    b.HasIndex("CategoriesId");
+                    b.HasIndex("CategoriesId")
+                        .HasDatabaseName("ix_book_category_categories_id");
 
-                    b.ToTable("BookCategory");
+                    b.ToTable("book_category", (string)null);
                 });
 
             modelBuilder.Entity("DicaNinja.API.Models.Author", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("id");
 
                     b.Property<DateTimeOffset>("Created")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("name");
 
                     b.Property<DateTimeOffset?>("Updated")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_authors");
 
-                    b.ToTable("authors");
+                    b.ToTable("authors", (string)null);
                 });
 
             modelBuilder.Entity("DicaNinja.API.Models.Book", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("id");
 
                     b.Property<double?>("AverageRating")
-                        .HasColumnType("REAL")
+                        .HasColumnType("double precision")
                         .HasColumnName("average_ratting");
 
                     b.Property<DateTimeOffset>("Created")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("description");
 
                     b.Property<string>("Image")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("image");
 
                     b.Property<string>("Language")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("language");
 
                     b.Property<int?>("PageCount")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("integer")
                         .HasColumnName("page_count");
 
                     b.Property<string>("PreviewLink")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("preview_link");
 
                     b.Property<string>("PublicationDate")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("publication_date");
 
                     b.Property<string>("Publisher")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("publisher");
 
                     b.Property<string>("Subtitle")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("subtitle");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("title");
 
                     b.Property<DateTimeOffset?>("Updated")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_books");
 
-                    b.ToTable("books");
+                    b.ToTable("books", (string)null);
                 });
 
             modelBuilder.Entity("DicaNinja.API.Models.Bookmark", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("id");
 
                     b.Property<Guid>("BookId")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("book_id");
 
                     b.Property<DateTimeOffset>("Created")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
                     b.Property<DateTimeOffset?>("Updated")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_bookmarks");
 
-                    b.HasIndex("BookId");
+                    b.HasIndex("BookId")
+                        .HasDatabaseName("ix_bookmarks_book_id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_bookmarks_user_id");
 
-                    b.ToTable("bookmarks");
+                    b.ToTable("bookmarks", (string)null);
                 });
 
             modelBuilder.Entity("DicaNinja.API.Models.Category", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("id");
 
                     b.Property<Guid>("BookId")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("book_id");
 
                     b.Property<DateTimeOffset>("Created")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("name");
 
                     b.Property<DateTimeOffset?>("Updated")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_categories");
 
-                    b.ToTable("categories");
+                    b.ToTable("categories", (string)null);
                 });
 
             modelBuilder.Entity("DicaNinja.API.Models.Follower", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("id");
 
                     b.Property<DateTimeOffset>("Created")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
                     b.Property<Guid>("FollowedId")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("follower_id");
 
                     b.Property<DateTimeOffset?>("Updated")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_followers");
 
-                    b.HasIndex("FollowedId");
+                    b.HasIndex("FollowedId")
+                        .HasDatabaseName("ix_followers_follower_id");
 
                     b.HasIndex("UserId", "FollowedId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_followers_user_id_follower_id");
 
-                    b.ToTable("followers");
+                    b.ToTable("followers", (string)null);
                 });
 
             modelBuilder.Entity("DicaNinja.API.Models.Identifier", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("id");
 
                     b.Property<Guid>("BookId")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("book_id");
 
                     b.Property<DateTimeOffset>("Created")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
                     b.Property<string>("Isbn")
                         .IsRequired()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("isbn");
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("type");
 
                     b.Property<DateTimeOffset?>("Updated")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_identifiers");
 
-                    b.HasIndex("BookId");
+                    b.HasIndex("BookId")
+                        .HasDatabaseName("ix_identifiers_book_id");
 
-                    b.ToTable("identifiers");
+                    b.ToTable("identifiers", (string)null);
                 });
 
             modelBuilder.Entity("DicaNinja.API.Models.PasswordRecovery", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("id");
 
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasMaxLength(7)
-                        .HasColumnType("TEXT")
+                        .HasColumnType("character varying(7)")
                         .HasColumnName("code");
 
                     b.Property<DateTimeOffset>("Created")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
                     b.Property<DateTimeOffset>("ExpireDate")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("expire_date");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("boolean")
                         .HasColumnName("is_active");
 
                     b.Property<DateTimeOffset?>("Updated")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_password_recoveries");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_password_recoveries_user_id");
 
-                    b.ToTable("password_recoveries");
+                    b.ToTable("password_recoveries", (string)null);
                 });
 
             modelBuilder.Entity("DicaNinja.API.Models.RefreshToken", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("id");
 
                     b.Property<DateTimeOffset>("Created")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("boolean")
                         .HasColumnName("is_active");
 
                     b.Property<DateTimeOffset>("RefreshTokenExpiryTime")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("refresh_token_expiry_time");
 
                     b.Property<DateTimeOffset?>("Updated")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("TEXT")
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("value");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_refresh_tokens");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_refresh_tokens_user_id");
 
-                    b.ToTable("refresh_tokens");
+                    b.ToTable("refresh_tokens", (string)null);
                 });
 
             modelBuilder.Entity("DicaNinja.API.Models.Review", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("id");
 
                     b.Property<Guid>("BookId")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("book_id");
 
                     b.Property<DateTimeOffset>("Created")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
                     b.Property<int>("Rating")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("integer")
                         .HasColumnName("rating");
 
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasMaxLength(2048)
-                        .HasColumnType("TEXT")
+                        .HasColumnType("character varying(2048)")
                         .HasColumnName("text");
 
                     b.Property<DateTimeOffset?>("Updated")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_reviews");
 
-                    b.HasIndex("BookId");
+                    b.HasIndex("BookId")
+                        .HasDatabaseName("ix_reviews_book_id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_reviews_user_id");
 
-                    b.ToTable("reviews");
+                    b.ToTable("reviews", (string)null);
                 });
 
             modelBuilder.Entity("DicaNinja.API.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("uuid")
                         .HasColumnName("id");
 
                     b.Property<DateTimeOffset>("Created")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
 
                     b.Property<string>("Description")
                         .HasMaxLength(200)
-                        .HasColumnType("TEXT")
+                        .HasColumnType("character varying(200)")
                         .HasColumnName("description");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("email");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(48)
-                        .HasColumnType("TEXT")
+                        .HasColumnType("character varying(48)")
                         .HasColumnName("first_name");
 
                     b.Property<string>("Image")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("image");
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(48)
-                        .HasColumnType("TEXT")
+                        .HasColumnType("character varying(48)")
                         .HasColumnName("last_name");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("TEXT")
+                        .HasColumnType("text")
                         .HasColumnName("password");
 
                     b.Property<DateTimeOffset?>("Updated")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated");
 
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(48)
-                        .HasColumnType("TEXT")
+                        .HasColumnType("character varying(48)")
                         .HasColumnName("username");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_users");
 
-                    b.ToTable("users");
+                    b.ToTable("users", (string)null);
                 });
 
             modelBuilder.Entity("AuthorBook", b =>
@@ -448,13 +480,15 @@ namespace DicaNinja.API.Migrations
                         .WithMany()
                         .HasForeignKey("AuthorsId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_author_book_authors_authors_id");
 
                     b.HasOne("DicaNinja.API.Models.Book", null)
                         .WithMany()
                         .HasForeignKey("BooksId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_author_book_books_books_id");
                 });
 
             modelBuilder.Entity("BookCategory", b =>
@@ -463,13 +497,15 @@ namespace DicaNinja.API.Migrations
                         .WithMany()
                         .HasForeignKey("BooksId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_book_category_books_books_id");
 
                     b.HasOne("DicaNinja.API.Models.Category", null)
                         .WithMany()
                         .HasForeignKey("CategoriesId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_book_category_categories_categories_id");
                 });
 
             modelBuilder.Entity("DicaNinja.API.Models.Bookmark", b =>
@@ -478,13 +514,15 @@ namespace DicaNinja.API.Migrations
                         .WithMany("Bookmarks")
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_bookmarks_books_book_id");
 
                     b.HasOne("DicaNinja.API.Models.User", "User")
                         .WithMany("Bookmarks")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_bookmarks_users_user_id");
 
                     b.Navigation("Book");
 
@@ -497,13 +535,15 @@ namespace DicaNinja.API.Migrations
                         .WithMany("Followers")
                         .HasForeignKey("FollowedId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_followers_users_user_id1");
 
                     b.HasOne("DicaNinja.API.Models.User", "FollowedUser")
                         .WithMany("Following")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_followers_users_user_id");
 
                     b.Navigation("FollowedUser");
 
@@ -516,7 +556,8 @@ namespace DicaNinja.API.Migrations
                         .WithMany("Identifiers")
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_identifiers_books_book_id");
 
                     b.Navigation("Book");
                 });
@@ -527,7 +568,8 @@ namespace DicaNinja.API.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_password_recoveries_users_user_id");
 
                     b.Navigation("User");
                 });
@@ -538,7 +580,8 @@ namespace DicaNinja.API.Migrations
                         .WithMany("RefreshTokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_refresh_tokens_users_user_id");
 
                     b.Navigation("User");
                 });
@@ -549,13 +592,15 @@ namespace DicaNinja.API.Migrations
                         .WithMany("Reviews")
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_reviews_books_book_id");
 
                     b.HasOne("DicaNinja.API.Models.User", null)
                         .WithMany("Reviews")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_reviews_users_user_id");
                 });
 
             modelBuilder.Entity("DicaNinja.API.Models.Book", b =>
