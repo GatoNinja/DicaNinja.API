@@ -64,6 +64,11 @@ public class BookmarkProvider : IBookmarkProvider
         return await FilterByUser(userId, identifier, type).AnyAsync(cancellationToken).ConfigureAwait(false);
     }
 
+    public async Task<bool> IsBookMarkedAsync(Guid userId, Guid bookId)
+    {
+        return await Context.Bookmarks.AnyAsync(bookmark => bookmark.UserId == userId && bookmark.BookId == bookId);
+    }
+
     private IQueryable<Bookmark> FilterByUser(Guid userId, string identifier, string type)
     {
         var query = from bookmark in Context.Bookmarks

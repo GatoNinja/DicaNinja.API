@@ -45,14 +45,14 @@ public class BookController : ControllerHelper
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
     [ProducesDefaultResponseType]
-    public async Task<ActionResult<List<BookResponse>>> GetAsync([FromQuery] QueryParametersWithFilter queryString, CancellationToken cancellationToken)
+    public async Task<ActionResult<List<BookResponse>>> GetAsync([FromQuery] QueryParametersWithFilter request, CancellationToken cancellationToken)
     {
-        if (queryString is null)
+        if (request is null)
         {
-            throw new ArgumentNullException(nameof(queryString));
+            throw new ArgumentNullException(nameof(request));
         }
 
-        var cacheKey = $"googlebook_{queryString.Query}-{queryString.Page}-{queryString.PerPage}";
+        var cacheKey = $"googlebook_{request.Query}-{request.Page}-{request.PerPage}";
 
         var cache = CacheService.GetData<List<BookResponse>>(cacheKey);
 
@@ -65,10 +65,13 @@ public class BookController : ControllerHelper
 
         try
         {
-            books = await Service.QueryBooksAsync(queryString.Query, cancellationToken, queryString.Page, queryString.PerPage).ConfigureAwait(false);
+            books = await Service.QueryBooksAsync(request.Query, cancellationToken, request.Page, request.PerPage, request.Lang).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
+
             return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao chamar a API do Google Books");
         }
 

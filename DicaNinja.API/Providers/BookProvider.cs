@@ -40,6 +40,7 @@ public class BookProvider : IBookProvider
             .Skip((page - 1) * perPage)
             .Take(perPage)
             .Include(book => book.Identifiers)
+            .Include(book => book.Authors)
             .ToListAsync(cancellationToken).ConfigureAwait(false);
 
         return books;
@@ -109,10 +110,10 @@ public class BookProvider : IBookProvider
     public async Task<IEnumerable<Book>> GetBooksAsync(CancellationToken cancellationToken, int page = 1, int perPage = 10)
     {
         return await Context.Books
-            //.OrderBy(book => Guid.NewGuid())
+            .OrderBy(book => Guid.NewGuid())
             .Skip((page - 1) * perPage)
             .Take(perPage)
-            .Include(book => book.Identifiers)
+            .Include(book => book.Identifiers)  
             .ToListAsync(cancellationToken).ConfigureAwait(false);
     }
 

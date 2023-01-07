@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc;
+
 namespace DicaNinja.API.Helpers;
 
 public class QueryParametersWithFilter
@@ -13,4 +15,6 @@ public class QueryParametersWithFilter
     }
 
     public string Query { get; set; } = string.Empty;
+
+    public string? Lang { get; set; } = null;
 }
