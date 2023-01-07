@@ -15,7 +15,7 @@ namespace DicaNinja.API.Controllers;
 [Route("[controller]")]
 [ApiController]
 [AllowAnonymous]
-public class MainController : ControllerHelper
+public class MainController : ControllerBase
 {
     public MainController(IMapper mapper, IBookProvider bookProvider, IUserProvider userProvider, IAuthorProvider authorProvider, ICategoryProvider categoriProvider, ICacheService cacheService, IBookmarkProvider bookmarkProvider)
     {
@@ -39,7 +39,7 @@ public class MainController : ControllerHelper
     [HttpGet]
     public async Task<ActionResult<PagedResponse<IEnumerable<BookResponse>>>> Get([FromQuery] QueryParameters query, CancellationToken cancellationToken)
     {
-        var cacheKey = $"main_${GetUserId()}";
+        var cacheKey = "main";
 
         var cache = CacheService.GetData<MainResponse>(cacheKey);
 
