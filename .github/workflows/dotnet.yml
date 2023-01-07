@@ -22,12 +22,12 @@ jobs:
     - name: Build app
       run: dotnet build --configuration Release
     - name: Upload app to Azure VM
-      uses: azure/upload-artifact@v1
+      uses: actions/upload-artifact@v1
       with:
         artifact: bin/Release/netcoreapp7.0
         target-path: /home/azureuser/app
     - name: Deploy app to Azure VM
-      uses: azure/ssh-action@v1
+      uses: actions/ssh-action@v1
       with:
         host: ${{ secrets.VM_IP }}
         username: ${{ secrets.VM_USER }}
