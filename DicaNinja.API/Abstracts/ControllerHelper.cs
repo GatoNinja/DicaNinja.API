@@ -13,4 +13,9 @@ public class ControllerHelper : ControllerBase
 
         return claim is null ? throw new BadHttpRequestException(TextConstant.ForbiddenUser) : Guid.Parse(claim.Value);
     }
+
+    protected bool IsAuthenticated()
+    {
+        return User.Claims.Any();
+    }
 }

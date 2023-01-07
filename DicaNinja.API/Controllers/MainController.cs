@@ -15,7 +15,7 @@ namespace DicaNinja.API.Controllers;
 [Route("[controller]")]
 [ApiController]
 [AllowAnonymous]
-public class MainController : ControllerBase
+public class MainController : ControllerHelper
 {
     public MainController(IMapper mapper, IBookProvider bookProvider, IUserProvider userProvider, IAuthorProvider authorProvider, ICategoryProvider categoriProvider, ICacheService cacheService, IBookmarkProvider bookmarkProvider)
     {
@@ -58,9 +58,12 @@ public class MainController : ControllerBase
 
         var mapped = Mapper.Map<IEnumerable<BookResponse>>(books);
 
-        foreach (var book in mapped)
+        if (IsAuthenticated())
         {
-            book.IsBookMarked = await BookmarkProvider.IsBookMarkedAsync(GetUserId(), book.Id);
+            foreach (var book in mapped)
+            {
+                book.IsBookMarked = await BookmarkProvider.IsBookMarkedAsync(GetUserId(), book.Id);
+            }
         }
 
         var paginated = PaginationHelper.CreatePagedResponse(mapped, query, totalBooks);
