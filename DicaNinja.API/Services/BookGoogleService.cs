@@ -88,7 +88,7 @@ public class BookGoogleService
 
     public async Task<BookResponse?> GetFromIdentifierAsync(string identifier, CancellationToken cancellationToken)
     {
-        var request = Service.Volumes.List(identifier);
+        var request = Service.Volumes.List($"isbn:{identifier}");
         var response = await request.ExecuteAsync(cancellationToken).ConfigureAwait(false);
 
         if (response is null)
