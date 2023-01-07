@@ -38,7 +38,7 @@ public class UserController : ControllerHelper
     [HttpGet()]
     public async Task<IActionResult> Search([FromQuery] string query, CancellationToken cancellationToken)
     {
-        var users = await UserProvider.SearchAsync(GetUserId(), query, cancellationToken).ConfigureAwait(false);
+        var users = await UserProvider.SearchAsync(query, cancellationToken).ConfigureAwait(false);
 
         return Ok(users);
 

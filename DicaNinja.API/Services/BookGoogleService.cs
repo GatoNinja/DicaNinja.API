@@ -38,7 +38,7 @@ public class BookGoogleService
 
     public async Task<List<BookResponse>> QueryBooksAsync(string query, CancellationToken cancellationToken, int page = 1, int perPage = 10, string? langRestrict = null)
     {
-        var request = Service.Volumes.List(query);
+        var request = Service.Volumes.List($"intitle:{query}");
 
         request.MaxResults = perPage;
         request.StartIndex = (page - 1) * perPage;
@@ -49,14 +49,12 @@ public class BookGoogleService
             request.LangRestrict = langRestrict;
         }
 
-
         var response = await request.ExecuteAsync(cancellationToken).ConfigureAwait(false);
-        var validBooks = response.Items.Where(item => item.VolumeInfo.IndustryIdentifiers.Any(identifier => identifier.Type.ToLower().Contains("isbn")));
-        var books = Mapper.Map<List<BookResponse>>(validBooks);
+        var books = Mapper.Map<List<BookResponse>>(response.Items);
 
         foreach (var book in books)
         {
-            var identifiers = response.Items.FirstOrDefault(i => i.VolumeInfo.Title == book.Title)?.VolumeInfo.IndustryIdentifiers.Where(identifier => identifier.Type.ToLower().Contains("isbn"));
+            var identifiers = response.Items.FirstOrDefault(i => i.VolumeInfo.Title == book.Title)?.VolumeInfo.IndustryIdentifiers;
 
             if (identifiers is null)
             {

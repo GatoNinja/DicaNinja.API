@@ -21,7 +21,7 @@ public interface IUserProvider
     Task<int> GetFollowingCountAsync(Guid userId, CancellationToken cancellationToken);
     Task<User?> GetByUsernameOrEmailAsync(string parameter, CancellationToken cancellationToken);
     Task<int> GetCountAsync(CancellationToken cancellationToken);
-    Task<IEnumerable<User>> SearchAsync(Guid userId, string searchTerm, CancellationToken cancellationToken);
+    Task<IEnumerable<User>> SearchAsync(string searchTerm, CancellationToken cancellationToken, int page = 1, int pageSize = 10);
     Task<User?> UpdateUserAsync(Guid userId, User user, CancellationToken cancellationToken);
 
 }

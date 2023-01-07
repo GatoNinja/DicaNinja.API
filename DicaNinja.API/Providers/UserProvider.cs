@@ -174,7 +174,7 @@ public sealed class UserProvider : IUserProvider
         return await Context.Users.CountAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<IEnumerable<User>> SearchAsync(Guid userId, string searchTerm, CancellationToken cancellationToken)
+    public async Task<IEnumerable<User>> SearchAsync(string searchTerm, CancellationToken cancellationToken, int page = 1, int perPage = 10)
     {
         searchTerm = searchTerm.Trim().ToLower();
 
@@ -195,7 +195,7 @@ public sealed class UserProvider : IUserProvider
                              || string.Concat(user.FirstName, " ", user.LastName).ToLower().Contains(searchTerm)
                          select new User(user.Id, user.Username, user.Email, user.FirstName, user.LastName, user.Image);
 
-        return await exactQuery.Take(20).ToListAsync(cancellationToken).ConfigureAwait(false);
+        return await exactQuery.Skip((page - 1) * perPage).Take(perPage).ToListAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<User?> UpdateUserAsync(Guid userId, User user, CancellationToken cancellationToken)
