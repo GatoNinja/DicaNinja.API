@@ -15,12 +15,15 @@ using Google.Apis.Books.v1.Data;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
+using System.Net;
 using System.Text;
 using System.Text.Json.Serialization;
+using System.Threading.RateLimiting;
 
 namespace DicaNinja.API.Startup;
 
@@ -43,8 +46,44 @@ public static class WebApplicationBuilderExtensions
         AddAutoMapper(services);
         AddHttpLogging(services);
         ConfigureDependencyInjection(services);
+        AddRateLimiter(services);
 
         return builder;
+    }
+
+    private static void AddRateLimiter(IServiceCollection services)
+    {
+        services.AddRateLimiter(options =>
+        {
+            // Excesso de banda expendido
+            options.RejectionStatusCode = 509;
+
+            options.OnRejected = (OnRejectedContext context, CancellationToken cancellation) =>
+            {
+                Console.WriteLine("Peguei um babaca no log");
+                Console.WriteLine($"IP: {context.HttpContext.Request.Headers["X-Real-IP"]}");
+
+                return new ValueTask();
+            };
+
+            options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+                RateLimitPartition.GetFixedWindowLimiter(
+                    partitionKey: httpContext.User.Identity?.Name ?? httpContext.Request.Headers.Host.ToString(),
+                    factory: partition => new FixedWindowRateLimiterOptions
+                    {
+                        AutoReplenishment = true,
+                        PermitLimit = 10,
+                        QueueLimit = 0,
+                        Window = TimeSpan.FromMinutes(1)
+                    }));
+
+            options.AddFixedWindowLimiter("token", options =>
+            {
+                options.AutoReplenishment = true;
+                options.PermitLimit = 3;
+                options.Window = TimeSpan.FromMinutes(1);
+            });
+        });
     }
 
     private static void AddHttpLogging(IServiceCollection services)

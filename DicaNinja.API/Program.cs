@@ -37,6 +37,8 @@ public sealed class Program
 
         app.MapControllers();
 
+        app.UseRateLimiter();
+
         app.Run();
     }
 }

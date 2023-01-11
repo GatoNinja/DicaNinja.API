@@ -17,7 +17,6 @@ public class RequestLoggingMiddleware
         {
             throw new ArgumentNullException(nameof(context));
         }
-
         try
         {
             await _next(context).ConfigureAwait(false);
@@ -25,12 +24,13 @@ public class RequestLoggingMiddleware
         finally
         {
             _logger.LogInformation(
-                "Request {Method} {Url} {Params} => {StatusCode}",
-                context.Request?.Method,
-                context.Request?.Path.Value,
-                context.Request?.QueryString,
-                context.Response?.StatusCode);
+                  "{Date} Request {Method} {Url} {Params} {Ip} => {StatusCode}",
+                  DateTimeOffset.Now,
+                  context.Request?.Method,
+                  context.Request?.Path.Value,
+                  context.Request?.QueryString,
+                  context.Connection?.RemoteIpAddress?.ToString(),
+                  context.Response?.StatusCode);
         }
     }
-
 }

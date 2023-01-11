@@ -7,10 +7,12 @@ using DicaNinja.API.Response;
 using DicaNinja.API.Services;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace DicaNinja.API.Controllers;
 
 [Route("token")]
+[EnableRateLimiting("token")]
 public class TokenController : ControllerHelper
 {
     public TokenController(IUserProvider userProvider, ITokenService tokenService)
