@@ -27,6 +27,9 @@ public sealed class Program
 
         app.UseCors(config =>
         {
+            config.WithOrigins("*");
+            config.WithMethods("*");
+            config.WithHeaders("*");
             config.AllowAnyHeader();
             config.AllowAnyMethod();
             config.AllowAnyOrigin();
