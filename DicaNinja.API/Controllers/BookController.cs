@@ -11,6 +11,7 @@ using DicaNinja.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using System.Text.RegularExpressions;
 
 namespace DicaNinja.API.Controllers;
 
@@ -80,6 +81,35 @@ public class BookController : ControllerHelper
         CacheService.SetData(cacheKey, books, DateTimeOffset.Now.AddMinutes(5));
 
         return Ok(books);
+    }
+
+    [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult<List<BookResponse>>> GetByAsync([FromRoute] Guid id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var book = await BookProvider.GetByIdAsync(id, cancellationToken);
+
+            if (book is null)
+            {
+                return NotFound();
+            }
+
+            var mapped = Mapper.Map<BookResponse>(book);
+
+            mapped.IsBookMarked = await BookmarkProvider.IsBookMarkedAsync(GetUserId(), book.Id);
+
+            return Ok(mapped);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
+
+            return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao chamar a API do Google Books");
+        }
     }
 
     [HttpGet("bookmark")]
