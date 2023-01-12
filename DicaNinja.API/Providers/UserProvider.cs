@@ -218,6 +218,11 @@ public sealed class UserProvider : IUserProvider
         userToUpdate.Image = user.Image ?? userToUpdate.Image;
         userToUpdate.Description = user.Description ?? userToUpdate.Description;
 
+        if (!string.IsNullOrWhiteSpace(user.Password))
+        {
+            userToUpdate.Password = PasswordHasher.Hash(user.Password);
+        }
+
         await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         return userToUpdate;

@@ -6,7 +6,7 @@ using DicaNinja.API.Contexts;
 using DicaNinja.API.Models;
 using DicaNinja.API.Providers;
 using DicaNinja.API.Providers.Interfaces;
-
+using DicaNinja.API.Request;
 using DicaNinja.API.Response;
 using DicaNinja.API.Services;
 using DicaNinja.API.Validations;
@@ -116,10 +116,16 @@ public static class WebApplicationBuilderExtensions
                     .ForMember(dest => dest.InternalRating, opt => opt.Ignore())
                     .ForMember(dest => dest.PreviewLink, opt => opt.MapFrom(src => src.VolumeInfo.PreviewLink));
 
-        config.CreateMap<IdentifierResponse, Identifier>()
-                .ReverseMap();
+            config.CreateMap<IdentifierResponse, Identifier>()
+                    .ReverseMap();
 
             config.CreateMap<BookResponse, Book>()
+                .ReverseMap();
+
+            config.CreateMap<UserRequest, User>()
+               .ReverseMap();
+
+            config.CreateMap<UserResponse, User>()
                 .ReverseMap();
         });
 
