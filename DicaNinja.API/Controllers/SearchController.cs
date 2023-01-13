@@ -1,15 +1,11 @@
-using System.Threading;
-
 using DicaNinja.API.Abstracts;
 using DicaNinja.API.Cache;
 using DicaNinja.API.Helpers;
-using DicaNinja.API.Providers;
 using DicaNinja.API.Response;
 using DicaNinja.API.Services;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using DicaNinja.API.Providers.Interfaces;
 using DicaNinja.API.Models;
 

@@ -86,6 +86,8 @@ public class User : BaseModel
 
     public virtual List<Follower> Followers { get; private set; } = new();
 
+    public virtual List<Hint> Hints { get; private set; } = new();
+
     public void SetPassword(string password)
     {
         Password = password;

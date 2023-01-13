@@ -8,7 +8,6 @@ using DicaNinja.API.Request;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 
 namespace DicaNinja.API.Controllers;
 

@@ -1,7 +1,6 @@
 
 using DicaNinja.API.Abstracts;
 
-using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -69,4 +68,7 @@ public class Book : BaseModel
     public virtual List<Bookmark> Bookmarks { get; private set; } = new();
 
     public virtual List<Review> Reviews { get; private set; } = new();
+
+    public virtual List<Hint> Hints { get; private set; } = new();
+
 }

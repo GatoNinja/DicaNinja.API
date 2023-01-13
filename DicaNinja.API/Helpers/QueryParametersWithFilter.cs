@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-
 namespace DicaNinja.API.Helpers;
 
 public class QueryParametersWithFilter

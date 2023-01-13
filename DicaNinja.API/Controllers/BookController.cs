@@ -10,8 +10,6 @@ using DicaNinja.API.Services;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using System.Text.RegularExpressions;
 
 namespace DicaNinja.API.Controllers;
 

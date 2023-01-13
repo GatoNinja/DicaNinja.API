@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace DicaNinja.API.Extensions;
 
 public static class StringExtensions

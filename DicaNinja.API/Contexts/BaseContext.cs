@@ -32,6 +32,8 @@ public class BaseContext : DbContext
 
     public DbSet<Review> Reviews { get; private set; } = default!;
 
+    public DbSet<Hint> Hints { get; private set; } = default!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         if (modelBuilder is null)

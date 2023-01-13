@@ -20,7 +20,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
-using System.Net;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
@@ -72,7 +71,7 @@ public static class WebApplicationBuilderExtensions
                     factory: partition => new FixedWindowRateLimiterOptions
                     {
                         AutoReplenishment = true,
-                        PermitLimit = 10,
+                        PermitLimit = 30,
                         QueueLimit = 0,
                         Window = TimeSpan.FromMinutes(1)
                     }));
@@ -152,6 +151,7 @@ public static class WebApplicationBuilderExtensions
         services.AddTransient<ICategoryProvider, CategoryProvider>();
         services.AddTransient<IReviewProvider, ReviewProvider>();
         services.AddTransient<IProfileProvider, ProfileProvider>();
+        services.AddTransient<IHintProvider, HintProvider>();
         services.AddTransient<ICacheService, CacheService>();
         services.AddTransient<BookGoogleService>();
         services.AddTransient<SmtpService>();
