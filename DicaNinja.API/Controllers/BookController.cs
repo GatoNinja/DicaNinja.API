@@ -86,6 +86,7 @@ public class BookController : ControllerHelper
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesDefaultResponseType]
+    [AllowAnonymous]
     public async Task<ActionResult<List<BookResponse>>> GetByAsync([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         try
@@ -99,7 +100,10 @@ public class BookController : ControllerHelper
 
             var mapped = Mapper.Map<BookResponse>(book);
 
-            mapped.IsBookMarked = await BookmarkProvider.IsBookMarkedAsync(GetUserId(), book.Id);
+            if (IsAuthenticated())
+            {
+                mapped.IsBookMarked = await BookmarkProvider.IsBookMarkedAsync(GetUserId(), book.Id);
+            }
 
             return Ok(mapped);
         }
@@ -155,6 +159,7 @@ public class BookController : ControllerHelper
     }
 
     [HttpGet("{bookId:guid}/author")]
+    [AllowAnonymous]
     public async Task<ActionResult<List<Author>>> GetAuthorsAsync([FromRoute] Guid bookId, CancellationToken cancellationToken)
     {
         var authors = await AuthorProvider.GetByBookAsync(bookId, cancellationToken).ConfigureAwait(false);
@@ -163,6 +168,7 @@ public class BookController : ControllerHelper
     }
 
     [HttpGet("{bookId:guid}/identifier")]
+    [AllowAnonymous]
     public async Task<ActionResult<List<Identifier>>> GetIdentifiersAsync([FromRoute] Guid bookId, CancellationToken cancellationToken)
     {
         var identifiers = await IdentifierProvider.GetByBookAsync(bookId, cancellationToken).ConfigureAwait(false);
@@ -171,6 +177,7 @@ public class BookController : ControllerHelper
     }
 
     [HttpGet("{bookId:guid}/category")]
+    [AllowAnonymous]
     public async Task<ActionResult<List<Category>>> GetCategoriesAsync([FromRoute] Guid bookId, CancellationToken cancellationToken)
     {
         var categories = await CategoryProvider.GetByBookAsync(bookId, cancellationToken).ConfigureAwait(false);
@@ -179,6 +186,7 @@ public class BookController : ControllerHelper
     }
 
     [HttpGet("{bookId:guid}/review")]
+    [AllowAnonymous]
     public async Task<ActionResult<List<Category>>> GetReviewsAsync([FromRoute] Guid bookId, [FromQuery] QueryParameters query, CancellationToken cancellationToken)
     {
         if (query is null)
