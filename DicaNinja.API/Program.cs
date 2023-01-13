@@ -25,15 +25,15 @@ public sealed class Program
 
         app.UseMiddleware<RequestLoggingMiddleware>();
 
-        //app.UseCors(config =>
-        //{
-        //    config.WithOrigins("*");
-        //    config.WithMethods("*");
-        //    config.WithHeaders("*");
-        //    config.AllowAnyHeader();
-        //    config.AllowAnyMethod();
-        //    config.AllowAnyOrigin();
-        //});
+        app.UseCors(config =>
+        {
+            config.WithOrigins("*");
+            config.WithMethods("*");
+            config.WithHeaders("*");
+            config.AllowAnyHeader();
+            config.AllowAnyMethod();
+            config.AllowAnyOrigin();
+        });
 
         app.UseAuthentication();
         app.UseAuthorization();
