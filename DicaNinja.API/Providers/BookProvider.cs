@@ -78,6 +78,7 @@ public class BookProvider : IBookProvider
 
         return await query
             .OrderByDescending(review => review.Created)
+            .Include(review => review.User)
             .Skip((page - 1) * perPage)
             .Take(perPage)
             .ToListAsync(cancellationToken).ConfigureAwait(false);

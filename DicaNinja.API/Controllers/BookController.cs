@@ -187,7 +187,7 @@ public class BookController : ControllerHelper
 
     [HttpGet("{bookId:guid}/review")]
     [AllowAnonymous]
-    public async Task<ActionResult<List<Category>>> GetReviewsAsync([FromRoute] Guid bookId, [FromQuery] QueryParameters query, CancellationToken cancellationToken)
+    public async Task<ActionResult<List<Review>>> GetReviewsAsync([FromRoute] Guid bookId, [FromQuery] QueryParameters query, CancellationToken cancellationToken)
     {
         if (query is null)
         {

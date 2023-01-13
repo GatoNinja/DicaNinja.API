@@ -42,4 +42,6 @@ public class Review : BaseModel
 
     [Column("book_id")]
     public Guid BookId { get; set; }
+
+    public User User { get; set; } = default!;
 }
