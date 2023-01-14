@@ -33,7 +33,7 @@ public class SearchController : ControllerHelper
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
     [ProducesDefaultResponseType]
-    public async Task<dynamic> DoSearch([FromQuery] QueryParametersWithFilter request, CancellationToken cancellationToken)
+    public async Task<dynamic> DoSearch([FromQuery] QueryParametersWithFilter request, CancellationToken cancellation)
     {
         if (request is null)
         {
@@ -53,8 +53,8 @@ public class SearchController : ControllerHelper
 
         try
         {
-            books = await Service.QueryBooksAsync(request.Query, cancellationToken, request.Page, request.PerPage, request.Lang).ConfigureAwait(false);
-            users = await UserProvider.SearchAsync(request.Query, cancellationToken, request.Page, request.PerPage);
+            books = await Service.QueryBooksAsync(request.Query, cancellation, request.Page, request.PerPage, request.Lang).ConfigureAwait(false);
+            users = await UserProvider.SearchAsync(request.Query, cancellation, request.Page, request.PerPage);
         }
         catch (Exception ex)
         {
@@ -66,7 +66,7 @@ public class SearchController : ControllerHelper
 
         if (IsAuthenticated())
         {
-            await BookProvider.PopulateWithBookmarksAsync(books, GetUserId(), cancellationToken).ConfigureAwait(false);
+            await BookProvider.PopulateWithBookmarksAsync(books, GetUserId(), cancellation).ConfigureAwait(false);
         }
 
         var response = new

@@ -5,7 +5,7 @@ namespace DicaNinja.API.Providers.Interfaces;
 
 public interface ICategoryProvider
 {
-    Task<Category?> GetOrCreateAsync(string categoryName, CancellationToken cancellationToken);
-    Task<IEnumerable<Category>> GetByBookAsync(Guid bookId, CancellationToken cancellationToken);
-    Task<int> GetCountAsync(CancellationToken cancellationToken);
+    Task<Category?> GetOrCreateAsync(string categoryName, CancellationToken cancellation);
+    Task<IEnumerable<Category>> GetByBookAsync(Guid bookId, CancellationToken cancellation);
+    Task<int> GetCountAsync(CancellationToken cancellation);
 }

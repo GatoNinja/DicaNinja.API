@@ -14,30 +14,30 @@ public class ProfileProvider : IProfileProvider
 
     private IUserProvider UserProvider { get; }
 
-    public async Task<UserProfileResponse?> GetUserProfileAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<UserProfileResponse?> GetUserProfileAsync(Guid userId, CancellationToken cancellation)
     {
-        var user = await UserProvider.GetByIdAsync(userId, cancellationToken).ConfigureAwait(false);
+        var user = await UserProvider.GetByIdAsync(userId, cancellation).ConfigureAwait(false);
 
-        return user is null ? null : await LoadProfile(user, cancellationToken).ConfigureAwait(false);
+        return user is null ? null : await LoadProfile(user, cancellation).ConfigureAwait(false);
     }
 
-    public async Task<UserProfileResponse?> GetUserProfileAsync(string parameter, CancellationToken cancellationToken)
+    public async Task<UserProfileResponse?> GetUserProfileAsync(string parameter, CancellationToken cancellation)
     {
-        var user = await UserProvider.GetByUsernameOrEmailAsync(parameter, cancellationToken).ConfigureAwait(false);
+        var user = await UserProvider.GetByUsernameOrEmailAsync(parameter, cancellation).ConfigureAwait(false);
 
-        return user is null ? null : await LoadProfile(user, cancellationToken).ConfigureAwait(false);
+        return user is null ? null : await LoadProfile(user, cancellation).ConfigureAwait(false);
     }
 
-    private async Task<UserProfileResponse> LoadProfile(User user, CancellationToken cancellationToken)
+    private async Task<UserProfileResponse> LoadProfile(User user, CancellationToken cancellation)
     {
         var userId = user.Id;
         var tasks = new Task<int>[]
         {
-            UserProvider.GetBooksCountAsync(userId, cancellationToken),
-            UserProvider.GetAuthorsCountAsync(userId, cancellationToken),
-            UserProvider.GetCategoriesCountAsync(userId, cancellationToken),
-            UserProvider.GetFollowersCountAsync(userId, cancellationToken),
-            UserProvider.GetFollowingCountAsync(userId, cancellationToken)
+            UserProvider.GetBooksCountAsync(userId, cancellation),
+            UserProvider.GetAuthorsCountAsync(userId, cancellation),
+            UserProvider.GetCategoriesCountAsync(userId, cancellation),
+            UserProvider.GetFollowersCountAsync(userId, cancellation),
+            UserProvider.GetFollowingCountAsync(userId, cancellation)
         };
         var counts = await Task.WhenAll(tasks).ConfigureAwait(false);
 

@@ -18,12 +18,12 @@ public class IdentifierProvider : IIdentifierProvider
 
     private BaseContext Context { get; }
 
-    public async Task<IEnumerable<Identifier>> GetByBookAsync(Guid bookId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Identifier>> GetByBookAsync(Guid bookId, CancellationToken cancellation)
     {
-        return await Context.Identifiers.Where(identifier => identifier.BookId == bookId).ToListAsync(cancellationToken).ConfigureAwait(false);
+        return await Context.Identifiers.Where(identifier => identifier.BookId == bookId).ToListAsync(cancellation).ConfigureAwait(false);
     }
 
-    public async Task<Identifier?> GetOrCreateAsync(IdentifierResponse bookIdentifier, CancellationToken cancellationToken)
+    public async Task<Identifier?> GetOrCreateAsync(IdentifierResponse bookIdentifier, CancellationToken cancellation)
     {
         if (bookIdentifier is null)
         {
@@ -31,7 +31,7 @@ public class IdentifierProvider : IIdentifierProvider
         }
 
         var identifier = await Context.Identifiers
-            .FirstOrDefaultAsync(identifier => identifier.Isbn == bookIdentifier.Isbn && identifier.Type == bookIdentifier.Type, cancellationToken).ConfigureAwait(false);
+            .FirstOrDefaultAsync(identifier => identifier.Isbn == bookIdentifier.Isbn && identifier.Type == bookIdentifier.Type, cancellation).ConfigureAwait(false);
 
         if (identifier is not null)
         {
@@ -40,8 +40,8 @@ public class IdentifierProvider : IIdentifierProvider
 
         identifier = new Identifier(bookIdentifier.Isbn, bookIdentifier.Type);
 
-        await Context.Identifiers.AddAsync(identifier, cancellationToken).ConfigureAwait(false);
-        await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await Context.Identifiers.AddAsync(identifier, cancellation).ConfigureAwait(false);
+        await Context.SaveChangesAsync(cancellation).ConfigureAwait(false);
 
         return identifier;
     }

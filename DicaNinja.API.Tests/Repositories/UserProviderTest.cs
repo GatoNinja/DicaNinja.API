@@ -17,9 +17,9 @@ public class UserProviderTest : BaseProviderTest
     [Test]
     public async Task GetByEmailTest()
     {
-        var cancellationToken = new CancellationToken();
+        var cancellation = new CancellationToken();
         var mock = Users.First();
-        var user = await UserProvider.GetByEmailAsync(mock.Email, cancellationToken);
+        var user = await UserProvider.GetByEmailAsync(mock.Email, cancellation);
 
         Assert.That(user, Is.Not.Null);
         Assert.Multiple(() =>
@@ -32,7 +32,7 @@ public class UserProviderTest : BaseProviderTest
         {
             Assert.That(user?.Password, Is.Null);
         });
-        user = await UserProvider.GetByEmailAsync("test@gatoninja.com.br", cancellationToken);
+        user = await UserProvider.GetByEmailAsync("test@gatoninja.com.br", cancellation);
 
         Assert.That(user, Is.Null);
     }
@@ -40,9 +40,9 @@ public class UserProviderTest : BaseProviderTest
     [Test]
     public async Task GetByIdTest()
     {
-        var cancellationToken = new CancellationToken();
+        var cancellation = new CancellationToken();
         var mock = Users.First();
-        var user = await UserProvider.GetByIdAsync(mock.Id, cancellationToken);
+        var user = await UserProvider.GetByIdAsync(mock.Id, cancellation);
 
         Assert.That(user, Is.Not.Null);
         Assert.Multiple(() =>
@@ -55,7 +55,7 @@ public class UserProviderTest : BaseProviderTest
             Assert.That(mock.LastName, Is.EqualTo(user?.LastName));
         });
 
-        user = await UserProvider.GetByIdAsync(Guid.NewGuid(), cancellationToken);
+        user = await UserProvider.GetByIdAsync(Guid.NewGuid(), cancellation);
 
         Assert.That(user, Is.Null);
     }
@@ -63,9 +63,9 @@ public class UserProviderTest : BaseProviderTest
     [Test]
     public async Task DoLoginAsyncTest()
     {
-        var cancellationToken = new CancellationToken();
+        var cancellation = new CancellationToken();
         var mock = Users.First();
-        var user = await UserProvider.DoLoginAsync(mock.Username, "ninja", cancellationToken);
+        var user = await UserProvider.DoLoginAsync(mock.Username, "ninja", cancellation);
 
         Assert.That(user, Is.Not.Null);
         Assert.Multiple(() =>
@@ -75,7 +75,7 @@ public class UserProviderTest : BaseProviderTest
             Assert.That(mock.Username, Is.EqualTo(user?.Username));
             Assert.That(mock.Email, Is.EqualTo(user?.Email));
         });
-        user = await UserProvider.DoLoginAsync("test", "test", cancellationToken);
+        user = await UserProvider.DoLoginAsync("test", "test", cancellation);
 
         Assert.That(user, Is.Null);
     }
@@ -83,10 +83,10 @@ public class UserProviderTest : BaseProviderTest
     [Test]
     public async Task InsertAsyncTest()
     {
-        var cancellationToken = new CancellationToken();
+        var cancellation = new CancellationToken();
         var mock = Users.First();
         mock.Id = Guid.Empty;
-        var user = await UserProvider.InsertAsync(mock, cancellationToken);
+        var user = await UserProvider.InsertAsync(mock, cancellation);
 
         Assert.That(user, Is.Null);
     }
@@ -94,32 +94,32 @@ public class UserProviderTest : BaseProviderTest
     [Test]
     public void ChangePasswordAsyncTest()
     {
-        var cancellationToken = new CancellationToken();
+        var cancellation = new CancellationToken();
         var mock = Users.First();
 
         Assert.DoesNotThrowAsync(async () =>
         {
-            await UserProvider.ChangePasswordAsync(mock.Email, "ninjanovo", cancellationToken);
+            await UserProvider.ChangePasswordAsync(mock.Email, "ninjanovo", cancellation);
         });
     }
 
     [Test]
     public async Task ValidateNewUserTestAsync()
     {
-        var cancellationToken = new CancellationToken();
+        var cancellation = new CancellationToken();
         var mock = Users.First();
-        var existingUsername = await UserProvider.ValidateNewUserAsync(mock, cancellationToken);
+        var existingUsername = await UserProvider.ValidateNewUserAsync(mock, cancellation);
 
         Assert.That(existingUsername, Is.EqualTo(EnumNewUserCheck.ExistingUsername));
 
         mock.Username = "novousername";
-        var existingEmail = await UserProvider.ValidateNewUserAsync(mock, cancellationToken);
+        var existingEmail = await UserProvider.ValidateNewUserAsync(mock, cancellation);
 
         Assert.That(existingEmail, Is.EqualTo(EnumNewUserCheck.ExistingEmail));
 
         mock.Email = "novo@gatoninja.com.br";
 
-        var valid = await UserProvider.ValidateNewUserAsync(mock, cancellationToken);
+        var valid = await UserProvider.ValidateNewUserAsync(mock, cancellation);
 
         Assert.That(valid, Is.EqualTo(EnumNewUserCheck.Valid));
     }

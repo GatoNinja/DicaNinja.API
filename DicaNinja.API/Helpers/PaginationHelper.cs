@@ -3,7 +3,7 @@ namespace DicaNinja.API.Helpers;
 public static class PaginationHelper
 {
     public static PagedResponse<IEnumerable<T>> CreatePagedResponse<T>(IEnumerable<T> pagedData,
-        QueryParameters queryString, int totalRecords)
+        QueryParametersWithFilter queryString, int totalRecords)
     {
         if (queryString == null)
         {

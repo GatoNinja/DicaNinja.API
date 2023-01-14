@@ -28,5 +28,5 @@ public class Hint: BaseModel
 
     public virtual User User { get; set; } = default!;
 
-    public virtual Book MyProperty { get; set; } = default!;
+    public virtual Book Book { get; set; } = default!;
 }

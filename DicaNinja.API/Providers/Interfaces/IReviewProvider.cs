@@ -5,5 +5,5 @@ namespace DicaNinja.API.Providers.Interfaces;
 
 public interface IReviewProvider
 {
-    Task<Guid> CreateReviewAsync(Review review, CancellationToken cancellationToken);
+    Task<Guid> CreateReviewAsync(Review review, CancellationToken cancellation);
 }

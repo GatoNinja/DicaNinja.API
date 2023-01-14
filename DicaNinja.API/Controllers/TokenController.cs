@@ -26,14 +26,14 @@ public class TokenController : ControllerHelper
     private ITokenService TokenService { get; }
 
     [HttpPost, ProducesResponseType(StatusCodes.Status201Created), ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<TokenResponse>> PostTokenAsync([FromBody] LoginRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<TokenResponse>> PostTokenAsync([FromBody] LoginRequest request, CancellationToken cancellation)
     {
         if (request is null)
         {
             throw new ArgumentNullException(nameof(request));
         }
 
-        var user = await UserProvider.DoLoginAsync(request.Username, request.Password, cancellationToken).ConfigureAwait(false);
+        var user = await UserProvider.DoLoginAsync(request.Username, request.Password, cancellation).ConfigureAwait(false);
 
         if (user is null)
         {
@@ -42,7 +42,7 @@ public class TokenController : ControllerHelper
             return NotFound(messageResponse);
         }
 
-        var token = await TokenService.GenerateTokenAsync(user, cancellationToken).ConfigureAwait(false);
+        var token = await TokenService.GenerateTokenAsync(user, cancellation).ConfigureAwait(false);
 
         return new CreatedResult("token", token);
     }

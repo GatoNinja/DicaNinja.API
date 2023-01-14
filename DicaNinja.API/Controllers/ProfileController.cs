@@ -22,18 +22,18 @@ public class ProfileController : ControllerHelper
     private IProfileProvider ProfileProvider { get; }
 
     [HttpGet]
-    public async Task<ActionResult<UserProfileResponse>> GetUserProfileAsync(CancellationToken cancellationToken)
+    public async Task<ActionResult<UserProfileResponse>> GetUserProfileAsync(CancellationToken cancellation)
     {
-        var userProfile = await ProfileProvider.GetUserProfileAsync(GetUserId(), cancellationToken).ConfigureAwait(false);
+        var userProfile = await ProfileProvider.GetUserProfileAsync(GetUserId(), cancellation).ConfigureAwait(false);
 
         return userProfile is null ? NotFound() : Ok(userProfile);
     }
 
     [HttpGet("{parameter}")]
     [AllowAnonymous]
-    public async Task<ActionResult<UserProfileResponse>> GetUserProfileAsync([FromRoute] string parameter, CancellationToken cancellationToken)
+    public async Task<ActionResult<UserProfileResponse>> GetUserProfileAsync([FromRoute] string parameter, CancellationToken cancellation)
     {
-        var userProfile = await ProfileProvider.GetUserProfileAsync(parameter, cancellationToken).ConfigureAwait(false);
+        var userProfile = await ProfileProvider.GetUserProfileAsync(parameter, cancellation).ConfigureAwait(false);
 
         return userProfile is null ? NotFound() : Ok(userProfile);
     }

@@ -21,7 +21,7 @@ public class SignUpController : ControllerBase
     private IUserProvider UserProvider { get; }
 
     [HttpPost]
-    public async Task<ActionResult<Guid>> PostNewUserAsync([FromBody] NewUserRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<Guid>> PostNewUserAsync([FromBody] NewUserRequest request, CancellationToken cancellation)
     {
         if (request is null)
         {
@@ -36,7 +36,7 @@ public class SignUpController : ControllerBase
         }
 
         var user = new User(request.Username, request.Firstname, request.Lastname, request.Email, request.Password);
-        var validateNewUser = await UserProvider.ValidateNewUserAsync(user, cancellationToken).ConfigureAwait(false);
+        var validateNewUser = await UserProvider.ValidateNewUserAsync(user, cancellation).ConfigureAwait(false);
 
         if (validateNewUser == EnumNewUserCheck.ExistingEmail)
         {
@@ -52,7 +52,7 @@ public class SignUpController : ControllerBase
             return new BadRequestObjectResult(messageResponse);
         }
 
-        var insertedUser = await UserProvider.InsertAsync(user, cancellationToken).ConfigureAwait(false);
+        var insertedUser = await UserProvider.InsertAsync(user, cancellation).ConfigureAwait(false);
 
         return insertedUser is null
             ? (ActionResult<Guid>)new BadRequestObjectResult(new MessageResponse(TextConstant.ProblemToSaveRecord))

@@ -32,7 +32,7 @@ public sealed class RefreshTokenProvider : IRefreshTokenProvider
         return Convert.ToBase64String(randomNumber);
     }
 
-    public async Task<RefreshToken?> GetRefreshTokenAsync(string username, string value, CancellationToken cancellationToken)
+    public async Task<RefreshToken?> GetRefreshTokenAsync(string username, string value, CancellationToken cancellation)
     {
         var query = from refreshToken in Context.RefreshTokens
                     join user in Context.Users on refreshToken.UserId equals user.Id
@@ -43,12 +43,12 @@ public sealed class RefreshTokenProvider : IRefreshTokenProvider
                     select new RefreshToken(refreshToken.Id, refreshToken.Value, refreshToken.RefreshTokenExpiryTime,
                         selectedUser);
 
-        return await query.FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+        return await query.FirstOrDefaultAsync(cancellation).ConfigureAwait(false);
     }
 
-    public async Task SaveRefreshTokenAsync(Guid userId, string refreshTokenValue, CancellationToken cancellationToken)
+    public async Task SaveRefreshTokenAsync(Guid userId, string refreshTokenValue, CancellationToken cancellation)
     {
-        var user = await UserProvider.GetByIdAsync(userId, cancellationToken).ConfigureAwait(false);
+        var user = await UserProvider.GetByIdAsync(userId, cancellation).ConfigureAwait(false);
 
         if (user is null)
         {
@@ -58,13 +58,13 @@ public sealed class RefreshTokenProvider : IRefreshTokenProvider
         var refreshToken = new RefreshToken(refreshTokenValue, userId, true);
 
         Context.RefreshTokens.Add(refreshToken);
-        await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await Context.SaveChangesAsync(cancellation).ConfigureAwait(false);
     }
 
-    public async Task InvalidateAsync(string value, CancellationToken cancellationToken)
+    public async Task InvalidateAsync(string value, CancellationToken cancellation)
     {
         var refreshTokenFound =
-            await Context.RefreshTokens.FirstOrDefaultAsync(refreshToken => refreshToken.Value == value, cancellationToken).ConfigureAwait(false);
+            await Context.RefreshTokens.FirstOrDefaultAsync(refreshToken => refreshToken.Value == value, cancellation).ConfigureAwait(false);
 
         if (refreshTokenFound is null)
         {
@@ -74,6 +74,6 @@ public sealed class RefreshTokenProvider : IRefreshTokenProvider
         refreshTokenFound.IsActive = false;
 
         Context.Entry(refreshTokenFound).State = EntityState.Modified;
-        await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await Context.SaveChangesAsync(cancellation).ConfigureAwait(false);
     }
 }

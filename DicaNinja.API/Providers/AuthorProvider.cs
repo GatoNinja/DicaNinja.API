@@ -16,22 +16,22 @@ public class AuthorProvider : IAuthorProvider
 
     private BaseContext Context { get; }
 
-    public async Task<IEnumerable<Author>> GetByBookAsync(Guid bookId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Author>> GetByBookAsync(Guid bookId, CancellationToken cancellation)
     {
         return await Context.Authors
             .Where(author => author.Books.Any(book => book.Id == bookId))
             .OrderBy(author => author.Name)
-            .ToListAsync(cancellationToken).ConfigureAwait(false);
+            .ToListAsync(cancellation).ConfigureAwait(false);
     }
 
-    public async Task<int> GetCountAsync(CancellationToken cancellationToken)
+    public async Task<int> GetCountAsync(CancellationToken cancellation)
     {
-        return await Context.Authors.CountAsync(cancellationToken).ConfigureAwait(false);
+        return await Context.Authors.CountAsync(cancellation).ConfigureAwait(false);
     }
 
-    public async Task<Author?> GetOrCreateAsync(string authorName, CancellationToken cancellationToken)
+    public async Task<Author?> GetOrCreateAsync(string authorName, CancellationToken cancellation)
     {
-        var author = await Context.Authors.FirstOrDefaultAsync(a => a.Name == authorName, cancellationToken).ConfigureAwait(false);
+        var author = await Context.Authors.FirstOrDefaultAsync(a => a.Name == authorName, cancellation).ConfigureAwait(false);
 
         if (author is not null)
         {
@@ -40,8 +40,8 @@ public class AuthorProvider : IAuthorProvider
 
         author = new Author(authorName);
 
-        await Context.Authors.AddAsync(author, cancellationToken).ConfigureAwait(false);
-        await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await Context.Authors.AddAsync(author, cancellation).ConfigureAwait(false);
+        await Context.SaveChangesAsync(cancellation).ConfigureAwait(false);
 
         return author;
     }

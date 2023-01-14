@@ -22,14 +22,14 @@ public class FollowerController : ControllerHelper
     private IFollowerProvider FollowerProvider { get; }
 
     [HttpPost()]
-    public async Task<ActionResult<bool>> ChangeFollowStatusAsync([FromBody] FollowInfo request, CancellationToken cancellationToken)
+    public async Task<ActionResult<bool>> ChangeFollowStatusAsync([FromBody] FollowInfo request, CancellationToken cancellation)
     {
         return request is null
             ? throw new ArgumentNullException(nameof(request))
             : (ActionResult<bool>)(request.Status switch
         {
-            EnumStatusFollow.Follow => await FollowerProvider.FollowAsync(GetUserId(), request.FollowerId, cancellationToken).ConfigureAwait(false),
-            EnumStatusFollow.UnFollow => await FollowerProvider.UnFollowAsync(GetUserId(), request.FollowerId, cancellationToken).ConfigureAwait(false),
+            EnumStatusFollow.Follow => await FollowerProvider.FollowAsync(GetUserId(), request.FollowerId, cancellation).ConfigureAwait(false),
+            EnumStatusFollow.UnFollow => await FollowerProvider.UnFollowAsync(GetUserId(), request.FollowerId, cancellation).ConfigureAwait(false),
             _ => throw new NotImplementedException()
         });
     }

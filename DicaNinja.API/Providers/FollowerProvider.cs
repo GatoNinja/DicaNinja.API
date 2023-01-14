@@ -17,9 +17,9 @@ public class FollowerProvider : IFollowerProvider
 
     private BaseContext Context { get; }
 
-    public async Task<bool> FollowAsync(Guid userId, Guid followerId, CancellationToken cancellationToken)
+    public async Task<bool> FollowAsync(Guid userId, Guid followerId, CancellationToken cancellation)
     {
-        var existingFollowing = await Context.Followers.AnyAsync(f => f.UserId == userId && f.FollowedId == followerId, cancellationToken).ConfigureAwait(false);
+        var existingFollowing = await Context.Followers.AnyAsync(f => f.UserId == userId && f.FollowedId == followerId, cancellation).ConfigureAwait(false);
 
         if (existingFollowing)
         {
@@ -28,30 +28,30 @@ public class FollowerProvider : IFollowerProvider
 
         var follower = new Follower(userId, followerId);
 
-        await Context.Followers.AddAsync(follower, cancellationToken).ConfigureAwait(false);
-        await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await Context.Followers.AddAsync(follower, cancellation).ConfigureAwait(false);
+        await Context.SaveChangesAsync(cancellation).ConfigureAwait(false);
 
         return true;
     }
 
-    public async Task<bool> IsFollowingAsync(Guid userId, Guid followerId, CancellationToken cancellationToken)
+    public async Task<bool> IsFollowingAsync(Guid userId, Guid followerId, CancellationToken cancellation)
     {
-        return await Context.Followers.AnyAsync(f => f.UserId == userId && f.FollowedId == followerId, cancellationToken).ConfigureAwait(false);
+        return await Context.Followers.AnyAsync(f => f.UserId == userId && f.FollowedId == followerId, cancellation).ConfigureAwait(false);
     }
 
-    public async Task<bool> UnFollowAsync(Guid userId, Guid followerId, CancellationToken cancellationToken)
+    public async Task<bool> UnFollowAsync(Guid userId, Guid followerId, CancellationToken cancellation)
     {
-        var existingFollowing = await Context.Followers.AnyAsync(f => f.UserId == userId && f.FollowedId == followerId, cancellationToken).ConfigureAwait(false);
+        var existingFollowing = await Context.Followers.AnyAsync(f => f.UserId == userId && f.FollowedId == followerId, cancellation).ConfigureAwait(false);
 
         if (!existingFollowing)
         {
             return false;
         }
 
-        var follower = await Context.Followers.FirstAsync(f => f.UserId == userId && f.FollowedId == followerId, cancellationToken).ConfigureAwait(false);
+        var follower = await Context.Followers.FirstAsync(f => f.UserId == userId && f.FollowedId == followerId, cancellation).ConfigureAwait(false);
 
         Context.Followers.Remove(follower);
-        await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await Context.SaveChangesAsync(cancellation).ConfigureAwait(false);
 
         return true;
     }

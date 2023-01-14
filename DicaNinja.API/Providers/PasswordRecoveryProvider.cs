@@ -19,7 +19,7 @@ public class PasswordRecoveryProvider : IPasswordRecoveryProvider
 
     private BaseContext Context { get; }
 
-    public async Task<PasswordRecovery?> GetByEmailAndCodeAsync(string email, string code, CancellationToken cancellationToken)
+    public async Task<PasswordRecovery?> GetByEmailAndCodeAsync(string email, string code, CancellationToken cancellation)
     {
         var query = from passwordRecovery in Context.PasswordRecoveries
                     join user in Context.Users on passwordRecovery.UserId equals user.Id
@@ -29,12 +29,12 @@ public class PasswordRecoveryProvider : IPasswordRecoveryProvider
                           && passwordRecovery.ExpireDate >= DateTimeOffset.Now
                     select passwordRecovery;
 
-        return await query.FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+        return await query.FirstOrDefaultAsync(cancellation).ConfigureAwait(false);
     }
 
     private static readonly Random Random = new Random();
 
-    public async Task<PasswordRecovery> InsertAsync(PasswordRecovery passwordRecovery, CancellationToken cancellationToken)
+    public async Task<PasswordRecovery> InsertAsync(PasswordRecovery passwordRecovery, CancellationToken cancellation)
     {
         if (passwordRecovery is null)
         {
@@ -44,16 +44,16 @@ public class PasswordRecoveryProvider : IPasswordRecoveryProvider
         var code = Math.Ceiling(Random.NextDouble() * 1000000).ToString(CultureInfo.InvariantCulture);
         passwordRecovery.Code = code.PadLeft(code.Length - 7, '0');
 
-        await Context.PasswordRecoveries.AddAsync(passwordRecovery, cancellationToken).ConfigureAwait(false);
-        await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await Context.PasswordRecoveries.AddAsync(passwordRecovery, cancellation).ConfigureAwait(false);
+        await Context.SaveChangesAsync(cancellation).ConfigureAwait(false);
 
         return passwordRecovery;
     }
 
 
-    public async Task UseRecoveryCodeAsync(Guid recoverId, CancellationToken cancellationToken)
+    public async Task UseRecoveryCodeAsync(Guid recoverId, CancellationToken cancellation)
     {
-        var recover = await Context.PasswordRecoveries.FirstOrDefaultAsync(x => x.Id == recoverId, cancellationToken).ConfigureAwait(false);
+        var recover = await Context.PasswordRecoveries.FirstOrDefaultAsync(x => x.Id == recoverId, cancellation).ConfigureAwait(false);
 
         if (recover is null)
         {
@@ -62,6 +62,6 @@ public class PasswordRecoveryProvider : IPasswordRecoveryProvider
 
         recover.IsActive = false;
 
-        await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await Context.SaveChangesAsync(cancellation).ConfigureAwait(false);
     }
 }

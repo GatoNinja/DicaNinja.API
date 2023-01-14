@@ -23,12 +23,12 @@ public class BookProvider : IBookProvider
     private IMapper Mapper { get; }
     private BookGoogleService BookGoogleService { get; }
 
-    public async Task<Book?> GetByIdentifierAsync(string identifier, string type, CancellationToken cancellationToken)
+    public async Task<Book?> GetByIdentifierAsync(string identifier, string type, CancellationToken cancellation)
     {
-        return await Context.Books.FirstOrDefaultAsync(book => book.Identifiers.Any(i => i.Type == type && i.Isbn == identifier), cancellationToken).ConfigureAwait(false);
+        return await Context.Books.FirstOrDefaultAsync(book => book.Identifiers.Any(i => i.Type == type && i.Isbn == identifier), cancellation).ConfigureAwait(false);
     }
 
-    public async Task<IEnumerable<Book>> GetBookmarksAsync(Guid userId, CancellationToken cancellationToken, int page, int perPage)
+    public async Task<IEnumerable<Book>> GetBookmarksAsync(Guid userId, CancellationToken cancellation, int page, int perPage)
     {
         var query = from book in Context.Books
                     join bookmark in Context.Bookmarks on book.Id equals bookmark.BookId
@@ -41,12 +41,12 @@ public class BookProvider : IBookProvider
             .Take(perPage)
             .Include(book => book.Identifiers)
             .Include(book => book.Authors)
-            .ToListAsync(cancellationToken).ConfigureAwait(false);
+            .ToListAsync(cancellation).ConfigureAwait(false);
 
         return books;
     }
 
-    public async Task PopulateWithBookmarksAsync(IEnumerable<BookResponse> books, Guid userId, CancellationToken cancellationToken)
+    public async Task PopulateWithBookmarksAsync(IEnumerable<BookResponse> books, Guid userId, CancellationToken cancellation)
     {
         if (books is null)
         {
@@ -62,7 +62,7 @@ public class BookProvider : IBookProvider
 
             foreach (var identifier in book.Identifiers)
             {
-                book.IsBookMarked = await IsBookmark(userId, identifier.Isbn, identifier.Type, cancellationToken).ConfigureAwait(false);
+                book.IsBookMarked = await IsBookmark(userId, identifier.Isbn, identifier.Type, cancellation).ConfigureAwait(false);
 
                 if (book.IsBookMarked)
                 {
@@ -72,7 +72,7 @@ public class BookProvider : IBookProvider
         }
     }
 
-    public async Task<IEnumerable<Review>> GetReviewsAsync(Guid bookId, CancellationToken cancellationToken, int page = 1, int perPage = 10)
+    public async Task<IEnumerable<Review>> GetReviewsAsync(Guid bookId, CancellationToken cancellation, int page = 1, int perPage = 10)
     {
         var query = Context.Reviews.Where(review => review.BookId == bookId);
 
@@ -81,62 +81,62 @@ public class BookProvider : IBookProvider
             .Include(review => review.User)
             .Skip((page - 1) * perPage)
             .Take(perPage)
-            .ToListAsync(cancellationToken).ConfigureAwait(false);
+            .ToListAsync(cancellation).ConfigureAwait(false);
     }
 
-    public async Task<double> AverageRatingAsync(Guid bookId, CancellationToken cancellationToken)
+    public async Task<double> AverageRatingAsync(Guid bookId, CancellationToken cancellation)
     {
         return await Context.Reviews
             .Where(review => review.BookId == bookId)
             .Select(review => review.Rating)
             .DefaultIfEmpty()
-            .AverageAsync(rating => rating, cancellationToken).ConfigureAwait(false);
+            .AverageAsync(rating => rating, cancellation).ConfigureAwait(false);
     }
 
-    public async Task<Book?> GetByIdAsync(Guid bookId, CancellationToken cancellationToken)
+    public async Task<Book?> GetByIdAsync(Guid bookId, CancellationToken cancellation)
     {
-        return await Context.Books.FirstOrDefaultAsync(book => book.Id == bookId, cancellationToken).ConfigureAwait(false);
+        return await Context.Books.FirstOrDefaultAsync(book => book.Id == bookId, cancellation).ConfigureAwait(false);
     }
 
-    private async Task<bool> IsBookmark(Guid userId, string identifier, string type, CancellationToken cancellationToken)
+    private async Task<bool> IsBookmark(Guid userId, string identifier, string type, CancellationToken cancellation)
     {
         var query = from bookmark in Context.Bookmarks
                     join book in Context.Books on bookmark.BookId equals book.Id
                     where bookmark.UserId == userId && book.Identifiers.Any(i => i.Isbn == identifier && i.Type == type)
                     select bookmark;
 
-        return await query.AnyAsync(cancellationToken).ConfigureAwait(false);
+        return await query.AnyAsync(cancellation).ConfigureAwait(false);
     }
 
-    public async Task<IEnumerable<Book>> GetBooksAsync(CancellationToken cancellationToken, int page = 1, int perPage = 10)
+    public async Task<IEnumerable<Book>> GetBooksAsync(CancellationToken cancellation, int page = 1, int perPage = 10)
     {
         return await Context.Books
             .OrderBy(book => Guid.NewGuid())
             .Skip((page - 1) * perPage)
             .Take(perPage)
-            .Include(book => book.Identifiers)  
-            .ToListAsync(cancellationToken).ConfigureAwait(false);
+            .Include(book => book.Identifiers)
+            .ToListAsync(cancellation).ConfigureAwait(false);
     }
 
-    public async Task<int> GetCountAsync(CancellationToken cancellationToken)
+    public async Task<int> GetCountAsync(CancellationToken cancellation)
     {
-        return await Context.Books.CountAsync(cancellationToken).ConfigureAwait(false);
+        return await Context.Books.CountAsync(cancellation).ConfigureAwait(false);
     }
 
-    public async Task<BookResponse?> GetByIsbnAsync(string isbn, string type, CancellationToken cancellationToken)
+    public async Task<BookResponse?> GetByIsbnAsync(string isbn, string type, CancellationToken cancellation)
     {
-        var book = await Context.Books.FirstOrDefaultAsync(book => book.Identifiers.Any(i => i.Isbn == isbn && i.Type == type), cancellationToken).ConfigureAwait(false);
+        var book = await Context.Books.FirstOrDefaultAsync(book => book.Identifiers.Any(i => i.Isbn == isbn && i.Type == type), cancellation).ConfigureAwait(false);
 
         if (book is null)
         {
-            var bookGoogle = await BookGoogleService.GetFromIdentifierAsync(isbn, cancellationToken).ConfigureAwait(false);
+            var bookGoogle = await BookGoogleService.GetFromIdentifierAsync(isbn, cancellation).ConfigureAwait(false);
 
             if (bookGoogle is null)
             {
                 return null;
             }
 
-            var newBook = await BookGoogleService.CreateFromResponse(bookGoogle, cancellationToken).ConfigureAwait(false);
+            var newBook = await BookGoogleService.CreateFromResponse(bookGoogle, cancellation).ConfigureAwait(false);
 
             return Mapper.Map<BookResponse>(newBook);
         }

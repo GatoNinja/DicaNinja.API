@@ -36,7 +36,7 @@ public class BookGoogleService
     private BooksService Service { get; }
     private BaseContext Context { get; }
 
-    public async Task<List<BookResponse>> QueryBooksAsync(string query, CancellationToken cancellationToken, int page = 1, int perPage = 10, string? langRestrict = null)
+    public async Task<List<BookResponse>> QueryBooksAsync(string query, CancellationToken cancellation, int page = 1, int perPage = 10, string? langRestrict = null)
     {
         var request = Service.Volumes.List($"intitle:{query}");
 
@@ -49,7 +49,7 @@ public class BookGoogleService
             request.LangRestrict = langRestrict;
         }
 
-        var response = await request.ExecuteAsync(cancellationToken).ConfigureAwait(false);
+        var response = await request.ExecuteAsync(cancellation).ConfigureAwait(false);
         var books = Mapper.Map<List<BookResponse>>(response.Items);
 
         foreach (var book in books)
@@ -70,24 +70,24 @@ public class BookGoogleService
         return books;
     }
 
-    public async Task<Book?> CreateBookFromGoogleAsync(string identifier, CancellationToken cancellationToken)
+    public async Task<Book?> CreateBookFromGoogleAsync(string identifier, CancellationToken cancellation)
     {
-        var bookResponse = await GetFromIdentifierAsync(identifier, cancellationToken).ConfigureAwait(false);
+        var bookResponse = await GetFromIdentifierAsync(identifier, cancellation).ConfigureAwait(false);
 
         if (bookResponse is null)
         {
             return null;
         }
 
-        var book = await CreateFromResponse(bookResponse, cancellationToken).ConfigureAwait(false);
+        var book = await CreateFromResponse(bookResponse, cancellation).ConfigureAwait(false);
 
         return book;
     }
 
-    public async Task<BookResponse?> GetFromIdentifierAsync(string identifier, CancellationToken cancellationToken)
+    public async Task<BookResponse?> GetFromIdentifierAsync(string identifier, CancellationToken cancellation)
     {
         var request = Service.Volumes.List($"isbn:{identifier}");
-        var response = await request.ExecuteAsync(cancellationToken).ConfigureAwait(false);
+        var response = await request.ExecuteAsync(cancellation).ConfigureAwait(false);
 
         if (response is null)
         {
@@ -110,13 +110,13 @@ public class BookGoogleService
         return bookResponse;
     }
 
-    public async Task<Book?> CreateFromResponse(BookResponse response, CancellationToken cancellationToken)
+    public async Task<Book?> CreateFromResponse(BookResponse response, CancellationToken cancellation)
     {
         var book = Mapper.Map<Book>(response);
 
         Context.Books.Add(book);
 
-        await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await Context.SaveChangesAsync(cancellation).ConfigureAwait(false);
 
         return book;
     }

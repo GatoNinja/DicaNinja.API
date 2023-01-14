@@ -16,9 +16,9 @@ public class CategoryProviderTest : BaseProviderTest
     [Test]
     public async Task GetByBookTest()
     {
-        var cancellationToken = new CancellationToken();
+        var cancellation = new CancellationToken();
         var mock = Books.First();
-        var categories = await CategoryProvider.GetByBookAsync(mock.Id, cancellationToken);
+        var categories = await CategoryProvider.GetByBookAsync(mock.Id, cancellation);
 
         Assert.That(categories, Is.Not.Null);
         CollectionAssert.AllItemsAreNotNull(categories);
@@ -34,14 +34,14 @@ public class CategoryProviderTest : BaseProviderTest
     [Test]
     public async Task GetOrCreateTest()
     {
-        var cancellationToken = new CancellationToken();
+        var cancellation = new CancellationToken();
         var mock = Categories.First();
-        var category = await CategoryProvider.GetOrCreateAsync(mock.Name, cancellationToken);
+        var category = await CategoryProvider.GetOrCreateAsync(mock.Name, cancellation);
 
         Assert.That(category, Is.Not.Null);
         Assert.That(category?.Name, Is.EqualTo(mock.Name));
 
-        category = await CategoryProvider.GetOrCreateAsync("Categoria inexistente", cancellationToken);
+        category = await CategoryProvider.GetOrCreateAsync("Categoria inexistente", cancellation);
 
         Assert.That(category, Is.Not.Null);
         Assert.That(category?.Name, Is.EqualTo("Categoria inexistente"));

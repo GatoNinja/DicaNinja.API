@@ -16,19 +16,19 @@ public class CategoryProvider : ICategoryProvider
 
     private BaseContext Context { get; }
 
-    public async Task<IEnumerable<Category>> GetByBookAsync(Guid bookId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Category>> GetByBookAsync(Guid bookId, CancellationToken cancellation)
     {
-        return await Context.Categories.Where(category => category.Books.Any(book => book.Id == bookId)).ToListAsync(cancellationToken).ConfigureAwait(false);
+        return await Context.Categories.Where(category => category.Books.Any(book => book.Id == bookId)).ToListAsync(cancellation).ConfigureAwait(false);
     }
 
-    public async Task<int> GetCountAsync(CancellationToken cancellationToken)
+    public async Task<int> GetCountAsync(CancellationToken cancellation)
     {
-        return await Context.Categories.CountAsync(cancellationToken).ConfigureAwait(false);
+        return await Context.Categories.CountAsync(cancellation).ConfigureAwait(false);
     }
 
-    public async Task<Category?> GetOrCreateAsync(string categoryName, CancellationToken cancellationToken)
+    public async Task<Category?> GetOrCreateAsync(string categoryName, CancellationToken cancellation)
     {
-        var category = await Context.Categories.FirstOrDefaultAsync(c => c.Name == categoryName, cancellationToken).ConfigureAwait(false);
+        var category = await Context.Categories.FirstOrDefaultAsync(c => c.Name == categoryName, cancellation).ConfigureAwait(false);
 
         if (category is not null)
         {
@@ -37,8 +37,8 @@ public class CategoryProvider : ICategoryProvider
 
         category = new Category(categoryName);
 
-        await Context.Categories.AddAsync(category, cancellationToken).ConfigureAwait(false);
-        await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await Context.Categories.AddAsync(category, cancellation).ConfigureAwait(false);
+        await Context.SaveChangesAsync(cancellation).ConfigureAwait(false);
 
         return category;
     }

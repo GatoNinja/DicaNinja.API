@@ -16,9 +16,9 @@ public class AuthorProviderTest : BaseProviderTest
     [Test]
     public async Task GetByBookTest()
     {
-        var cancellationToken = new CancellationToken();
+        var cancellation = new CancellationToken();
         var mock = Books.First();
-        var authors = await AuthorProvider.GetByBookAsync(mock.Id, cancellationToken);
+        var authors = await AuthorProvider.GetByBookAsync(mock.Id, cancellation);
 
         Assert.That(authors, Is.Not.Null);
         CollectionAssert.AllItemsAreNotNull(authors);
@@ -34,14 +34,14 @@ public class AuthorProviderTest : BaseProviderTest
     [Test]
     public async Task GetOrCreateTest()
     {
-        var cancellationToken = new CancellationToken();
+        var cancellation = new CancellationToken();
         var mock = Authors.First();
-        var author = await AuthorProvider.GetOrCreateAsync(mock.Name, cancellationToken);
+        var author = await AuthorProvider.GetOrCreateAsync(mock.Name, cancellation);
 
         Assert.That(author, Is.Not.Null);
         Assert.That(author?.Name, Is.EqualTo(mock.Name));
 
-        author = await AuthorProvider.GetOrCreateAsync("Author inexistente", cancellationToken);
+        author = await AuthorProvider.GetOrCreateAsync("Author inexistente", cancellation);
 
         Assert.That(author, Is.Not.Null);
         Assert.That(author?.Name, Is.EqualTo("Author inexistente"));

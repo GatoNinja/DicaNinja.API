@@ -61,7 +61,7 @@ public class BaseContext : DbContext
         base.OnConfiguring(optionsBuilder);
     }
 
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    public override Task<int> SaveChangesAsync(CancellationToken cancellation = default)
     {
         foreach (var item in ChangeTracker.Entries())
         {
@@ -76,6 +76,6 @@ public class BaseContext : DbContext
             }
         }
 
-        return base.SaveChangesAsync(cancellationToken);
+        return base.SaveChangesAsync(cancellation);
     }
 }

@@ -10,7 +10,7 @@ namespace DicaNinja.API.Services;
 
 public interface ITokenService
 {
-    Task<TokenResponse> GenerateTokenAsync(User user, CancellationToken cancellationToken);
+    Task<TokenResponse> GenerateTokenAsync(User user, CancellationToken cancellation);
 
     ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
 

@@ -44,7 +44,7 @@ public class BookController : ControllerHelper
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
     [ProducesDefaultResponseType]
-    public async Task<ActionResult<List<BookResponse>>> GetAsync([FromQuery] QueryParametersWithFilter request, CancellationToken cancellationToken)
+    public async Task<ActionResult<List<BookResponse>>> GetAsync([FromQuery] QueryParametersWithFilter request, CancellationToken cancellation)
     {
         if (request is null)
         {
@@ -64,7 +64,7 @@ public class BookController : ControllerHelper
 
         try
         {
-            books = await Service.QueryBooksAsync(request.Query, cancellationToken, request.Page, request.PerPage, request.Lang).ConfigureAwait(false);
+            books = await Service.QueryBooksAsync(request.Query, cancellation, request.Page, request.PerPage, request.Lang).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -74,7 +74,7 @@ public class BookController : ControllerHelper
             return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao chamar a API do Google Books");
         }
 
-        await BookProvider.PopulateWithBookmarksAsync(books, GetUserId(), cancellationToken).ConfigureAwait(false);
+        await BookProvider.PopulateWithBookmarksAsync(books, GetUserId(), cancellation).ConfigureAwait(false);
 
         CacheService.SetData(cacheKey, books, DateTimeOffset.Now.AddMinutes(5));
 
@@ -85,11 +85,11 @@ public class BookController : ControllerHelper
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesDefaultResponseType]
     [AllowAnonymous]
-    public async Task<ActionResult<List<BookResponse>>> GetByAsync([FromRoute] Guid id, CancellationToken cancellationToken)
+    public async Task<ActionResult<List<BookResponse>>> GetByAsync([FromRoute] Guid id, CancellationToken cancellation)
     {
         try
         {
-            var book = await BookProvider.GetByIdAsync(id, cancellationToken);
+            var book = await BookProvider.GetByIdAsync(id, cancellation);
 
             if (book is null)
             {
@@ -115,15 +115,15 @@ public class BookController : ControllerHelper
     }
 
     [HttpGet("bookmark")]
-    public async Task<ActionResult<List<BookResponse>>> GetBookmarksAsync([FromQuery] QueryParameters query, CancellationToken cancellationToken)
+    public async Task<ActionResult<List<BookResponse>>> GetBookmarksAsync([FromQuery] QueryParametersWithFilter query, CancellationToken cancellation)
     {
         if (query is null)
         {
             throw new ArgumentNullException(nameof(query));
         }
 
-        var books = await BookProvider.GetBookmarksAsync(GetUserId(), cancellationToken, query.Page, query.PerPage).ConfigureAwait(false);
-        var totalBookmarks = await BookmarkProvider.GetBookmarkCountAsync(GetUserId(), cancellationToken).ConfigureAwait(false);
+        var books = await BookProvider.GetBookmarksAsync(GetUserId(), cancellation, query.Page, query.PerPage).ConfigureAwait(false);
+        var totalBookmarks = await BookmarkProvider.GetBookmarkCountAsync(GetUserId(), cancellation).ConfigureAwait(false);
         var mapped = Mapper.Map<List<BookResponse>>(books);
         var paginated = PaginationHelper.CreatePagedResponse(mapped, query, totalBookmarks);
 
@@ -139,9 +139,9 @@ public class BookController : ControllerHelper
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesDefaultResponseType]
-    public async Task<ActionResult<BookResponse>> GetBookAsync([FromRoute] string isbn, [FromRoute] string type, CancellationToken cancellationToken)
+    public async Task<ActionResult<BookResponse>> GetBookAsync([FromRoute] string isbn, [FromRoute] string type, CancellationToken cancellation)
     {
-        var book = await BookProvider.GetByIsbnAsync(isbn, type, cancellationToken).ConfigureAwait(false);
+        var book = await BookProvider.GetByIsbnAsync(isbn, type, cancellation).ConfigureAwait(false);
 
         if (book == null)
         {
@@ -149,7 +149,7 @@ public class BookController : ControllerHelper
         }
 
         var mapped = Mapper.Map<BookResponse>(book);
-        var internalRating = await BookProvider.AverageRatingAsync(book.Id, cancellationToken).ConfigureAwait(false);
+        var internalRating = await BookProvider.AverageRatingAsync(book.Id, cancellation).ConfigureAwait(false);
 
         mapped.InternalRating = internalRating;
 
@@ -158,41 +158,41 @@ public class BookController : ControllerHelper
 
     [HttpGet("{bookId:guid}/author")]
     [AllowAnonymous]
-    public async Task<ActionResult<List<Author>>> GetAuthorsAsync([FromRoute] Guid bookId, CancellationToken cancellationToken)
+    public async Task<ActionResult<List<Author>>> GetAuthorsAsync([FromRoute] Guid bookId, CancellationToken cancellation)
     {
-        var authors = await AuthorProvider.GetByBookAsync(bookId, cancellationToken).ConfigureAwait(false);
+        var authors = await AuthorProvider.GetByBookAsync(bookId, cancellation).ConfigureAwait(false);
 
         return Ok(authors);
     }
 
     [HttpGet("{bookId:guid}/identifier")]
     [AllowAnonymous]
-    public async Task<ActionResult<List<Identifier>>> GetIdentifiersAsync([FromRoute] Guid bookId, CancellationToken cancellationToken)
+    public async Task<ActionResult<List<Identifier>>> GetIdentifiersAsync([FromRoute] Guid bookId, CancellationToken cancellation)
     {
-        var identifiers = await IdentifierProvider.GetByBookAsync(bookId, cancellationToken).ConfigureAwait(false);
+        var identifiers = await IdentifierProvider.GetByBookAsync(bookId, cancellation).ConfigureAwait(false);
 
         return Ok(identifiers);
     }
 
     [HttpGet("{bookId:guid}/category")]
     [AllowAnonymous]
-    public async Task<ActionResult<List<Category>>> GetCategoriesAsync([FromRoute] Guid bookId, CancellationToken cancellationToken)
+    public async Task<ActionResult<List<Category>>> GetCategoriesAsync([FromRoute] Guid bookId, CancellationToken cancellation)
     {
-        var categories = await CategoryProvider.GetByBookAsync(bookId, cancellationToken).ConfigureAwait(false);
+        var categories = await CategoryProvider.GetByBookAsync(bookId, cancellation).ConfigureAwait(false);
 
         return Ok(categories);
     }
 
     [HttpGet("{bookId:guid}/review")]
     [AllowAnonymous]
-    public async Task<ActionResult<List<Review>>> GetReviewsAsync([FromRoute] Guid bookId, [FromQuery] QueryParameters query, CancellationToken cancellationToken)
+    public async Task<ActionResult<List<Review>>> GetReviewsAsync([FromRoute] Guid bookId, [FromQuery] QueryParametersWithFilter query, CancellationToken cancellation)
     {
         if (query is null)
         {
             throw new ArgumentNullException(nameof(query));
         }
 
-        var reviews = await BookProvider.GetReviewsAsync(bookId, cancellationToken, query.Page, query.PerPage).ConfigureAwait(false);
+        var reviews = await BookProvider.GetReviewsAsync(bookId, cancellation, query.Page, query.PerPage).ConfigureAwait(false);
 
         return Ok(reviews);
     }

@@ -19,22 +19,22 @@ public sealed class UserProvider : IUserProvider
     private BaseContext Context { get; }
     private IPasswordHasher PasswordHasher { get; }
 
-    public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellation)
     {
         var query = from user in Context.Users
                     where user.Id == id
                     select new User(user.Id, user.Username, user.Email, user.FirstName, user.LastName, user.Image);
 
-        return await query.FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+        return await query.FirstOrDefaultAsync(cancellation).ConfigureAwait(false);
     }
 
-    public async Task<User?> DoLoginAsync(string username, string password, CancellationToken cancellationToken)
+    public async Task<User?> DoLoginAsync(string username, string password, CancellationToken cancellation)
     {
         var query = from user in Context.Users
                     where user.Username == username || user.Email == username
                     select new User(user.Id, user.Username, user.Email, user.Password);
 
-        var userFound = await query.FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+        var userFound = await query.FirstOrDefaultAsync(cancellation).ConfigureAwait(false);
 
         if (userFound is null)
         {
@@ -48,14 +48,14 @@ public sealed class UserProvider : IUserProvider
         return verifiedPassword ? userFound : null;
     }
 
-    public async Task<User?> InsertAsync(User user, CancellationToken cancellationToken)
+    public async Task<User?> InsertAsync(User user, CancellationToken cancellation)
     {
         if (user is null)
         {
             throw new ArgumentNullException(nameof(user));
         }
 
-        var existing = await Context.Users.AnyAsync(u => u.Username == user.Username || u.Email == user.Email, cancellationToken).ConfigureAwait(false);
+        var existing = await Context.Users.AnyAsync(u => u.Username == user.Username || u.Email == user.Email, cancellation).ConfigureAwait(false);
 
         if (existing)
         {
@@ -67,19 +67,19 @@ public sealed class UserProvider : IUserProvider
         user.Id = Guid.Empty;
 
         Context.Users.Add(user);
-        await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await Context.SaveChangesAsync(cancellation).ConfigureAwait(false);
 
         return user;
     }
 
-    public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken)
+    public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellation)
     {
-        return await Context.Users.Select(user => new User(user.Id, user.Username, user.Email)).FirstOrDefaultAsync(user => user.Email == email, cancellationToken).ConfigureAwait(false);
+        return await Context.Users.Select(user => new User(user.Id, user.Username, user.Email)).FirstOrDefaultAsync(user => user.Email == email, cancellation).ConfigureAwait(false);
     }
 
-    public async Task ChangePasswordAsync(string email, string password, CancellationToken cancellationToken)
+    public async Task ChangePasswordAsync(string email, string password, CancellationToken cancellation)
     {
-        var user = await GetByEmailAsync(email, cancellationToken).ConfigureAwait(false);
+        var user = await GetByEmailAsync(email, cancellation).ConfigureAwait(false);
 
         if (user is null)
         {
@@ -88,13 +88,13 @@ public sealed class UserProvider : IUserProvider
 
         user.Password = PasswordHasher.Hash(password);
 
-        await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await Context.SaveChangesAsync(cancellation).ConfigureAwait(false);
     }
 
-    public async Task<EnumNewUserCheck> ValidateNewUserAsync(User user, CancellationToken cancellationToken)
+    public async Task<EnumNewUserCheck> ValidateNewUserAsync(User user, CancellationToken cancellation)
     {
-        var hasUsername = await Context.Users.AnyAsync(item => item.Username == user.Username, cancellationToken).ConfigureAwait(false);
-        var hasEmail = await Context.Users.AnyAsync(item => item.Email == user.Email, cancellationToken).ConfigureAwait(false);
+        var hasUsername = await Context.Users.AnyAsync(item => item.Username == user.Username, cancellation).ConfigureAwait(false);
+        var hasEmail = await Context.Users.AnyAsync(item => item.Email == user.Email, cancellation).ConfigureAwait(false);
 
         return (hasUsername, hasEmail) switch
         {
@@ -104,7 +104,7 @@ public sealed class UserProvider : IUserProvider
         };
     }
 
-    public async Task<IEnumerable<User>> GetFollowersAsync(Guid userId, CancellationToken cancellationToken, int page = 1, int pageSize = 10)
+    public async Task<IEnumerable<User>> GetFollowersAsync(Guid userId, CancellationToken cancellation, int page = 1, int pageSize = 10)
     {
         var query = from follower in Context.Followers
                     join user in Context.Users on follower.FollowedId equals user.Id
@@ -114,10 +114,10 @@ public sealed class UserProvider : IUserProvider
 
         return await query.Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .ToListAsync(cancellationToken).ConfigureAwait(false);
+            .ToListAsync(cancellation).ConfigureAwait(false);
     }
 
-    public async Task<IEnumerable<User>> GetFollowingAsync(Guid userId, CancellationToken cancellationToken, int page = 1, int pageSize = 10)
+    public async Task<IEnumerable<User>> GetFollowingAsync(Guid userId, CancellationToken cancellation, int page = 1, int pageSize = 10)
     {
         var query = from follower in Context.Followers
                     join user in Context.Users on follower.FollowedId equals user.Id
@@ -127,35 +127,35 @@ public sealed class UserProvider : IUserProvider
 
         return await query.Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .ToListAsync(cancellationToken).ConfigureAwait(false);
+            .ToListAsync(cancellation).ConfigureAwait(false);
     }
 
-    public async Task<int> GetFollowersCountAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<int> GetFollowersCountAsync(Guid userId, CancellationToken cancellation)
     {
-        return await Context.Followers.CountAsync(follower => follower.FollowedId == userId, cancellationToken).ConfigureAwait(false);
+        return await Context.Followers.CountAsync(follower => follower.FollowedId == userId, cancellation).ConfigureAwait(false);
     }
 
-    public async Task<int> GetFollowingCountAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<int> GetFollowingCountAsync(Guid userId, CancellationToken cancellation)
     {
-        return await Context.Followers.CountAsync(follower => follower.UserId == userId, cancellationToken).ConfigureAwait(false);
+        return await Context.Followers.CountAsync(follower => follower.UserId == userId, cancellation).ConfigureAwait(false);
     }
 
-    public async Task<int> GetBooksCountAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<int> GetBooksCountAsync(Guid userId, CancellationToken cancellation)
     {
-        return await Context.Bookmarks.CountAsync(bookmark => bookmark.UserId == userId, cancellationToken).ConfigureAwait(false);
+        return await Context.Bookmarks.CountAsync(bookmark => bookmark.UserId == userId, cancellation).ConfigureAwait(false);
     }
 
-    public async Task<int> GetAuthorsCountAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<int> GetAuthorsCountAsync(Guid userId, CancellationToken cancellation)
     {
-        return await Context.Authors.Where(author => author.Books.Any(book => book.Bookmarks.Any(bookmark => bookmark.UserId == userId))).Distinct().CountAsync(cancellationToken).ConfigureAwait(false);
+        return await Context.Authors.Where(author => author.Books.Any(book => book.Bookmarks.Any(bookmark => bookmark.UserId == userId))).Distinct().CountAsync(cancellation).ConfigureAwait(false);
     }
 
-    public async Task<int> GetCategoriesCountAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<int> GetCategoriesCountAsync(Guid userId, CancellationToken cancellation)
     {
-        return await Context.Categories.Where(category => category.Books.Any(book => book.Bookmarks.Any(bookmark => bookmark.UserId == userId))).Distinct().CountAsync(cancellationToken).ConfigureAwait(false);
+        return await Context.Categories.Where(category => category.Books.Any(book => book.Bookmarks.Any(bookmark => bookmark.UserId == userId))).Distinct().CountAsync(cancellation).ConfigureAwait(false);
     }
 
-    public async Task<User?> GetByUsernameOrEmailAsync(string parameter, CancellationToken cancellationToken)
+    public async Task<User?> GetByUsernameOrEmailAsync(string parameter, CancellationToken cancellation)
     {
         _ = Guid.TryParse(parameter, out var id);
 
@@ -163,15 +163,15 @@ public sealed class UserProvider : IUserProvider
                     where user.Email == parameter || user.Username == parameter || user.Id == id
                     select new User(user.Id, user.Username, user.Email, user.FirstName, user.LastName, user.Image);
 
-        return await query.FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+        return await query.FirstOrDefaultAsync(cancellation).ConfigureAwait(false);
     }
 
-    public async Task<int> GetCountAsync(CancellationToken cancellationToken)
+    public async Task<int> GetCountAsync(CancellationToken cancellation)
     {
-        return await Context.Users.CountAsync(cancellationToken).ConfigureAwait(false);
+        return await Context.Users.CountAsync(cancellation).ConfigureAwait(false);
     }
 
-    public async Task<IEnumerable<User>> SearchAsync(string searchTerm, CancellationToken cancellationToken, int page = 1, int perPage = 10)
+    public async Task<IEnumerable<User>> SearchAsync(string searchTerm, CancellationToken cancellation, int page = 1, int perPage = 10)
     {
         searchTerm = searchTerm.Trim().ToLower();
 
@@ -181,7 +181,7 @@ public sealed class UserProvider : IUserProvider
                         where user.Email == searchTerm
                         select new User(user.Id, user.Username, user.Email, user.FirstName, user.LastName, user.Image);
 
-            return await query.ToListAsync(cancellationToken).ConfigureAwait(false);
+            return await query.ToListAsync(cancellation).ConfigureAwait(false);
         }
 
         var exactQuery = from user in Context.Users
@@ -192,10 +192,10 @@ public sealed class UserProvider : IUserProvider
                              || string.Concat(user.FirstName, " ", user.LastName).ToLower().Contains(searchTerm)
                          select new User(user.Id, user.Username, user.Email, user.FirstName, user.LastName, user.Image);
 
-        return await exactQuery.Skip((page - 1) * perPage).Take(perPage).ToListAsync(cancellationToken).ConfigureAwait(false);
+        return await exactQuery.Skip((page - 1) * perPage).Take(perPage).ToListAsync(cancellation).ConfigureAwait(false);
     }
 
-    public async Task<User?> UpdateUserAsync(Guid userId, User user, CancellationToken cancellationToken)
+    public async Task<User?> UpdateUserAsync(Guid userId, User user, CancellationToken cancellation)
     {
         if (user is null)
         {
@@ -203,7 +203,7 @@ public sealed class UserProvider : IUserProvider
         }
 
         var userToUpdate = await Context.Users
-                                 .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken).ConfigureAwait(false);
+                                 .FirstOrDefaultAsync(u => u.Id == userId, cancellation).ConfigureAwait(false);
 
         if (userToUpdate == null)
         {
@@ -220,7 +220,7 @@ public sealed class UserProvider : IUserProvider
             userToUpdate.Password = PasswordHasher.Hash(user.Password);
         }
 
-        await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await Context.SaveChangesAsync(cancellation).ConfigureAwait(false);
 
         return userToUpdate;
     }

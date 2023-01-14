@@ -17,9 +17,9 @@ public class IdentifierProviderTest : BaseProviderTest
     [Test]
     public async Task GetByBookTest()
     {
-        var cancellationToken = new CancellationToken();
+        var cancellation = new CancellationToken();
         var mock = Books.First();
-        var identifiers = await IdentifierProvider.GetByBookAsync(mock.Id, cancellationToken);
+        var identifiers = await IdentifierProvider.GetByBookAsync(mock.Id, cancellation);
 
         Assert.That(identifiers, Is.Not.Null);
         CollectionAssert.AllItemsAreNotNull(identifiers);
@@ -41,15 +41,15 @@ public class IdentifierProviderTest : BaseProviderTest
     [Test]
     public async Task GetOrCreateTest()
     {
-        var cancellationToken = new CancellationToken();
+        var cancellation = new CancellationToken();
         var mock = Identifiers.First();
-        var identifier = await IdentifierProvider.GetOrCreateAsync(new IdentifierResponse(mock.Isbn, mock.Type), cancellationToken);
+        var identifier = await IdentifierProvider.GetOrCreateAsync(new IdentifierResponse(mock.Isbn, mock.Type), cancellation);
 
         Assert.That(identifier, Is.Not.Null);
         Assert.That(identifier, Is.EqualTo(mock));
 
         var newMock = new IdentifierResponse("21341213123", "ISBN_13");
-        identifier = await IdentifierProvider.GetOrCreateAsync(newMock, cancellationToken);
+        identifier = await IdentifierProvider.GetOrCreateAsync(newMock, cancellation);
 
         Assert.That(identifier, Is.Not.Null);
         Assert.Multiple(() =>

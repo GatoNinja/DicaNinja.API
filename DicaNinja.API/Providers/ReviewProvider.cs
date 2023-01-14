@@ -17,36 +17,36 @@ public class ReviewProvider : IReviewProvider
 
     private BaseContext Context { get; }
 
-    public async Task<Guid> CreateReviewAsync(Review review, CancellationToken cancellationToken)
+    public async Task<Guid> CreateReviewAsync(Review review, CancellationToken cancellation)
     {
         if (review is null)
         {
             throw new ArgumentNullException(nameof(review));
         }
 
-        var existingBook = await Context.Books.AnyAsync(book => book.Id == review.BookId, cancellationToken).ConfigureAwait(false);
+        var existingBook = await Context.Books.AnyAsync(book => book.Id == review.BookId, cancellation).ConfigureAwait(false);
 
         if (!existingBook)
         {
             throw new KeyNotFoundException("O livro informado não foi encontrado");
         }
 
-        var existingUser = await Context.Users.AnyAsync(user => user.Id == review.UserId, cancellationToken).ConfigureAwait(false);
+        var existingUser = await Context.Users.AnyAsync(user => user.Id == review.UserId, cancellation).ConfigureAwait(false);
 
         if (!existingUser)
         {
             throw new KeyNotFoundException("O usuário informado não foi encontrado");
         }
 
-        var existingReview = await Context.Reviews.AnyAsync(r => r.UserId == review.UserId && r.BookId == review.BookId, cancellationToken).ConfigureAwait(false);
+        var existingReview = await Context.Reviews.AnyAsync(r => r.UserId == review.UserId && r.BookId == review.BookId, cancellation).ConfigureAwait(false);
 
         if (existingReview)
         {
             throw new KeyNotFoundException("Você já avaliou este livro");
         }
 
-        await Context.Reviews.AddAsync(review, cancellationToken).ConfigureAwait(false);
-        await Context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await Context.Reviews.AddAsync(review, cancellation).ConfigureAwait(false);
+        await Context.SaveChangesAsync(cancellation).ConfigureAwait(false);
 
         return review.Id;
     }

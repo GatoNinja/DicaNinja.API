@@ -26,7 +26,7 @@ public sealed class TokenService : ITokenService
 
     private ConfigurationReader Config { get; }
 
-    public async Task<TokenResponse> GenerateTokenAsync(User user, CancellationToken cancellationToken)
+    public async Task<TokenResponse> GenerateTokenAsync(User user, CancellationToken cancellation)
     {
         if (user is null)
         {
@@ -44,7 +44,7 @@ public sealed class TokenService : ITokenService
         var accessToken = GenerateAccessToken(claims);
         var refreshToken = RefreshTokenProvider.GenerateRefreshToken();
 
-        await RefreshTokenProvider.SaveRefreshTokenAsync(user.Id, refreshToken, cancellationToken).ConfigureAwait(false);
+        await RefreshTokenProvider.SaveRefreshTokenAsync(user.Id, refreshToken, cancellation).ConfigureAwait(false);
 
         return new TokenResponse(accessToken, refreshToken, user);
     }

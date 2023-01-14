@@ -37,7 +37,7 @@ public class MainController : ControllerHelper
     private IUserProvider UserProvider { get; }
 
     [HttpGet]
-    public async Task<ActionResult<PagedResponse<IEnumerable<BookResponse>>>> Get([FromQuery] QueryParameters query, CancellationToken cancellationToken)
+    public async Task<ActionResult<PagedResponse<IEnumerable<BookResponse>>>> Get([FromQuery] QueryParametersWithFilter query, CancellationToken cancellation)
     {
         var cacheKey = "main";
 
@@ -50,11 +50,11 @@ public class MainController : ControllerHelper
             return Ok(cache);
         }
 
-        var books = await BookProvider.GetBooksAsync(cancellationToken);
-        var totalBooks = await BookProvider.GetCountAsync(cancellationToken);
-        var totalAuthors = await AuthorProvider.GetCountAsync(cancellationToken);
-        var totalCategories = await CategoriProvider.GetCountAsync(cancellationToken);
-        var totalUsers = await UserProvider.GetCountAsync(cancellationToken);
+        var books = await BookProvider.GetBooksAsync(cancellation);
+        var totalBooks = await BookProvider.GetCountAsync(cancellation);
+        var totalAuthors = await AuthorProvider.GetCountAsync(cancellation);
+        var totalCategories = await CategoriProvider.GetCountAsync(cancellation);
+        var totalUsers = await UserProvider.GetCountAsync(cancellation);
 
         var mapped = Mapper.Map<IEnumerable<BookResponse>>(books);
 

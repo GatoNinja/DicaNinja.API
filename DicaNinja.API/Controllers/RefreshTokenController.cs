@@ -24,7 +24,7 @@ public class RefreshTokenController : ControllerHelper
     private ITokenService TokenService { get; }
 
     [HttpPost]
-    public async Task<ActionResult<RefreshTokenResponse>> RefreshAsync([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<RefreshTokenResponse>> RefreshAsync([FromBody] RefreshTokenRequest request, CancellationToken cancellation)
     {
         if (request == null)
         {
@@ -47,7 +47,7 @@ public class RefreshTokenController : ControllerHelper
             return new NotFoundObjectResult(messageResponse);
         }
 
-        var refreshToken = await RefreshTokenProvider.GetRefreshTokenAsync(username, request.RefreshToken, cancellationToken).ConfigureAwait(false);
+        var refreshToken = await RefreshTokenProvider.GetRefreshTokenAsync(username, request.RefreshToken, cancellation).ConfigureAwait(false);
 
         if (refreshToken is null)
         {
@@ -63,19 +63,19 @@ public class RefreshTokenController : ControllerHelper
             return new BadRequestObjectResult(messageResponse);
         }
 
-        var refreshTokenResponse = await CreateRefreshTokenResponse(GetUserId(), refreshToken.Value, cancellationToken).ConfigureAwait(false);
+        var refreshTokenResponse = await CreateRefreshTokenResponse(GetUserId(), refreshToken.Value, cancellation).ConfigureAwait(false);
 
         return new OkObjectResult(refreshTokenResponse);
     }
 
-    private async Task<RefreshTokenResponse> CreateRefreshTokenResponse(Guid userId, string value, CancellationToken cancellationToken)
+    private async Task<RefreshTokenResponse> CreateRefreshTokenResponse(Guid userId, string value, CancellationToken cancellation)
     {
-        await RefreshTokenProvider.InvalidateAsync(value, cancellationToken).ConfigureAwait(false);
+        await RefreshTokenProvider.InvalidateAsync(value, cancellation).ConfigureAwait(false);
 
         var newAccessToken = TokenService.GenerateAccessToken(User.Claims);
         var newRefreshToken = RefreshTokenProvider.GenerateRefreshToken();
 
-        await RefreshTokenProvider.SaveRefreshTokenAsync(userId, newRefreshToken, cancellationToken).ConfigureAwait(false);
+        await RefreshTokenProvider.SaveRefreshTokenAsync(userId, newRefreshToken, cancellation).ConfigureAwait(false);
 
         return new RefreshTokenResponse(newAccessToken, newRefreshToken);
     }

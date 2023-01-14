@@ -22,14 +22,14 @@ public class PasswordRecoveryController : ControllerHelper
     private IUserProvider UserProvider { get; }
 
     [HttpPost]
-    public async Task<ActionResult> PostPasswordRecovery([FromBody] PasswordRecoveryRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult> PostPasswordRecovery([FromBody] PasswordRecoveryRequest request, CancellationToken cancellation)
     {
         if (request is null)
         {
             throw new ArgumentNullException(nameof(request));
         }
 
-        var recoveryCode = await PasswordRecoveryProvider.GetByEmailAndCodeAsync(request.Email, request.Code, cancellationToken).ConfigureAwait(false);
+        var recoveryCode = await PasswordRecoveryProvider.GetByEmailAndCodeAsync(request.Email, request.Code, cancellation).ConfigureAwait(false);
 
         if (recoveryCode is null)
         {
@@ -38,8 +38,8 @@ public class PasswordRecoveryController : ControllerHelper
             return new BadRequestObjectResult(messageResponse);
         }
 
-        await UserProvider.ChangePasswordAsync(request.Email, request.NewPassword, cancellationToken).ConfigureAwait(false);
-        await PasswordRecoveryProvider.UseRecoveryCodeAsync(recoveryCode.Id, cancellationToken).ConfigureAwait(false);
+        await UserProvider.ChangePasswordAsync(request.Email, request.NewPassword, cancellation).ConfigureAwait(false);
+        await PasswordRecoveryProvider.UseRecoveryCodeAsync(recoveryCode.Id, cancellation).ConfigureAwait(false);
 
         return Ok();
 

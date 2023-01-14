@@ -27,33 +27,33 @@ public class UserController : ControllerHelper
     private IMapper Mapper { get; }
 
     [HttpPut]
-    public async Task<IActionResult> UpdateUser([FromBody] UserRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> UpdateUser([FromBody] UserRequest request, CancellationToken cancellation)
     {
         var user = Mapper.Map<User>(request);
-        var updatedUser = await UserProvider.UpdateUserAsync(GetUserId(), user, cancellationToken).ConfigureAwait(false);
+        var updatedUser = await UserProvider.UpdateUserAsync(GetUserId(), user, cancellation).ConfigureAwait(false);
 
         return updatedUser is null ? NotFound() : Ok(Mapper.Map<DicaNinja.API.Response.UserResponse>(updatedUser));
     }
 
     [HttpGet()]
-    public async Task<IActionResult> Search([FromQuery] string query, CancellationToken cancellationToken)
+    public async Task<IActionResult> Search([FromQuery] string query, CancellationToken cancellation)
     {
-        var users = await UserProvider.SearchAsync(query, cancellationToken).ConfigureAwait(false);
+        var users = await UserProvider.SearchAsync(query, cancellation).ConfigureAwait(false);
 
         return Ok(users);
 
     }
 
     [HttpGet("followers")]
-    public async Task<ActionResult<IEnumerable<User>>> GetFollowers([FromQuery] QueryParameters query, CancellationToken cancellationToken)
+    public async Task<ActionResult<IEnumerable<User>>> GetFollowers([FromQuery] QueryParametersWithFilter query, CancellationToken cancellation)
     {
         if (query is null)
         {
             throw new ArgumentNullException(nameof(query));
         }
 
-        var followers = await UserProvider.GetFollowersAsync(GetUserId(), cancellationToken, query.Page, query.PerPage).ConfigureAwait(false);
-        var total = await UserProvider.GetFollowersCountAsync(GetUserId(), cancellationToken).ConfigureAwait(false);
+        var followers = await UserProvider.GetFollowersAsync(GetUserId(), cancellation, query.Page, query.PerPage).ConfigureAwait(false);
+        var total = await UserProvider.GetFollowersCountAsync(GetUserId(), cancellation).ConfigureAwait(false);
         var mapped = Mapper.Map<IEnumerable<UserResponse>>(followers);
         var paginated = PaginationHelper.CreatePagedResponse(mapped, query, total);
 
@@ -61,15 +61,15 @@ public class UserController : ControllerHelper
     }
 
     [HttpGet("following")]
-    public async Task<ActionResult<IEnumerable<User>>> GetFollowing([FromQuery] QueryParameters query, CancellationToken cancellationToken)
+    public async Task<ActionResult<IEnumerable<User>>> GetFollowing([FromQuery] QueryParametersWithFilter query, CancellationToken cancellation)
     {
         if (query is null)
         {
             throw new ArgumentNullException(nameof(query));
         }
 
-        var following = await UserProvider.GetFollowingAsync(GetUserId(), cancellationToken, query.Page, query.PerPage).ConfigureAwait(false);
-        var total = await UserProvider.GetFollowingCountAsync(GetUserId(), cancellationToken).ConfigureAwait(false);
+        var following = await UserProvider.GetFollowingAsync(GetUserId(), cancellation, query.Page, query.PerPage).ConfigureAwait(false);
+        var total = await UserProvider.GetFollowingCountAsync(GetUserId(), cancellation).ConfigureAwait(false);
         var mapped = Mapper.Map<IEnumerable<UserResponse>>(following);
         var paginated = PaginationHelper.CreatePagedResponse(mapped, query, total);
 

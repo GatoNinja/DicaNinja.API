@@ -7,9 +7,9 @@ public interface IRefreshTokenProvider
 {
     string GenerateRefreshToken();
 
-    Task<RefreshToken?> GetRefreshTokenAsync(string username, string value, CancellationToken cancellationToken);
+    Task<RefreshToken?> GetRefreshTokenAsync(string username, string value, CancellationToken cancellation);
 
-    Task SaveRefreshTokenAsync(Guid userId, string refreshTokenValue, CancellationToken cancellationToken);
+    Task SaveRefreshTokenAsync(Guid userId, string refreshTokenValue, CancellationToken cancellation);
 
-    Task InvalidateAsync(string value, CancellationToken cancellationToken);
+    Task InvalidateAsync(string value, CancellationToken cancellation);
 }

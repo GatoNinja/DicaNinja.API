@@ -28,14 +28,14 @@ public class ForgotPasswordController : ControllerHelper
     private IUserProvider UserProvider { get; }
 
     [HttpPost]
-    public async Task<ActionResult> PostForgotPasswordAsync([FromBody] ForgotPasswordRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult> PostForgotPasswordAsync([FromBody] ForgotPasswordRequest request, CancellationToken cancellation)
     {
         if (request is null)
         {
             throw new ArgumentNullException(nameof(request));
         }
 
-        var user = await UserProvider.GetByEmailAsync(request.Email, cancellationToken).ConfigureAwait(false);
+        var user = await UserProvider.GetByEmailAsync(request.Email, cancellation).ConfigureAwait(false);
 
         if (user is null)
         {
@@ -45,7 +45,7 @@ public class ForgotPasswordController : ControllerHelper
         }
 
         var passwordRecovery = new PasswordRecovery(user);
-        var inserted = await PasswordRecoveryProvider.InsertAsync(passwordRecovery, cancellationToken).ConfigureAwait(false);
+        var inserted = await PasswordRecoveryProvider.InsertAsync(passwordRecovery, cancellation).ConfigureAwait(false);
         var code = inserted.Code;
         var bodyMessage = @$"Seu código de recuperação para o login é {code}";
         SmtpService.SendEmail("ygor@ygorlazaro.com", "Recupere sua senha", bodyMessage);
