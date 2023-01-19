@@ -220,6 +220,8 @@ public sealed class UserProvider : IUserProvider
             userToUpdate.Password = PasswordHasher.Hash(user.Password);
         }
 
+        Context.Entry(userToUpdate).State = EntityState.Modified;
+
         await Context.SaveChangesAsync(cancellation).ConfigureAwait(false);
 
         return userToUpdate;

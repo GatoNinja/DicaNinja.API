@@ -26,7 +26,7 @@ public class UserController : ControllerHelper
     private IUserProvider UserProvider { get; }
     private IMapper Mapper { get; }
 
-    [HttpPut]
+    [HttpPatch]
     public async Task<IActionResult> UpdateUser([FromBody] UserRequest request, CancellationToken cancellation)
     {
         var user = Mapper.Map<User>(request);

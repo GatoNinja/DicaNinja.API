@@ -2,7 +2,7 @@ namespace DicaNinja.API.Response;
 
 public class UserResponse
 {
-    public Guid UserId { get; set; }
+    public Guid Id { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string Username { get; set; }
@@ -11,7 +11,7 @@ public class UserResponse
 
     public UserResponse()
     {
-        UserId = Guid.Empty;
+        Id = Guid.Empty;
         FirstName = string.Empty;
         LastName = string.Empty;
         Username = string.Empty;
@@ -19,9 +19,9 @@ public class UserResponse
         Description = string.Empty;
     }
 
-    public UserResponse(Guid userId, string firstName, string lastName, string username, string image, string? description)
+    public UserResponse(Guid id, string firstName, string lastName, string username, string image, string? description)
     {
-        UserId = userId;
+        Id = id;
         FirstName = firstName;
         LastName = lastName;
         Username = username;
