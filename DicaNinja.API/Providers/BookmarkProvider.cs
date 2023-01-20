@@ -59,6 +59,11 @@ public class BookmarkProvider : IBookmarkProvider
         return await Context.Bookmarks.CountAsync(bookmark => bookmark.UserId == userId, cancellation).ConfigureAwait(false);
     }
 
+    public async Task<bool> HasBookmarkAsync(Guid userId, CancellationToken cancellation)
+    {
+        return await Context.Bookmarks.AnyAsync(bm => bm.UserId == userId, cancellation);
+    }
+
     public async Task<bool> IsBookMarkedAsync(Guid userId, string identifier, string type, CancellationToken cancellation)
     {
         return await FilterByUser(userId, identifier, type).AnyAsync(cancellation).ConfigureAwait(false);

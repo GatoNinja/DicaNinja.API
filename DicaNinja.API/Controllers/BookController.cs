@@ -156,6 +156,34 @@ public class BookController : ControllerHelper
         return Ok(mapped);
     }
 
+    [HttpPost("isbn/{isbn}/type/{type}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType]
+    public async Task<ActionResult> PostBookAsync([FromRoute] string isbn, [FromRoute] string type, CancellationToken cancellation)
+    {
+        var existingBook = await BookProvider.GetExistingByIsbnAsync(isbn, type, cancellation).ConfigureAwait(false);
+
+        if (existingBook)
+        {
+            var book = await BookProvider.GetByIsbnAsync(isbn, type, cancellation).ConfigureAwait(false);
+            var mapped = Mapper.Map<BookResponse>(book);
+
+            return Ok(mapped);
+        }
+
+        var newBook = await BookProvider.CreateFromGoogleAsync(isbn, cancellation);
+
+        if (newBook is null)
+        {
+            return new BadRequestObjectResult(new MessageResponse("Ocorreu um problema ao procurar o livro"));
+        }
+
+        var newMapped = Mapper.Map<BookResponse>(newBook);
+
+        return Ok(newMapped);
+    }
+
     [HttpGet("{bookId:guid}/author")]
     [AllowAnonymous]
     public async Task<ActionResult<List<Author>>> GetAuthorsAsync([FromRoute] Guid bookId, CancellationToken cancellation)

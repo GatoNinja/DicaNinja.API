@@ -127,21 +127,25 @@ public class BookProvider : IBookProvider
     {
         var book = await Context.Books.FirstOrDefaultAsync(book => book.Identifiers.Any(i => i.Isbn == isbn && i.Type == type), cancellation).ConfigureAwait(false);
 
-        if (book is null)
-        {
-            var bookGoogle = await BookGoogleService.GetFromIdentifierAsync(isbn, cancellation).ConfigureAwait(false);
-
-            if (bookGoogle is null)
-            {
-                return null;
-            }
-
-            var newBook = await BookGoogleService.CreateFromResponse(bookGoogle, cancellation).ConfigureAwait(false);
-
-            return Mapper.Map<BookResponse>(newBook);
-        }
-
-        return Mapper.Map<BookResponse>(book);
+        return book is null ? await CreateFromGoogleAsync(isbn, cancellation) : Mapper.Map<BookResponse>(book);
     }
 
+    public async Task<BookResponse?> CreateFromGoogleAsync(string isbn, CancellationToken cancellation)
+    {
+        var bookGoogle = await BookGoogleService.GetFromIdentifierAsync(isbn, cancellation).ConfigureAwait(false);
+
+        if (bookGoogle is null)
+        {
+            return null;
+        }
+
+        var newBook = await BookGoogleService.CreateFromResponse(bookGoogle, cancellation).ConfigureAwait(false);
+
+        return Mapper.Map<BookResponse>(newBook);
+    }
+
+    public async Task<bool> GetExistingByIsbnAsync(string isbn, string type, CancellationToken cancellation)
+    {
+        return await Context.Identifiers.AnyAsync(i => i.Isbn == isbn && i.Type == type);
+    }
 }

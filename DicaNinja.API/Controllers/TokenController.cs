@@ -15,15 +15,17 @@ namespace DicaNinja.API.Controllers;
 [EnableRateLimiting("token")]
 public class TokenController : ControllerHelper
 {
-    public TokenController(IUserProvider userProvider, ITokenService tokenService)
+    public TokenController(IUserProvider userProvider, ITokenService tokenService, IBookmarkProvider bookmarkProvider)
     {
         UserProvider = userProvider;
         TokenService = tokenService;
+        BookmarkProvider = bookmarkProvider;
     }
 
     private IUserProvider UserProvider { get; }
 
     private ITokenService TokenService { get; }
+    public IBookmarkProvider BookmarkProvider { get; }
 
     [HttpPost, ProducesResponseType(StatusCodes.Status201Created), ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<TokenResponse>> PostTokenAsync([FromBody] LoginRequest request, CancellationToken cancellation)
@@ -42,7 +44,8 @@ public class TokenController : ControllerHelper
             return NotFound(messageResponse);
         }
 
-        var token = await TokenService.GenerateTokenAsync(user, cancellation).ConfigureAwait(false);
+        var hasBookmark = await BookmarkProvider.HasBookmarkAsync(user.Id, cancellation);
+        var token = await TokenService.GenerateTokenAsync(user, hasBookmark, cancellation).ConfigureAwait(false);
 
         return new CreatedResult("token", token);
     }

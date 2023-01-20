@@ -9,4 +9,6 @@ public interface IBookmarkProvider
     Task<bool> IsBookMarkedAsync(Guid userId, string identifier, string type, CancellationToken cancellation);
 
     Task<bool> IsBookMarkedAsync(Guid userId, Guid bookId);
+
+    Task<bool> HasBookmarkAsync(Guid userId, CancellationToken cancellation);
 }

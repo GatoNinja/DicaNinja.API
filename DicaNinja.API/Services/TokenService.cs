@@ -26,7 +26,7 @@ public sealed class TokenService : ITokenService
 
     private ConfigurationReader Config { get; }
 
-    public async Task<TokenResponse> GenerateTokenAsync(User user, CancellationToken cancellation)
+    public async Task<TokenResponse> GenerateTokenAsync(User user, bool hasBookmark, CancellationToken cancellation)
     {
         if (user is null)
         {
@@ -46,7 +46,7 @@ public sealed class TokenService : ITokenService
 
         await RefreshTokenProvider.SaveRefreshTokenAsync(user.Id, refreshToken, cancellation).ConfigureAwait(false);
 
-        return new TokenResponse(accessToken, refreshToken, user);
+        return new TokenResponse(accessToken, refreshToken, user, hasBookmark);
     }
 
     public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
