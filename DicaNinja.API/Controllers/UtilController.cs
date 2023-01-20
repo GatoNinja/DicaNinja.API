@@ -4,7 +4,6 @@ using System.Globalization;
 using DicaNinja.API.Abstracts;
 
 using DicaNinja.API.Helpers;
-using DicaNinja.API.Services;
 using DicaNinja.API.Startup;
 
 using Microsoft.AspNetCore.Authorization;
@@ -18,12 +17,9 @@ public class UtilController : ControllerHelper
 {
     private ConfigurationReader Config { get; }
 
-    private SmtpService SmtpService { get; }
-
-    public UtilController(ConfigurationReader config, SmtpService smtpService)
+    public UtilController(ConfigurationReader config)
     {
         Config = config;
-        SmtpService = smtpService;
     }
 
     [HttpGet("version")]

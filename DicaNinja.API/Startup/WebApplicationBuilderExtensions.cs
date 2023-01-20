@@ -251,8 +251,6 @@ public static class WebApplicationBuilderExtensions
         {
             options.UseNpgsql(connectionString)
                 .UseSnakeCaseNamingConvention();
-
-            options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
     }
 }

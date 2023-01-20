@@ -2,6 +2,7 @@ using AutoMapper;
 
 using DicaNinja.API.Contexts;
 using DicaNinja.API.Models;
+using DicaNinja.API.Providers.Interfaces;
 using DicaNinja.API.Response;
 using DicaNinja.API.Startup;
 
@@ -14,7 +15,7 @@ namespace DicaNinja.API.Services;
 
 public class BookGoogleService
 {
-    public BookGoogleService(ConfigurationReader config, IMapper mapper, BaseContext context)
+    public BookGoogleService(ConfigurationReader config, IMapper mapper, BaseContext context, IAuthorProvider authorProvider, ICategoryProvider categoryProvider)
     {
         if (config is null)
         {
@@ -30,11 +31,15 @@ public class BookGoogleService
         Service = service;
         Mapper = mapper;
         Context = context;
+        AuthorProvider = authorProvider;
+        CategoryProvider = categoryProvider;
     }
 
     private IMapper Mapper { get; }
     private BooksService Service { get; }
     private BaseContext Context { get; }
+    private IAuthorProvider AuthorProvider { get; }
+    private ICategoryProvider CategoryProvider { get; }
 
     public async Task<List<BookResponse>> QueryBooksAsync(string query, CancellationToken cancellation, int page = 1, int perPage = 10, string? langRestrict = null)
     {
@@ -113,6 +118,22 @@ public class BookGoogleService
     public async Task<Book?> CreateFromResponse(BookResponse response, CancellationToken cancellation)
     {
         var book = Mapper.Map<Book>(response);
+
+        book.Identifiers = book.Identifiers.DistinctBy(identifier => identifier.Isbn).ToList();
+
+        book.Authors = (await Task.WhenAll(book.Authors.AsParallel().AsOrdered().Select(async author =>
+        {
+            var existingAuthor = await AuthorProvider.GetByName(author.Name, cancellation);
+
+            return existingAuthor is not null ? existingAuthor : author;
+        }))).ToList();
+
+        book.Categories = (await Task.WhenAll(book.Categories.AsParallel().AsOrdered().Select(async category =>
+        {
+            var existingCategory = await CategoryProvider.GetByName(category.Name, cancellation);
+
+            return existingCategory is not null ? existingCategory : category;
+        }))).ToList();
 
         Context.Books.Add(book);
 

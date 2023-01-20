@@ -59,16 +59,16 @@ public class Book : BaseModel
     [Column("preview_link")]
     public string? PreviewLink { get; set; }
 
-    public virtual List<Identifier> Identifiers { get; private set; } = new();
+    public virtual List<Identifier> Identifiers { get; set; } = new();
 
-    public virtual List<Author> Authors { get; private set; } = new();
+    public virtual List<Author> Authors { get; set; } = new();
 
-    public virtual List<Category> Categories { get; private set; } = new();
+    public virtual List<Category> Categories { get; set; } = new();
 
-    public virtual List<Bookmark> Bookmarks { get; private set; } = new();
+    public virtual List<Bookmark> Bookmarks { get; set; } = new();
 
-    public virtual List<Review> Reviews { get; private set; } = new();
+    public virtual List<Review> Reviews { get; set; } = new();
 
-    public virtual List<Hint> Hints { get; private set; } = new();
+    public virtual List<Hint> Hints { get; set; } = new();
 
 }

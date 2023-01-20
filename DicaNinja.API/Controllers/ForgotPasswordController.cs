@@ -1,6 +1,3 @@
-
-using System.Web.Http.Results;
-
 using DicaNinja.API.Abstracts;
 
 using DicaNinja.API.Helpers;
@@ -9,7 +6,6 @@ using DicaNinja.API.Providers.Interfaces;
 using DicaNinja.API.Request;
 using DicaNinja.API.Services;
 
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DicaNinja.API.Controllers;

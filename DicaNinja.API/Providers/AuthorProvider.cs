@@ -24,6 +24,11 @@ public class AuthorProvider : IAuthorProvider
             .ToListAsync(cancellation).ConfigureAwait(false);
     }
 
+    public async Task<Author?> GetByName(string name, CancellationToken cancellation)
+    {
+        return await Context.Authors.FirstOrDefaultAsync(author => author.Name == name, cancellation);
+    }
+
     public async Task<int> GetCountAsync(CancellationToken cancellation)
     {
         return await Context.Authors.CountAsync(cancellation).ConfigureAwait(false);

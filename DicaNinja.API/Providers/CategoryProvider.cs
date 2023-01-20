@@ -21,6 +21,11 @@ public class CategoryProvider : ICategoryProvider
         return await Context.Categories.Where(category => category.Books.Any(book => book.Id == bookId)).ToListAsync(cancellation).ConfigureAwait(false);
     }
 
+    public async Task<Category?> GetByName(string name, CancellationToken cancellation)
+    {
+        return await Context.Categories.FirstOrDefaultAsync(category => category.Name == name, cancellation);
+    }
+
     public async Task<int> GetCountAsync(CancellationToken cancellation)
     {
         return await Context.Categories.CountAsync(cancellation).ConfigureAwait(false);

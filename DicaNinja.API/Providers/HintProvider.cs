@@ -17,7 +17,7 @@ public class HintProvider : IHintProvider
 
     private BaseContext Context { get; }
 
-    public Task<Book?>? GetHintAsync(Guid userId, CancellationToken cancellation)
+    public async Task<Book?>? GetHintAsync(Guid userId, CancellationToken cancellation)
     {
         var query = from book in Context.Books
                     where !Context.Bookmarks.Any(bookmark => bookmark.UserId == userId && bookmark.BookId == book.Id)
@@ -25,28 +25,62 @@ public class HintProvider : IHintProvider
                     orderby Guid.NewGuid()
                     select book;
 
-        var bookFromCategory = GetRecommendedByCategories(userId, query, cancellation);
+        var bookFromCategory = await GetRecommendedByCategories(userId, query, cancellation);
 
         if (bookFromCategory is not null)
         {
+            Console.WriteLine("Vindo da categoria");
+
             return bookFromCategory;
         }
 
-        //var bookFromAuthor = GetRecommendedByAuthor(userId, query);
+        var bookFromAuthor = await GetRecommendedByAuthor(userId, query, cancellation);
 
-        //if (bookFromAuthor is not null)
-        //{
-        //    return bookFromAuthor;
-        //}
+        if (bookFromAuthor is not null)
+        {
+            Console.WriteLine("Vindo do autor");
+            return bookFromAuthor;
+        }
 
-        //var bookFromFollowing = GetRecommendedByFollowing(userId, query);
+        var bookFromFollowing = await GetRecommendedByFollowing(userId, query, cancellation);
 
-        //if (bookFromFollowing is not null)
-        //{
-        //    return bookFromFollowing;
-        //}
+        if (bookFromFollowing is not null)
+        {
+            Console.WriteLine("Vindo de seguidores");
 
-        return null;
+            return bookFromFollowing;
+        }
+
+        Console.WriteLine("Garbage time");
+
+        return await query.FirstOrDefaultAsync(cancellation);
+    }
+
+    private async Task<Book?> GetRecommendedByFollowing(Guid userId, IOrderedQueryable<Book> query, CancellationToken cancellation)
+    {
+        var newBooks = from follower in Context.Followers
+                       where follower.UserId == userId
+                       from bookmark in follower.FollowedUser.Bookmarks
+                       join book in query on bookmark.BookId equals book.Id
+                       where !bookmark.Book.Bookmarks.Any(b => b.UserId == userId)
+                       select bookmark.Book;
+
+        return await newBooks.FirstOrDefaultAsync(cancellation);
+    }
+
+    private async Task<Book?> GetRecommendedByAuthor(Guid userId, IOrderedQueryable<Book> query, CancellationToken cancellation)
+    {
+        var likedAuthorsIds = (from bookmark in Context.Bookmarks
+                               where bookmark.UserId == userId
+                               select bookmark.Book.Authors.Select(a => a.Id)
+                      ).SelectMany(a => a);
+
+        var newBooks = from book in query
+                       where !book.Bookmarks.Any(b => b.UserId == userId)
+                       && book.Authors.Any(a => likedAuthorsIds.Contains(a.Id))
+                       select book;
+
+        return await newBooks.FirstOrDefaultAsync(cancellation);
     }
 
     private async Task<Book?> GetRecommendedByCategories(Guid userId, IOrderedQueryable<Book> query, CancellationToken cancellation)

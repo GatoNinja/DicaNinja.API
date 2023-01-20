@@ -10,4 +10,6 @@ public interface IAuthorProvider
     Task<IEnumerable<Author>> GetByBookAsync(Guid bookId, CancellationToken cancellation);
 
     Task<int> GetCountAsync(CancellationToken cancellation);
+
+    Task<Author?> GetByName(string name, CancellationToken cancellation);
 }
