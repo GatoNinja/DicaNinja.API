@@ -159,6 +159,7 @@ public class BookController : ControllerHelper
     [HttpPost("isbn/{isbn}/type/{type}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [AllowAnonymous]
     [ProducesDefaultResponseType]
     public async Task<ActionResult> PostBookAsync([FromRoute] string isbn, [FromRoute] string type, CancellationToken cancellation)
     {
