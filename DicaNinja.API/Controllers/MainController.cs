@@ -17,31 +17,25 @@ namespace DicaNinja.API.Controllers;
 [AllowAnonymous]
 public class MainController : ControllerHelper
 {
-    public MainController(IMapper mapper, IBookProvider bookProvider, IUserProvider userProvider, IAuthorProvider authorProvider, ICategoryProvider categoriProvider, ICacheService cacheService, IBookmarkProvider bookmarkProvider)
+    public MainController(IMapper mapper, IBookProvider bookProvider, ICacheService cacheService, IBookmarkProvider bookmarkProvider)
     {
         Mapper = mapper;
         BookProvider = bookProvider;
-        AuthorProvider = authorProvider;
-        CategoriProvider = categoriProvider;
         CacheService = cacheService;
         BookmarkProvider = bookmarkProvider;
-        UserProvider = userProvider;
     }
 
     private IMapper Mapper { get; }
     private IBookProvider BookProvider { get; }
-    private IAuthorProvider AuthorProvider { get; }
-    private ICategoryProvider CategoriProvider { get; }
     private ICacheService CacheService { get; }
     private IBookmarkProvider BookmarkProvider { get; }
-    private IUserProvider UserProvider { get; }
 
     [HttpGet]
     public async Task<ActionResult<PagedResponse<IEnumerable<BookResponse>>>> Get([FromQuery] QueryParametersWithFilter query, CancellationToken cancellation)
     {
         var cacheKey = "main";
 
-        var cache = CacheService.GetData<MainResponse>(cacheKey);
+        var cache = CacheService.GetData<PagedResponse<IEnumerable<BookResponse>>>(cacheKey);
 
         if (cache is not null && false)
         {
@@ -52,9 +46,6 @@ public class MainController : ControllerHelper
 
         var books = await BookProvider.GetBooksAsync(cancellation);
         var totalBooks = await BookProvider.GetCountAsync(cancellation);
-        var totalAuthors = await AuthorProvider.GetCountAsync(cancellation);
-        var totalCategories = await CategoriProvider.GetCountAsync(cancellation);
-        var totalUsers = await UserProvider.GetCountAsync(cancellation);
 
         var mapped = Mapper.Map<IEnumerable<BookResponse>>(books);
 
@@ -67,10 +58,9 @@ public class MainController : ControllerHelper
         }
 
         var paginated = PaginationHelper.CreatePagedResponse(mapped, query, totalBooks);
-        var response = new MainResponse(paginated, totalBooks, totalAuthors, totalCategories, totalUsers);
 
-        CacheService.SetData(cacheKey, response, DateTimeOffset.Now.AddMinutes(10));
+        CacheService.SetData(cacheKey, paginated, DateTimeOffset.Now.AddMinutes(10));
 
-        return Ok(response);
+        return Ok(paginated);
     }
 }
