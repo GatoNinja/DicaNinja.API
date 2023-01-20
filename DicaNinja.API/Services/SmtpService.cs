@@ -1,29 +1,30 @@
-using RestSharp;
-using RestSharp.Authenticators;
+using SendGrid.Helpers.Mail;
+using SendGrid;
 
 namespace DicaNinja.API.Services;
 
 public class SmtpService
 {
-    public RestResponse SendEmail(string to, string subject, string body)
+    public async Task<SendGrid.Response> SendRecoveryEmailAsync(string to, string code)
     {
-        using var client = new RestClient()
+        const string templateId = "d-ad5d2ea662d641328cc2abfd8212108b";
+
+        var client = new SendGridClient("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");
+
+        var substitutions = new Dictionary<string, string>
         {
-            Authenticator = new HttpBasicAuthenticator("api",
-                "6e2e57a23e28b9da38ef0ff8326b4e74-27a562f9-bcfc585c")
+            {"email", to },
+            { "code", code }
         };
 
-        var request = new RestRequest()
-        {
-            Resource = "https://api.mailgun.net/v3/sandbox50fc8eab321a4b5fa6e2e83dd353ac74.mailgun.org/messages"
-        };
-        request.AddParameter("domain", "https://api.mailgun.net/v3/sandbox50fc8eab321a4b5fa6e2e83dd353ac74.mailgun.org", ParameterType.UrlSegment);
-        request.AddParameter("from", "Dica Ninja <mailgun@sandbox50fc8eab321a4b5fa6e2e83dd353ac74.mailgun.org>");
-        request.AddParameter("to", to);
-        request.AddParameter("subject", "Olá!");
-        request.AddParameter("text", "Seja bem vindo à Dica Ninja!");
-        request.Method = Method.Post;
+        var msg = new SendGridMessage();
+        msg.SetFrom(new EmailAddress("ninja@dicaninja.com.br", "Dica Ninja"));
+        msg.AddTo(new EmailAddress(to));
+        msg.SetTemplateId(templateId);
+        msg.AddSubstitutions(substitutions);
 
-        return client.Execute(request);
+        var response = await client.SendEmailAsync(msg);
+
+        return response;
     }
 }

@@ -42,11 +42,4 @@ public class UtilController : ControllerHelper
 
         return Ok(message);
     }
-
-    [HttpGet("email_test")]
-    public void EmailTest()
-    {
-        SmtpService.SendEmail("ygor@ygorlazaro.com", "", "");
-    }
-    
 }

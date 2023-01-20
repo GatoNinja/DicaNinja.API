@@ -1,4 +1,6 @@
 
+using System.Web.Http.Results;
+
 using DicaNinja.API.Abstracts;
 
 using DicaNinja.API.Helpers;
@@ -7,6 +9,7 @@ using DicaNinja.API.Providers.Interfaces;
 using DicaNinja.API.Request;
 using DicaNinja.API.Services;
 
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DicaNinja.API.Controllers;
@@ -44,12 +47,15 @@ public class ForgotPasswordController : ControllerHelper
             return new NotFoundObjectResult(messageResponse);
         }
 
-        var passwordRecovery = new PasswordRecovery(user);
+        var passwordRecovery = new PasswordRecovery(user.Id);
         var inserted = await PasswordRecoveryProvider.InsertAsync(passwordRecovery, cancellation).ConfigureAwait(false);
         var code = inserted.Code;
-        var bodyMessage = @$"Seu código de recuperação para o login é {code}";
-        SmtpService.SendEmail("ygor@ygorlazaro.com", "Recupere sua senha", bodyMessage);
+        var response = await SmtpService.SendRecoveryEmailAsync(user.Email, code);
+        var errorMessage = "Ocorreu um problema ao enviar o e-mail. Tente mais tarde, se o problema persistir entre em contato em ninja@dicaninja.com.br";
+        var successMessage = "Seu e-mail de recuperação foi enviado";
 
-        return Ok(new MessageResponse("Seu e-mail de recuperação foi enviado"));
+        return response.IsSuccessStatusCode
+            ? Ok(new MessageResponse(successMessage))
+            : StatusCode(StatusCodes.Status500InternalServerError, errorMessage);
     }
 }

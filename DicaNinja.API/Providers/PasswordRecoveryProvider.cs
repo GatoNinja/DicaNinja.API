@@ -6,8 +6,6 @@ using DicaNinja.API.Providers.Interfaces;
 
 using Microsoft.EntityFrameworkCore;
 
-using System.Globalization;
-
 namespace DicaNinja.API.Providers;
 
 public class PasswordRecoveryProvider : IPasswordRecoveryProvider
@@ -32,8 +30,6 @@ public class PasswordRecoveryProvider : IPasswordRecoveryProvider
         return await query.FirstOrDefaultAsync(cancellation).ConfigureAwait(false);
     }
 
-    private static readonly Random Random = new Random();
-
     public async Task<PasswordRecovery> InsertAsync(PasswordRecovery passwordRecovery, CancellationToken cancellation)
     {
         if (passwordRecovery is null)
@@ -41,8 +37,8 @@ public class PasswordRecoveryProvider : IPasswordRecoveryProvider
             throw new ArgumentNullException(nameof(passwordRecovery));
         }
 
-        var code = Math.Ceiling(Random.NextDouble() * 1000000).ToString(CultureInfo.InvariantCulture);
-        passwordRecovery.Code = code.PadLeft(code.Length - 7, '0');
+        var random = new Random();
+        passwordRecovery.Code = random.Next(100000, 999999).ToString();
 
         await Context.PasswordRecoveries.AddAsync(passwordRecovery, cancellation).ConfigureAwait(false);
         await Context.SaveChangesAsync(cancellation).ConfigureAwait(false);
@@ -61,6 +57,8 @@ public class PasswordRecoveryProvider : IPasswordRecoveryProvider
         }
 
         recover.IsActive = false;
+
+        Context.Entry(recover).State = EntityState.Modified;
 
         await Context.SaveChangesAsync(cancellation).ConfigureAwait(false);
     }

@@ -17,15 +17,9 @@ public class PasswordRecovery : BaseModel
         ExpireDate = DateTimeOffset.Now.AddHours(12);
     }
 
-    public PasswordRecovery(User user) : this()
+    public PasswordRecovery(Guid userId) : this()
     {
-        if (user is null)
-        {
-            throw new ArgumentNullException(nameof(user));
-        }
-
-        User = user;
-        UserId = user.Id;
+        UserId = userId;
     }
 
     [Required, DefaultValue(true)]

@@ -74,12 +74,16 @@ public sealed class UserProvider : IUserProvider
 
     public async Task<User?> GetByEmailAsync(string email, CancellationToken cancellation)
     {
-        return await Context.Users.Select(user => new User(user.Id, user.Username, user.Email)).FirstOrDefaultAsync(user => user.Email == email, cancellation).ConfigureAwait(false);
+        var query = from user in Context.Users
+                    where user.Email == email
+                    select new User(user.Id, user.Username, user.Email);
+
+        return await query.FirstOrDefaultAsync().ConfigureAwait(false);
     }
 
     public async Task ChangePasswordAsync(string email, string password, CancellationToken cancellation)
     {
-        var user = await GetByEmailAsync(email, cancellation).ConfigureAwait(false);
+        var user = await Context.Users.FirstOrDefaultAsync(user => user.Email == email).ConfigureAwait(false);
 
         if (user is null)
         {
@@ -87,6 +91,8 @@ public sealed class UserProvider : IUserProvider
         }
 
         user.Password = PasswordHasher.Hash(password);
+
+        Context.Entry(user).State = EntityState.Modified;
 
         await Context.SaveChangesAsync(cancellation).ConfigureAwait(false);
     }
