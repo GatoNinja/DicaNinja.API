@@ -38,6 +38,11 @@ public static class WebApplicationBuilderExtensions
         var config = new ConfigurationReader(builder.Configuration);
         var services = builder.Services;
 
+        if (config.Security.TokenSecurity is null)
+        {
+            throw new NullReferenceException();
+        }
+
         ConfigureDatabase(services, config.DefaultConnectionString);
         AddController(services);
         AddAuthentication(services, config.Info, config.Security.TokenSecurity);

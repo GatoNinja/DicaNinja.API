@@ -17,7 +17,7 @@ public class HintProvider : IHintProvider
 
     private BaseContext Context { get; }
 
-    public async Task<Book?>? GetHintAsync(Guid userId, CancellationToken cancellation)
+    public async Task<Book?> GetHintAsync(Guid userId, CancellationToken cancellation)
     {
         var query = from book in Context.Books
                     where !Context.Bookmarks.Any(bookmark => bookmark.UserId == userId && bookmark.BookId == book.Id)

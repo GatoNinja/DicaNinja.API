@@ -1,4 +1,3 @@
-
 using DicaNinja.API.Models;
 using DicaNinja.API.Providers.Interfaces;
 using DicaNinja.API.Response;
@@ -33,6 +32,11 @@ public sealed class TokenService : ITokenService
             throw new ArgumentNullException(nameof(user));
         }
 
+        if (Config.Security.DefaultUserRole is null)
+        {
+            throw new NullReferenceException();
+        }
+
         var claims = new List<Claim>
         {
             new("Id", user.Id.ToString()),
@@ -51,6 +55,11 @@ public sealed class TokenService : ITokenService
 
     public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
     {
+        if (Config.Security.TokenSecurity is null)
+        {
+            throw new NullReferenceException();
+        }
+
         var tokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
@@ -71,6 +80,11 @@ public sealed class TokenService : ITokenService
 
     public string GenerateAccessToken(IEnumerable<Claim> claims)
     {
+        if (Config.Security.TokenSecurity is null)
+        {
+            throw new NullReferenceException();
+        }
+
         var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Config.Security.TokenSecurity));
         var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
         var tokenExpiryInMinutes = Convert.ToInt32(Config.Security.TokenExpiryInMinutes);

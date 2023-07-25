@@ -25,7 +25,13 @@ public class UtilController : ControllerHelper
     [HttpGet("version")]
     public ActionResult GetVersion()
     {
-        var message = new MessageResponse(Config.Info.Version);
+        var version = Config.Info.Version;
+        if (version is null)
+        {
+            throw new NullReferenceException();
+        }
+
+        var message = new MessageResponse(version);
 
         return Ok(message);
     }

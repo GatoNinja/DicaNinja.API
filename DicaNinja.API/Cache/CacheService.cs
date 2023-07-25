@@ -25,7 +25,7 @@ public class CacheService : ICacheService
 
         try
         {
-            if (!string.IsNullOrEmpty(key))
+            if (!string.IsNullOrEmpty(key) && value is not null)
             {
                 _memoryCache.Set(key, value, expirationTime);
             }
